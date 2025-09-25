@@ -7,7 +7,7 @@ import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export const Navbar = () => {
   return (
-    <nav className="fixed top-6 inset-x-4 h-16 border border-gray-800 max-w-(--breakpoint-xl) mx-auto rounded-full z-50 shadow-lg">
+    <nav className="fixed top-6 inset-x-4 bg-secondary/50 backdrop-blur-xs h-16 border border-gray-800 max-w-(--breakpoint-xl) mx-auto rounded-full z-50 shadow-lg">
       <div className="h-full flex items-center justify-between mx-auto px-4">
         <Logo />
 
@@ -16,9 +16,9 @@ export const Navbar = () => {
 
         <div className="flex items-center gap-3">
           <SignedOut>
-            <SignInButton>
+            <Link href={"/login"}>
               <Button className="rounded-full">Get Started</Button>
-            </SignInButton>
+            </Link>
           </SignedOut>
           <SignedIn>
             <UserButton

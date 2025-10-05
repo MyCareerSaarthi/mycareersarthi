@@ -20,6 +20,29 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Razorpay Payment Integration
+
+This application includes Razorpay payment gateway integration for profile analysis services.
+
+### Setup
+
+1. Create a Razorpay account at [https://razorpay.com](https://razorpay.com)
+2. Obtain your API keys from the Razorpay dashboard
+3. Add the following environment variables to your `.env` file:
+
+```env
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id_here
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
+```
+
+### How It Works
+
+- Users must complete payment before accessing profile analysis features
+- Payment is processed through Razorpay checkout
+- All payments are verified server-side for security
+
+For detailed setup instructions, see [RAZORPAY_SETUP.md](RAZORPAY_SETUP.md).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

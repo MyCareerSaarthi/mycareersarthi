@@ -1,21 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const services = [
   {
-    title: "LinkedIn Profile Review",
+    title: "LinkedIn Profile Optimization",
     description:
-      "Get expert feedback on your LinkedIn profile to increase visibility and attract recruiters.",
+      "Get expert feedback to increase your profile visibility and attract recruiters with our comprehensive analysis.",
     features: [
-      "Profile optimization",
-      "Keyword analysis",
-      "Visual enhancement",
+      "Profile headline & summary enhancement",
+      "Keyword optimization for search algorithms",
+      "Experience section restructuring",
+      "Visual content recommendations",
     ],
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-12 w-12 text-blue-400"
+        className="h-12 w-12 text-primary"
         viewBox="0 0 24 24"
         fill="currentColor"
       >
@@ -24,18 +26,19 @@ const services = [
     ),
   },
   {
-    title: "Resume Scoring",
+    title: "ATS-Compliant Resume Builder",
     description:
-      "Get your resume scored by our AI and experts to ensure it passes through applicant tracking systems.",
+      "Create resumes that pass through applicant tracking systems with our AI-powered scoring and expert guidance.",
     features: [
-      "ATS compatibility",
-      "Content optimization",
-      "Design enhancement",
+      "ATS compatibility analysis",
+      "Keyword matching optimization",
+      "Format & structure enhancement",
+      "Achievement quantification",
     ],
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-12 w-12 text-green-400"
+        className="h-12 w-12 text-green-500"
         viewBox="0 0 24 24"
         fill="currentColor"
       >
@@ -46,16 +49,17 @@ const services = [
   {
     title: "AI Mock Interviews",
     description:
-      "Practice with our AI-powered interview simulator that provides real-time feedback and improvement suggestions.",
+      "Practice with our AI-powered interview simulator that provides real-time feedback and performance analytics.",
     features: [
-      "Realistic scenarios",
-      "Instant feedback",
-      "Performance analytics",
+      "Industry-specific question sets",
+      "Behavioral analysis & feedback",
+      "Speech & communication coaching",
+      "Performance tracking dashboard",
     ],
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-12 w-12 text-purple-400"
+        className="h-12 w-12 text-purple-500"
         viewBox="0 0 24 24"
         fill="currentColor"
       >
@@ -64,18 +68,19 @@ const services = [
     ),
   },
   {
-    title: "Career Coaching",
+    title: "Personalized Career Coaching",
     description:
-      "One-on-one sessions with industry experts to guide your career journey and goal setting.",
+      "One-on-one sessions with industry experts to guide your career journey and goal setting with tailored strategies.",
     features: [
-      "Personalized roadmap",
-      "Industry insights",
-      "Networking strategies",
+      "Custom career roadmap creation",
+      "Industry insights & trends",
+      "Networking strategy development",
+      "Skill gap analysis",
     ],
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-12 w-12 text-yellow-400"
+        className="h-12 w-12 text-yellow-500"
         viewBox="0 0 24 24"
         fill="currentColor"
       >
@@ -89,34 +94,46 @@ const ServicesSection = () => {
   return (
     <section id="services" className="py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in-down">
-            Our Career Services
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Comprehensive Career Services
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto animate-fade-in-up delay-100">
-            Comprehensive tools and expert guidance to accelerate your career
-            growth
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Expert tools and guidance to accelerate your career growth
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => (
-            <div
+            <motion.div
               key={index}
-              className="bg-gray-800/30 backdrop-blur-sm border border-gray-700/50 rounded-2xl p-6 hover:border-gray-600 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 animate-fade-in-up"
-              style={{ animationDelay: `${index * 100}ms` }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="bg-card border border-primary/10 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 group"
             >
-              <div className="mb-4">{service.icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-              <p className="text-gray-400 mb-4">{service.description}</p>
+              <div className="mb-4 text-primary group-hover:scale-110 transition-transform duration-300">
+                {service.icon}
+              </div>
+              <h3 className="text-xl font-semibold mb-3">{service.title}</h3>
+              <p className="text-muted-foreground mb-4 text-sm">
+                {service.description}
+              </p>
               <ul className="space-y-2 mb-6">
                 {service.features.map((feature, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center text-sm text-gray-400"
+                    className="flex items-start text-sm text-muted-foreground"
                   >
                     <svg
-                      className="h-4 w-4 text-green-400 mr-2"
+                      className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -128,17 +145,17 @@ const ServicesSection = () => {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    {feature}
+                    <span>{feature}</span>
                   </li>
                 ))}
               </ul>
               <Button
                 variant="outline"
-                className="w-full rounded-full border-gray-700 hover:bg-gray-800/50"
+                className="w-full rounded-full hover:bg-primary hover:text-primary-foreground transition-colors"
               >
-                Learn More
+                Explore Service
               </Button>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

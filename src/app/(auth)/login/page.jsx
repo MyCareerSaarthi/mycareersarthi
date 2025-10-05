@@ -18,7 +18,7 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen flex max-w-7xl mx-auto">
       {/* Left side - Visual Preview */}
-      <div className="hidden lg:flex flex-col justify-center w-1/2 p-12">
+      <div className="hidden lg:flex flex-col justify-center w-1/2 p-12 bg-background">
         <div className="space-y-8">
           <div className="max-w-md">
             <h1 className="text-4xl font-bold text-foreground mb-4">
@@ -88,10 +88,10 @@ export default function SignInPage() {
             <SignIn.Step name="start">
               <Card className="border-0 shadow-none bg-transparent">
                 <CardHeader className="px-0 pt-0 pb-6">
-                  <CardTitle className="text-2xl font-bold">
+                  <CardTitle className="text-2xl font-bold text-foreground">
                     Sign in to your account
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-muted-foreground">
                     Welcome back! Please enter your details
                   </CardDescription>
                 </CardHeader>
@@ -108,7 +108,7 @@ export default function SignInPage() {
 
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-muted" />
+                      <div className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
                       <span className="bg-background px-3 py-1 text-muted-foreground">
@@ -118,7 +118,10 @@ export default function SignInPage() {
                   </div>
 
                   <Clerk.Field name="identifier" className="space-y-2">
-                    <Label htmlFor="identifier" className="text-base">
+                    <Label
+                      htmlFor="identifier"
+                      className="text-base text-foreground"
+                    >
                       Email
                     </Label>
                     <Clerk.Input asChild>
@@ -153,16 +156,19 @@ export default function SignInPage() {
               <SignIn.Strategy name="email_code">
                 <Card className="border-0 shadow-none bg-transparent">
                   <CardHeader className="px-0 pt-0 pb-6">
-                    <CardTitle className="text-2xl font-bold">
+                    <CardTitle className="text-2xl font-bold text-foreground">
                       Check your email
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-muted-foreground">
                       We sent a code to <SignIn.SafeIdentifier />.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="px-0 space-y-6">
                     <Clerk.Field name="code" className="space-y-2">
-                      <Label htmlFor="code" className="text-base">
+                      <Label
+                        htmlFor="code"
+                        className="text-base text-foreground"
+                      >
                         Email code
                       </Label>
                       <Clerk.Input asChild>
@@ -199,13 +205,16 @@ export default function SignInPage() {
               <SignIn.Strategy name="password">
                 <Card className="border-0 shadow-none bg-transparent">
                   <CardHeader className="px-0 pt-0 pb-6">
-                    <CardTitle className="text-2xl font-bold">
+                    <CardTitle className="text-2xl font-bold text-foreground">
                       Enter your password
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="px-0 space-y-6">
                     <Clerk.Field name="password" className="space-y-2">
-                      <Label htmlFor="password" className="text-base">
+                      <Label
+                        htmlFor="password"
+                        className="text-base text-foreground"
+                      >
                         Password
                       </Label>
                       <Clerk.Input asChild>
@@ -226,7 +235,10 @@ export default function SignInPage() {
                         </Button>
                       </SignIn.Action>
                       <SignIn.Action navigate="forgot-password" asChild>
-                        <Button variant="link" className="w-full text-base p-0">
+                        <Button
+                          variant="link"
+                          className="w-full text-base p-0 text-primary"
+                        >
                           Forgot password?
                         </Button>
                       </SignIn.Action>
@@ -238,16 +250,19 @@ export default function SignInPage() {
               <SignIn.Strategy name="reset_password_email_code">
                 <Card className="border-0 shadow-none bg-transparent">
                   <CardHeader className="px-0 pt-0 pb-6">
-                    <CardTitle className="text-2xl font-bold">
+                    <CardTitle className="text-2xl font-bold text-foreground">
                       Check your email
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-muted-foreground">
                       We sent a code to <SignIn.SafeIdentifier />.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="px-0 space-y-6">
                     <Clerk.Field name="code" className="space-y-2">
-                      <Label htmlFor="reset-code" className="text-base">
+                      <Label
+                        htmlFor="reset-code"
+                        className="text-base text-foreground"
+                      >
                         Email code
                       </Label>
                       <Clerk.Input asChild>
@@ -273,10 +288,10 @@ export default function SignInPage() {
             <SignIn.Step name="forgot-password">
               <Card className="border-0 shadow-none bg-transparent">
                 <CardHeader className="px-0 pt-0 pb-6">
-                  <CardTitle className="text-2xl font-bold">
+                  <CardTitle className="text-2xl font-bold text-foreground">
                     Forgot your password?
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-muted-foreground">
                     No worries, we'll send you reset instructions.
                   </CardDescription>
                 </CardHeader>
@@ -305,13 +320,16 @@ export default function SignInPage() {
             <SignIn.Step name="reset-password">
               <Card className="border-0 shadow-none bg-transparent">
                 <CardHeader className="px-0 pt-0 pb-6">
-                  <CardTitle className="text-2xl font-bold">
+                  <CardTitle className="text-2xl font-bold text-foreground">
                     Reset your password
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-0 space-y-6">
                   <Clerk.Field name="password" className="space-y-2">
-                    <Label htmlFor="new-password" className="text-base">
+                    <Label
+                      htmlFor="new-password"
+                      className="text-base text-foreground"
+                    >
                       New password
                     </Label>
                     <Clerk.Input asChild>
@@ -326,7 +344,10 @@ export default function SignInPage() {
                   </Clerk.Field>
 
                   <Clerk.Field name="confirmPassword" className="space-y-2">
-                    <Label htmlFor="confirm-password" className="text-base">
+                    <Label
+                      htmlFor="confirm-password"
+                      className="text-base text-foreground"
+                    >
                       Confirm password
                     </Label>
                     <Clerk.Input asChild>

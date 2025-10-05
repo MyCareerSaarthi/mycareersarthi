@@ -18,7 +18,7 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen flex max-w-7xl mx-auto">
       {/* Left side - Visual Preview */}
-      <div className="hidden lg:flex flex-col justify-center w-1/2 p-12">
+      <div className="hidden lg:flex flex-col justify-center w-1/2 p-12 bg-background">
         <div className="space-y-8">
           <div className="max-w-md">
             <h1 className="text-4xl font-bold text-foreground mb-4">
@@ -88,10 +88,10 @@ export default function SignUpPage() {
             <SignUp.Step name="start">
               <Card className="border-0 shadow-none bg-transparent">
                 <CardHeader className="px-0 pt-0 pb-6">
-                  <CardTitle className="text-2xl font-bold">
+                  <CardTitle className="text-2xl font-bold text-foreground">
                     Create an account
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-muted-foreground">
                     Welcome! Please enter your details to get started
                   </CardDescription>
                 </CardHeader>
@@ -108,7 +108,7 @@ export default function SignUpPage() {
 
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-muted" />
+                      <div className="w-full border-t border-border" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
                       <span className="bg-background px-3 py-1 text-muted-foreground">
@@ -117,22 +117,11 @@ export default function SignUpPage() {
                     </div>
                   </div>
 
-                  <Clerk.Field name="username" className="space-y-2">
-                    <Label htmlFor="username" className="text-base">
-                      Username
-                    </Label>
-                    <Clerk.Input asChild>
-                      <Input
-                        id="username"
-                        placeholder="Enter your username"
-                        className="py-6 text-base"
-                      />
-                    </Clerk.Input>
-                    <Clerk.FieldError className="block text-sm text-destructive" />
-                  </Clerk.Field>
-
                   <Clerk.Field name="emailAddress" className="space-y-2">
-                    <Label htmlFor="email" className="text-base">
+                    <Label
+                      htmlFor="email"
+                      className="text-base text-foreground"
+                    >
                       Email
                     </Label>
                     <Clerk.Input asChild>
@@ -146,7 +135,10 @@ export default function SignUpPage() {
                   </Clerk.Field>
 
                   <Clerk.Field name="password" className="space-y-2">
-                    <Label htmlFor="password" className="text-base">
+                    <Label
+                      htmlFor="password"
+                      className="text-base text-foreground"
+                    >
                       Password
                     </Label>
                     <Clerk.Input asChild>
@@ -181,29 +173,15 @@ export default function SignUpPage() {
             <SignUp.Step name="continue">
               <Card className="border-0 shadow-none bg-transparent">
                 <CardHeader className="px-0 pt-0 pb-6">
-                  <CardTitle className="text-2xl font-bold">
+                  <CardTitle className="text-2xl font-bold text-foreground">
                     Fill in missing fields
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-muted-foreground">
                     Please provide the required information to complete your
                     registration
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="px-0 space-y-6">
-                  <Clerk.Field name="username" className="space-y-2">
-                    <Label htmlFor="username-continue" className="text-base">
-                      Username
-                    </Label>
-                    <Clerk.Input asChild>
-                      <Input
-                        id="username-continue"
-                        placeholder="Enter your username"
-                        className="py-6 text-base"
-                      />
-                    </Clerk.Input>
-                    <Clerk.FieldError className="block text-sm text-destructive" />
-                  </Clerk.Field>
-
                   <SignUp.Action submit asChild>
                     <Button className="w-full py-6 text-base font-medium">
                       Continue
@@ -217,16 +195,19 @@ export default function SignUpPage() {
               <SignUp.Strategy name="phone_code">
                 <Card className="border-0 shadow-none bg-transparent">
                   <CardHeader className="px-0 pt-0 pb-6">
-                    <CardTitle className="text-2xl font-bold">
+                    <CardTitle className="text-2xl font-bold text-foreground">
                       Check your phone for an SMS
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-muted-foreground">
                       We sent a code to your phone number
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="px-0 space-y-6">
                     <Clerk.Field name="code" className="space-y-2">
-                      <Label htmlFor="phone-code" className="text-base">
+                      <Label
+                        htmlFor="phone-code"
+                        className="text-base text-foreground"
+                      >
                         Phone Code
                       </Label>
                       <Clerk.Input asChild>
@@ -251,16 +232,19 @@ export default function SignUpPage() {
               <SignUp.Strategy name="email_code">
                 <Card className="border-0 shadow-none bg-transparent">
                   <CardHeader className="px-0 pt-0 pb-6">
-                    <CardTitle className="text-2xl font-bold">
+                    <CardTitle className="text-2xl font-bold text-foreground">
                       Check your email
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-muted-foreground">
                       We sent a code to your email address
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="px-0 space-y-6">
                     <Clerk.Field name="code" className="space-y-2">
-                      <Label htmlFor="email-code" className="text-base">
+                      <Label
+                        htmlFor="email-code"
+                        className="text-base text-foreground"
+                      >
                         Email Code
                       </Label>
                       <Clerk.Input asChild>

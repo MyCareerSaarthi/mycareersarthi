@@ -14,7 +14,7 @@ const AboutUs = () => {
       <FounderSpotlight />
       <ProductStory />
       <AboutEdge />
-      <AboutGallery />
+      {/* <AboutGallery /> */}
     </div>
   );
 };

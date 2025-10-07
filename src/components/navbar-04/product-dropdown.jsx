@@ -5,9 +5,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDownIcon, FileTextIcon, LinkedinIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  FileTextIcon,
+  LinkedinIcon,
+  CrownIcon,
+  SparklesIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 
@@ -26,17 +33,45 @@ export const ProductDropdown = () => {
           <ChevronDownIcon className="ml-1 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-48">
+      <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuItem asChild>
+          <Link
+            href="/services/linkedin-optimization"
+            className="flex items-center gap-2"
+          >
+            <LinkedinIcon className="h-4 w-4" />
+            <span>LinkedIn Optimization</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link
+            href="/services/resume-optimization"
+            className="flex items-center gap-2"
+          >
+            <FileTextIcon className="h-4 w-4" />
+            <span>Resume Services</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link
+            href="/services/personal-branding"
+            className="flex items-center gap-2"
+          >
+            <CrownIcon className="h-4 w-4" />
+            <span>Personal Branding</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/resume/analyze" className="flex items-center gap-2">
-            <FileTextIcon className="h-4 w-4" />
-            <span>Analyze Resume</span>
+            <SparklesIcon className="h-4 w-4" />
+            <span>Quick Resume Analysis</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/linkedin/analyze" className="flex items-center gap-2">
-            <LinkedinIcon className="h-4 w-4" />
-            <span>Analyze LinkedIn</span>
+            <SparklesIcon className="h-4 w-4" />
+            <span>Quick LinkedIn Analysis</span>
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

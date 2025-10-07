@@ -31,14 +31,14 @@ const steps = [
 
 const HowItWorksSection = () => {
   return (
-    <section className="py-20 bg-gradient-to-br from-background to-primary/5">
+    <section className="py-12 bg-muted/10">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Your Career Transformation Journey
@@ -64,7 +64,7 @@ const HowItWorksSection = () => {
                 className="relative"
               >
                 <div className="bg-card border border-primary/10 rounded-2xl p-6 h-full transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 group">
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-to-r from-primary to-purple-600 flex items-center justify-center text-white font-bold text-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg transition-colors duration-300">
                     {step.number}
                   </div>
                   <h3 className="text-xl font-semibold mb-3 mt-8 text-center">

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Card,
@@ -7,405 +9,577 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { useDashboard } from "@/hooks/useDashboard";
+import { useRouter } from "next/navigation";
+import {
+  RefreshCw,
+  TrendingUp,
+  Users,
+  FileText,
+  CreditCard,
+  Target,
+  Calendar,
+  BarChart3,
+  ArrowRight,
+  Plus,
+  Eye,
+  Activity,
+  Briefcase,
+  FileCheck,
+  DollarSign,
+} from "lucide-react";
 
-const Dashboard = () => {
-  // Mock data for LinkedIn and resume related dashboard
-  const dashboardData = {
-    latestLinkedInScore: 72,
-    latestResumeScore: 85,
-    recentReviews: [
-      {
-        id: 1,
-        type: "LinkedIn",
-        title: "Profile completeness review",
-        score: 72,
-        date: "2 hours ago",
-        status: "completed",
-      },
-      {
-        id: 2,
-        type: "Resume",
-        title: "Technical skills section review",
-        score: 85,
-        date: "1 day ago",
-        status: "completed",
-      },
-      {
-        id: 3,
-        type: "LinkedIn",
-        title: "Headline optimization",
-        score: 68,
-        date: "2 days ago",
-        status: "completed",
-      },
-      {
-        id: 4,
-        type: "Resume",
-        title: "Formatting and layout review",
-        score: 78,
-        date: "3 days ago",
-        status: "completed",
-      },
-    ],
-    recommendations: [
-      {
-        id: 1,
-        type: "LinkedIn",
-        title: "Add more industry keywords",
-        description: "Your profile is missing 5 key industry terms",
-        priority: "high",
-      },
-      {
-        id: 2,
-        type: "Resume",
-        title: "Quantify achievements",
-        description: "Add metrics to 3 experience entries",
-        priority: "medium",
-      },
-      {
-        id: 3,
-        type: "LinkedIn",
-        title: "Request recommendations",
-        description: "Ask 2 colleagues for recommendations",
-        priority: "low",
-      },
-    ],
-    upcomingReviews: [
-      {
-        id: 1,
-        type: "LinkedIn",
-        title: "Profile photo review",
-        due: "Tomorrow",
-        status: "pending",
-      },
-      {
-        id: 2,
-        type: "Resume",
-        title: "Skills section update",
-        due: "In 3 days",
-        status: "pending",
-      },
-    ],
+// Stats Card Component
+const StatsCard = ({
+  title,
+  value,
+  subtitle,
+  icon: Icon,
+  trend,
+  trendValue,
+  className = "",
+}) => {
+  const getTrendColor = (trend) => {
+    switch (trend) {
+      case "up":
+        return "text-emerald-600";
+      case "down":
+        return "text-red-600";
+      default:
+        return "text-muted-foreground";
+    }
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
-        {/* Removed motion.div wrapper */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
-            LinkedIn and resume analysis to boost your career prospects
+    <Card className={className}>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Icon className="h-4 w-4 text-muted-foreground" />
+              <p className="text-sm font-medium text-muted-foreground">
+                {title}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-2xl font-bold">{value}</p>
+              {subtitle && (
+                <p className="text-sm text-muted-foreground">{subtitle}</p>
+              )}
+            </div>
+          </div>
+          {trend && trendValue && (
+            <div className="text-right">
+              <Badge variant="secondary" className={getTrendColor(trend)}>
+                {trendValue}
+              </Badge>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Activity Item Component
+const ActivityItem = ({ activity, onViewReport }) => {
+  const getTypeIcon = (type, subtype) => {
+    if (type === "report") {
+      return subtype === "linkedin" ? (
+        <Briefcase className="h-4 w-4" />
+      ) : (
+        <FileCheck className="h-4 w-4" />
+      );
+    }
+    return <Activity className="h-4 w-4" />;
+  };
+
+  const getTypeColor = (type, subtype) => {
+    if (type === "report") {
+      return subtype === "linkedin" ? "text-blue-600" : "text-purple-600";
+    }
+    return "text-muted-foreground";
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  return (
+    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+      <div className="flex items-center gap-3">
+        <div
+          className={`p-2 rounded-md bg-muted ${getTypeColor(
+            activity.type,
+            activity.subtype
+          )}`}
+        >
+          {getTypeIcon(activity.type, activity.subtype)}
+        </div>
+        <div className="space-y-1">
+          <p className="text-sm font-medium">{activity.title}</p>
+          <p className="text-xs text-muted-foreground">
+            {activity.description}
           </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              {formatDate(activity.created_at)}
+            </span>
+            {activity.score && (
+              <Badge variant="outline" className="text-xs">
+                Score: {activity.score}/100
+              </Badge>
+            )}
+          </div>
         </div>
-        {/* Removed motion.div wrapper */}
+      </div>
+      {activity.type === "report" && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onViewReport?.(activity)}
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
+  );
+};
 
-        {/* Compact Latest Scores Section */}
-        {/* Removed motion.div wrapper */}
+// Recommendation Card Component
+const RecommendationCard = ({ recommendation }) => {
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "high":
+        return "border-red-200 bg-red-50";
+      case "medium":
+        return "border-yellow-200 bg-yellow-50";
+      case "low":
+        return "border-blue-200 bg-blue-50";
+      default:
+        return "border-muted bg-muted/50";
+    }
+  };
+
+  return (
+    <Card className={`${getPriorityColor(recommendation.priority)}`}>
+      <CardContent className="p-4">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between">
+            <div className="space-y-1">
+              <h4 className="text-sm font-semibold">{recommendation.title}</h4>
+              <p className="text-xs text-muted-foreground">
+                {recommendation.description}
+              </p>
+            </div>
+            <Badge variant="outline" className="text-xs">
+              {recommendation.priority}
+            </Badge>
+          </div>
+          {recommendation.currentScore && (
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">
+                Current: {recommendation.currentScore}
+              </span>
+              <span className="text-muted-foreground">
+                Target: {recommendation.targetScore}
+              </span>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const Dashboard = () => {
+  const router = useRouter();
+  const {
+    data,
+    stats,
+    recentReports,
+    recentPayments,
+    recommendations,
+    userInfo,
+    loading,
+    error,
+    isRefreshing,
+    lastFetched,
+    refresh,
+    isAuthenticated,
+  } = useDashboard();
+
+  // Loading state with skeleton
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header Skeleton */}
+        <div className="mb-8">
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+
+        {/* Stats Grid Skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6">
+                <Skeleton className="h-4 w-24 mb-4" />
+                <Skeleton className="h-8 w-16 mb-2" />
+                <Skeleton className="h-3 w-20" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Content Grid Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-4 w-48" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[...Array(3)].map((_, j) => (
+                    <Skeleton key={j} className="h-16 w-full" />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <Card className="max-w-md mx-auto">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">⚠️</span>
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Something went wrong</h2>
+            <p className="text-muted-foreground mb-6">{error}</p>
+            <Button onClick={refresh} variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <Card className="max-w-md mx-auto">
+          <CardContent className="p-8 text-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🔐</span>
+            </div>
+            <h2 className="text-2xl font-bold mb-2">Sign in required</h2>
+            <p className="text-muted-foreground mb-6">
+              Please sign in to view your dashboard
+            </p>
+            <Button asChild>
+              <Link href="/login">
+                <ArrowRight className="h-4 w-4 mr-2" />
+                Sign In
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
         <div>
-          <Card className="mb-8 border border-primary/10 bg-card rounded-2xl hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
+          <h1 className="text-3xl font-bold mb-2">
+            Welcome back, {userInfo?.first_name || "User"}! 👋
+          </h1>
+          <p className="text-muted-foreground">
+            Here's your career analysis overview and personalized insights.
+          </p>
+          {lastFetched && (
+            <p className="text-sm text-muted-foreground mt-1">
+              Last updated: {new Date(lastFetched).toLocaleTimeString()}
+            </p>
+          )}
+        </div>
+
+        <Button
+          onClick={refresh}
+          variant="outline"
+          size="sm"
+          disabled={isRefreshing}
+        >
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
+          />
+          {isRefreshing ? "Refreshing..." : "Refresh"}
+        </Button>
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+          title="Total Reports"
+          value={stats?.totalReports || 0}
+          subtitle="LinkedIn & Resume analyses"
+          icon={BarChart3}
+          trend={stats?.totalReports > 0 ? "up" : "neutral"}
+          trendValue="Active"
+        />
+
+        <StatsCard
+          title="LinkedIn Score"
+          value={Math.round(stats?.latestLinkedinScore || 0)}
+          subtitle={`Avg: ${Math.round(stats?.averageLinkedinScore || 0)}`}
+          icon={Briefcase}
+          trend={
+            stats?.latestLinkedinScore >= 80
+              ? "up"
+              : stats?.latestLinkedinScore >= 60
+              ? "neutral"
+              : "down"
+          }
+          trendValue={
+            stats?.latestLinkedinScore >= 80
+              ? "Excellent"
+              : stats?.latestLinkedinScore >= 60
+              ? "Good"
+              : "Needs Work"
+          }
+        />
+
+        <StatsCard
+          title="Resume Score"
+          value={Math.round(stats?.latestResumeScore || 0)}
+          subtitle={`Avg: ${Math.round(stats?.averageResumeScore || 0)}`}
+          icon={FileCheck}
+          trend={
+            stats?.latestResumeScore >= 80
+              ? "up"
+              : stats?.latestResumeScore >= 60
+              ? "neutral"
+              : "down"
+          }
+          trendValue={
+            stats?.latestResumeScore >= 80
+              ? "Excellent"
+              : stats?.latestResumeScore >= 60
+              ? "Good"
+              : "Needs Work"
+          }
+        />
+
+        <StatsCard
+          title="Total Investment"
+          value={`₹${stats?.totalSpent || 0}`}
+          subtitle={`${stats?.totalPayments || 0} payments`}
+          icon={DollarSign}
+          trend={stats?.totalSpent > 0 ? "up" : "neutral"}
+          trendValue="Invested"
+        />
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        {/* Recent Activity */}
+        <div className="lg:col-span-2">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-xl">Latest Profile Scores</CardTitle>
-              <CardDescription>
-                Your most recent LinkedIn and resume analyses
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col sm:flex-row justify-around items-center gap-6 py-4">
-                {/* LinkedIn Score - Compact Circular Indicator */}
-                <div className="flex flex-col items-center">
-                  <div className="relative w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-blue-500/5 border border-blue-500/30">
-                    <div className="absolute inset-0 rounded-full border-4 border-blue-500/30"></div>
-                    <div
-                      className="absolute inset-0 rounded-full border-4 border-blue-500"
-                      style={{
-                        clipPath: `inset(0 0 ${
-                          100 - dashboardData.latestLinkedInScore
-                        }% 0)`,
-                      }}
-                    ></div>
-                    <div className="absolute w-16 h-16 rounded-full bg-card flex items-center justify-center">
-                      <span className="text-xl font-bold text-foreground">
-                        {dashboardData.latestLinkedInScore}
-                      </span>
-                    </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-muted rounded-lg">
+                    <BarChart3 className="h-5 w-5" />
                   </div>
-                  <div className="mt-3 text-center">
-                    <div className="flex items-center gap-1">
-                      <span className="text-blue-400">💼</span>
-                      <span className="font-medium">LinkedIn</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      2 hours ago
-                    </p>
+                  <div>
+                    <CardTitle>Recent Activity</CardTitle>
+                    <CardDescription>
+                      Your latest analyses and actions
+                    </CardDescription>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="mt-2 text-xs rounded-full hover:bg-primary/10 hover:border-primary/30"
-                  >
-                    View Report
-                  </Button>
                 </div>
-
-                {/* Resume Score - Compact Circular Indicator */}
-                <div className="flex flex-col items-center">
-                  <div className="relative w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/30">
-                    <div className="absolute inset-0 rounded-full border-4 border-purple-500/30"></div>
-                    <div
-                      className="absolute inset-0 rounded-full border-4 border-purple-500"
-                      style={{
-                        clipPath: `inset(0 0 ${
-                          100 - dashboardData.latestResumeScore
-                        }% 0)`,
-                      }}
-                    ></div>
-                    <div className="absolute w-16 h-16 rounded-full bg-card flex items-center justify-center">
-                      <span className="text-xl font-bold text-foreground">
-                        {dashboardData.latestResumeScore}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="mt-3 text-center">
-                    <div className="flex items-center gap-1">
-                      <span className="text-purple-400">📄</span>
-                      <span className="font-medium">Resume</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      1 day ago
-                    </p>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="mt-2 text-xs rounded-full hover:bg-primary/10 hover:border-primary/30"
-                  >
-                    View Report
-                  </Button>
-                </div>
+                <Button variant="ghost" size="sm">
+                  <Eye className="h-4 w-4 mr-2" />
+                  View All
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-        {/* Removed motion.div wrapper */}
-
-        {/* Recent Reviews and Recommendations */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Recent Reviews */}
-          {/* Removed motion.div wrapper */}
-          <div>
-            <Card className="border border-primary/10 bg-card rounded-2xl hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
-              <CardHeader>
-                <CardTitle>Recent Reviews</CardTitle>
-                <CardDescription>
-                  Your latest LinkedIn and resume analyses
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {dashboardData.recentReviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="flex items-center justify-between py-3 border-b border-border last:border-0"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                            review.type === "LinkedIn"
-                              ? "bg-blue-500/20"
-                              : "bg-purple-500/20"
-                          }`}
-                        >
-                          <span
-                            className={
-                              review.type === "LinkedIn"
-                                ? "text-blue-400"
-                                : "text-purple-400"
-                            }
-                          >
-                            {review.type === "LinkedIn" ? "💼" : "📄"}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-medium text-foreground">
-                            {review.title}
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm text-muted-foreground">
-                              {review.date}
-                            </span>
-                            <span
-                              className={`px-1.5 py-0.5 rounded text-xs ${
-                                review.type === "LinkedIn"
-                                  ? "bg-blue-500/20 text-blue-300"
-                                  : "bg-purple-500/20 text-purple-300"
-                              }`}
-                            >
-                              {review.type}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-foreground">
-                          {review.score}/100
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="rounded-full hover:bg-primary/10"
-                        >
-                          View
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          {/* Removed motion.div wrapper */}
-
-          {/* Recommendations */}
-          {/* Removed motion.div wrapper */}
-          <div>
-            <Card className="border border-primary/10 bg-card rounded-2xl hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
-              <CardHeader>
-                <CardTitle>Improvement Recommendations</CardTitle>
-                <CardDescription>
-                  Targeted suggestions for your LinkedIn and resume
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {dashboardData.recommendations.map((recommendation) => (
-                    <div
-                      key={recommendation.id}
-                      className="p-4 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-all duration-300"
-                    >
-                      <div className="flex justify-between">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={
-                              recommendation.type === "LinkedIn"
-                                ? "text-blue-400"
-                                : "text-purple-400"
-                            }
-                          >
-                            {recommendation.type === "LinkedIn" ? "💼" : "📄"}
-                          </span>
-                          <h3 className="font-semibold text-foreground">
-                            {recommendation.title}
-                          </h3>
-                        </div>
-                        <span
-                          className={`px-2 py-1 rounded text-xs ${
-                            recommendation.priority === "high"
-                              ? "bg-red-500/20 text-red-300"
-                              : recommendation.priority === "medium"
-                              ? "bg-yellow-500/20 text-yellow-300"
-                              : "bg-green-500/20 text-green-300"
-                          }`}
-                        >
-                          {recommendation.priority}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        {recommendation.description}
-                      </p>
-                      <div className="flex gap-2 mt-3">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="rounded-full hover:bg-primary/10 hover:border-primary/30"
-                        >
-                          Implement
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="rounded-full hover:bg-primary/10"
-                        >
-                          Later
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          {/* Removed motion.div wrapper */}
-        </div>
-
-        {/* Quick Actions for LinkedIn and Resume */}
-        {/* Removed motion.div wrapper */}
-        <div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="border border-primary/10 bg-card rounded-2xl hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:bg-accent/50">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="bg-blue-500/20 p-2 rounded-lg text-blue-400">
-                    💼
-                  </span>
-                  <h3 className="text-xl font-semibold">LinkedIn Analysis</h3>
-                </div>
-                <p className="text-muted-foreground mb-4">
-                  Get detailed insights on your LinkedIn profile optimization
-                </p>
-                <div className="flex flex-col gap-2">
-                  {/* Updated to link to the analyze page which now has payment integration */}
-                  <Button
-                    asChild
-                    className="bg-blue-600 hover:bg-blue-700 justify-start rounded-full hover:scale-105 transition-transform"
-                  >
-                    <Link href="/analyze">Analyze Profile</Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="justify-start rounded-full hover:bg-primary/10 hover:border-primary/30"
-                  >
-                    View Detailed Report
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-primary/10 bg-card rounded-2xl hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:bg-accent/50">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="bg-purple-500/20 p-2 rounded-lg text-purple-400">
-                    📄
-                  </span>
-                  <h3 className="text-xl font-semibold">Resume Review</h3>
-                </div>
-                <p className="text-muted-foreground mb-4">
-                  Professional evaluation of your resume for better job
-                  prospects
-                </p>
-                <div className="flex flex-col gap-2">
-                  <Button
-                    asChild
-                    className="bg-purple-600 hover:bg-purple-700 justify-start rounded-full hover:scale-105 transition-transform"
-                  >
-                    <Link href="/resume/analyze">Review Resume</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="justify-start rounded-full hover:bg-primary/10 hover:border-primary/30"
-                  >
-                    <Link href="/resume/report?id=latest">
-                      View Detailed Report
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {recentReports && recentReports.length > 0 ? (
+                recentReports.slice(0, 3).map((report, index) => (
+                  <ActivityItem
+                    key={report.id}
+                    activity={{
+                      ...report,
+                      type: "report",
+                      subtype: report.type,
+                      title: report.title,
+                      description: `${
+                        report.type === "linkedin" ? "LinkedIn" : "Resume"
+                      } profile analyzed with score: ${report.score}`,
+                      status: report.status,
+                      created_at: report.created_at,
+                    }}
+                    onViewReport={(activity) => {
+                      const reportUrl =
+                        activity.subtype === "linkedin"
+                          ? `/linkedin/report?id=${activity.id}`
+                          : `/resume/report?id=${activity.id}`;
+                      router.push(reportUrl);
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                    <BarChart3 className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    No activity yet
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Start by analyzing your LinkedIn profile or resume
+                  </p>
+                  <Button asChild>
+                    <Link href="/linkedin/analyze">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Get Started
                     </Link>
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
-        {/* Removed motion.div wrapper */}
+
+        {/* Quick Actions */}
+        <div>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-muted rounded-lg">
+                  <Target className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle>Quick Actions</CardTitle>
+                  <CardDescription>
+                    Analyze and improve your profiles
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button asChild className="w-full h-16">
+                <Link href="/linkedin/analyze">
+                  <div className="flex items-center gap-3">
+                    <Briefcase className="h-5 w-5" />
+                    <div className="text-left">
+                      <div className="font-semibold">LinkedIn Analysis</div>
+                      <div className="text-sm opacity-90">
+                        Optimize your profile
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </Button>
+
+              <Button asChild variant="secondary" className="w-full h-16">
+                <Link href="/resume/analyze">
+                  <div className="flex items-center gap-3">
+                    <FileCheck className="h-5 w-5" />
+                    <div className="text-left">
+                      <div className="font-semibold">Resume Analysis</div>
+                      <div className="text-sm opacity-90">
+                        Improve your resume
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </Button>
+
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/reports">
+                  <FileText className="h-4 w-4 mr-2" />
+                  View All Reports
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Recommendations */}
+      <div className="mb-8">
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-muted rounded-lg">
+                <TrendingUp className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle>Personalized Recommendations</CardTitle>
+                <CardDescription>
+                  AI-powered insights to boost your career profile
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {recommendations && recommendations.length > 0 ? (
+                recommendations
+                  .slice(0, 4)
+                  .map((recommendation) => (
+                    <RecommendationCard
+                      key={recommendation.id}
+                      recommendation={recommendation}
+                    />
+                  ))
+              ) : (
+                <div className="col-span-2 text-center py-12">
+                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Target className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    No recommendations yet
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    Complete your first analysis to get personalized
+                    recommendations
+                  </p>
+                  <Button asChild>
+                    <Link href="/linkedin/analyze">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Start Analysis
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

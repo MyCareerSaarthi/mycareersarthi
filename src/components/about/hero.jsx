@@ -1,36 +1,55 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const AboutHero = () => {
-    return (
-        <section className="relative overflow-hidden py-20 md:py-28 lg:py-32">
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="max-w-5xl mx-auto text-center space-y-6">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-white/90 border border-white/10">
-                        About MyCareerSarthi
-                    </span>
-                    <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-500 leading-tight">
-                        Driven by Expertise. Powered by People.
-                    </h1>
-                    <p className="text-base md:text-lg text-gray-300 max-w-3xl mx-auto">
-                        We help professionals unlock their true potential on LinkedIn through precise scoring,
-                        actionable insights, and trustworthy guidance.
-                    </p>
-                    <div className="flex gap-3 justify-center">
-                        <Button size="lg" className="rounded-full px-7">Explore Our Journey</Button>
-                        <Button size="lg" variant="outline" className="rounded-full px-7 border-gray-700 hover:bg-gray-800/50">Our Values</Button>
-                    </div>
-                </div>
-            </div>
+  return (
+    <section className="py-12 md:py-16">
+      <div className="container mx-auto px-4">
+        <div className="max-w-5xl mx-auto text-center space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Badge
+              variant="secondary"
+              className="px-4 py-2 text-sm font-medium"
+            >
+              About MyCareerSarthi
+            </Badge>
+          </motion.div>
 
-            {/* Ambient shapes */}
-            <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-purple-500/10 blur-3xl" />
-        </section>
-    );
+          <motion.h1
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            Driven by Expertise.
+            <span className="block mt-2 text-primary">Powered by People.</span>
+          </motion.h1>
+
+          <motion.p
+            className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            We help experienced professionals unlock their true potential
+            through comprehensive LinkedIn optimization, resume creation, and
+            personal branding services.
+          </motion.p>
+
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default AboutHero;
-
-

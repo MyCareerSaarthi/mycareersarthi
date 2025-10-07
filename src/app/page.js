@@ -4,14 +4,12 @@ import ServicesSection from "@/components/home/services-section";
 import HowItWorksSection from "@/components/home/how-it-works-section";
 import TestimonialsSection from "@/components/home/testimonials-section";
 import CtaSection from "@/components/home/cta-section";
-import StatsSection from "@/components/home/stats-section";
 import FeaturesSection from "@/components/home/features-section";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <HeroSection />
-      <StatsSection />
       <FeaturesSection />
       <ServicesSection />
       <HowItWorksSection />

@@ -1,79 +1,131 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const AboutGallery = () => {
-    return (
-        <section className="space-y-6 max-w-6xl mx-auto px-4">
-            <div className="max-w-2xl">
-                <h2 className="text-3xl font-semibold">In Pictures</h2>
-                <p className="text-muted-foreground mt-2">A glimpse of our journey—learning, building, and mentoring.</p>
-            </div>
-            <div className="relative">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white/70 hover:bg-white/30 rounded-full"
-                    onClick={() => {
-                        const container = document.getElementById("gallery-carousel");
-                        const scrollAmount = 300;
-                        if (!container) return;
-                        if (container.scrollLeft === 0) {
-                            container.scrollTo({ left: container.scrollWidth, behavior: "smooth" });
-                        } else {
-                            container.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-                        }
-                    }}
-                >
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/10 hover:bg-white/20 rounded-full"
-                    onClick={() => {
-                        const container = document.getElementById("gallery-carousel");
-                        const scrollAmount = 300;
-                        if (!container) return;
-                        if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 5) {
-                            container.scrollTo({ left: 0, behavior: "smooth" });
-                        } else {
-                            container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-                        }
-                    }}
-                >
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                </Button>
-                <div
-                    id="gallery-carousel"
-                    className="flex gap-4 overflow-x-auto scrollbar-hide py-4 scroll-smooth"
-                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                >
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden bg-white/5 border border-white/10 flex-shrink-0 w-64">
-                        <img src="/globe.svg" alt="Journey" className="w-full h-full object-cover opacity-80" />
+  const galleryItems = [
+    {
+      src: "/globe.svg",
+      alt: "Global Reach",
+      title: "Global Impact",
+    },
+    {
+      src: "/window.svg",
+      alt: "Innovation",
+      title: "Innovation Hub",
+    },
+    {
+      src: "/file.svg",
+      alt: "Research",
+      title: "Research & Development",
+    },
+    {
+      src: "/vercel.svg",
+      alt: "Technology",
+      title: "Technology Stack",
+    },
+    {
+      src: "/founder-img.jpg",
+      alt: "Founder",
+      title: "Leadership",
+    },
+  ];
+
+  const scrollLeft = () => {
+    const container = document.getElementById("gallery-carousel");
+    if (!container) return;
+    container.scrollBy({ left: -300, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    const container = document.getElementById("gallery-carousel");
+    if (!container) return;
+    container.scrollBy({ left: 300, behavior: "smooth" });
+  };
+
+  return (
+    <section className="py-12">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Our Journey in Pictures
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+            A glimpse of our journey—learning, building, and mentoring
+            experienced professionals.
+          </p>
+        </motion.div>
+
+        <div className="relative">
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background border-border"
+            onClick={scrollLeft}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background border-border"
+            onClick={scrollRight}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+
+          <div
+            id="gallery-carousel"
+            className="flex gap-6 overflow-x-auto scrollbar-hide py-4 scroll-smooth px-12"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {galleryItems.map((item, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.1,
+                  ease: "easeOut",
+                }}
+                viewport={{ once: true }}
+                whileHover={{ y: -5 }}
+                className="flex-shrink-0 w-80"
+              >
+                <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
+                  <CardContent className="p-0">
+                    <div className="aspect-[4/3] overflow-hidden rounded-t-lg">
+                      <img
+                        src={item.src}
+                        alt={item.alt}
+                        className="w-full h-full object-cover transition-transform duration-300"
+                      />
                     </div>
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden bg-white/5 border border-white/10 flex-shrink-0 w-64">
-                        <img src="/window.svg" alt="Building" className="w-full h-full object-cover opacity-80" />
+                    <div className="p-4">
+                      <h3 className="font-semibold text-foreground">
+                        {item.title}
+                      </h3>
                     </div>
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden bg-white/5 border border-white/10 flex-shrink-0 w-64">
-                        <img src="/file.svg" alt="Research" className="w-full h-full object-cover opacity-80" />
-                    </div>
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden bg-white/5 border border-white/10 flex-shrink-0 w-64">
-                        <img src="/vercel.svg" alt="Team" className="w-full h-full object-cover opacity-80" />
-                    </div>
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden bg-white/5 border border-white/10 flex-shrink-0 w-64">
-                        <img src="/founder-img.jpg" alt="Founder" className="w-full h-full object-cover opacity-80" />
-                    </div>
-                </div>
-            </div>
-        </section>
-    );
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default AboutGallery;
-
-

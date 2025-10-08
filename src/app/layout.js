@@ -8,6 +8,7 @@ import { dark, shadcn } from "@clerk/themes";
 import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
 import SyncAuth from "@/components/auth/AuthSync";
+import { Suspense } from "react"
 
 const poppins = Poppins({
   variable: "--font-poppins ",
@@ -56,9 +57,11 @@ export default function RootLayout({ children }) {
               speed={300}
               shadow="0 0 15px rgba(34, 153, 221, 0.5), 0 0 5px rgba(106, 17, 203, 0.5)"
             />
+            <Suspense>
             <Navbar />
             <main className="pt-24">{children}</main>
             <Footer />
+            </Suspense>
           </ThemeProvider>
         </body>
       </html>

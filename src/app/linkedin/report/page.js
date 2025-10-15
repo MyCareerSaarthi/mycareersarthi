@@ -14,6 +14,7 @@ import Certification from "@/components/report/certification";
 import Projects from "@/components/report/projects";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/components/api/api";
+import { useAuth } from "@clerk/nextjs";
 
 const LinkedinReport = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -22,6 +23,7 @@ const LinkedinReport = () => {
   const id = searchParams.get("id");
   const [linkedinReport, setLinkedinReport] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { getToken } = useAuth();
 
   // Check if device is mobile
   useEffect(() => {
@@ -92,7 +94,12 @@ const LinkedinReport = () => {
   const getLinkedinReport = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/api/linkedin/${id}`);
+      const token = await getToken();
+      const response = await api.get(`/api/linkedin/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setLinkedinReport(response.data);
     } catch (error) {
       console.error("Error fetching LinkedIn report:", error);

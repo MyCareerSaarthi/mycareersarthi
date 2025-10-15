@@ -7,7 +7,9 @@ import {
 } from "@/components/ui/accordion";
 
 const ProfilePicture = ({ data }) => {
-  const profileData = data?.profile_picture_report?.[0]; // Get first item from array
+  const profileData = data?.section_scores?.find(
+    (section) => section.name === "profile-picture"
+  );
 
   if (!profileData) return <div>No profile picture data available</div>;
 

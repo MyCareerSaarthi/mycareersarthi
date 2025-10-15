@@ -11,11 +11,15 @@ const Education = ({ data }) => {
     return <div className="text-center py-8">No data available</div>;
   }
 
+  const educations = data.profile?.educations;
+
   const educationData = data.section_scores?.find(
     (section) => section.name === "Education"
   );
 
   if (!educationData) return <div>No education data available</div>;
+
+  console.log(educations);
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
@@ -41,6 +45,21 @@ const Education = ({ data }) => {
           </div>
         </div>
       </div>
+
+      {educations && educations.length > 0 && (
+        <div className="mb-6 w-full bg-secondary/50 p-4 rounded-lg">
+          <ul className="space-y-3">
+            {educations.map((education, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-foreground">{education.title}</span>
+                <span className="text-muted-foreground text-sm">
+                  {education.subtitle}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Summary */}
       <div className="mb-6 w-full">

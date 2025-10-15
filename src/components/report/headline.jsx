@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/accordion";
 
 const Headline = ({ data }) => {
+  const headline = data.profile?.headline;
   const headlineData = data.section_scores.find(
     (section) => section.name === "Headline"
   );
@@ -36,6 +37,10 @@ const Headline = ({ data }) => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mb-6 w-full bg-secondary/50 p-4 rounded-lg">
+        <p className="text-foreground">{headline}</p>
       </div>
 
       {/* Summary without accordion */}

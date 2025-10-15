@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -7,6 +8,9 @@ import {
 } from "@/components/ui/accordion";
 
 const About = ({ data }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const about = data.profile?.about;
   const aboutData = data.section_scores.find(
     (section) => section.name === "About"
   );
@@ -36,6 +40,20 @@ const About = ({ data }) => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mb-6 w-full bg-secondary/50 p-4 rounded-lg">
+        <p className="text-foreground">
+          {isExpanded ? about : about.slice(0, 100) + "..."}
+        </p>
+        {about.length > 100 && (
+          <button
+            className="text-primary underline"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? "Read Less" : "Read More"}
+          </button>
+        )}
       </div>
 
       {/* Summary */}

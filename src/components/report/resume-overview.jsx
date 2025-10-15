@@ -59,6 +59,22 @@ const ResumeOverview = ({ data, onNavigate }) => {
     return circumference - (score / 10) * circumference;
   };
 
+  const order = [
+    "profile-picture",
+    "skills",
+    "experience",
+    "education",
+    "certifications",
+    "projects",
+  ];
+  const orderedSections = section_scores
+    ?.slice()
+    .sort(
+      (a, b) =>
+        order.indexOf(a.name.toLowerCase()) -
+        order.indexOf(b.name.toLowerCase())
+    );
+
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8">
@@ -146,7 +162,7 @@ const ResumeOverview = ({ data, onNavigate }) => {
 
       {/* Section Scores Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-        {section_scores?.map((section, index) => (
+        {orderedSections?.map((section, index) => (
           <Card
             key={index}
             className={`border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-[1.02] ${

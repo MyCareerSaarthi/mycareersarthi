@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useReports } from "@/hooks/useDashboard";
+import { useModernReports } from "@/hooks/useModernReports";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -27,22 +27,41 @@ import {
   Target,
   Award,
   AlertCircle,
+  SortAsc,
+  SortDesc,
+  SlidersHorizontal,
+  X,
+  ChevronDown,
 } from "lucide-react";
 
 const ReportsPage = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState("created_at");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const {
     reports,
+    statistics,
     loading,
     error,
     hasMore,
+    totalCount,
+    filters,
     loadMore,
     refresh,
-    isAuthenticated,
-  } = useReports(activeTab, 10);
+    search,
+    filterByType,
+    sortReports,
+    filterByScore,
+    deleteReport,
+  } = useModernReports({
+    type: activeTab,
+    sortBy,
+    sortOrder,
+  });
 
   // Loading state
   if (loading && reports.length === 0) {
@@ -102,50 +121,72 @@ const ReportsPage = () => {
     );
   }
 
-  // Not authenticated
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-8">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">🔐</span>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            Sign in required
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Please sign in to view your reports
-          </p>
-          <Button
-            asChild
-            className="rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
-          >
-            <Link href="/login">Sign In</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // Handle search
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+    search(term);
+  };
 
-  // Filter reports based on search term
-  const filteredReports = reports.filter(
-    (report) =>
-      report.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      report.summary?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Handle tab change
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    filterByType(tab);
+  };
+
+  // Handle sort change
+  const handleSortChange = (newSortBy) => {
+    const newSortOrder =
+      sortBy === newSortBy && sortOrder === "desc" ? "asc" : "desc";
+    setSortBy(newSortBy);
+    setSortOrder(newSortOrder);
+    sortReports(newSortBy, newSortOrder);
+  };
+
+  // Handle score filter
+  const handleScoreFilter = (min, max) => {
+    // Convert to numbers and validate
+    const scoreMin =
+      min !== null && min !== undefined && min !== "" ? parseFloat(min) : null;
+    const scoreMax =
+      max !== null && max !== undefined && max !== "" ? parseFloat(max) : null;
+
+    // Only apply filter if values are valid numbers
+    if (
+      (scoreMin === null || (!isNaN(scoreMin) && isFinite(scoreMin))) &&
+      (scoreMax === null || (!isNaN(scoreMax) && isFinite(scoreMax)))
+    ) {
+      filterByScore(scoreMin, scoreMax);
+    }
+  };
+
+  // Handle report deletion
+  const handleDeleteReport = async (report) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete this ${report.type} report?`
+      )
+    ) {
+      const success = await deleteReport(report.id, report.type);
+      if (success) {
+        // Report will be automatically removed from the list
+      }
+    }
+  };
 
   const getScoreColor = (score) => {
-    if (score >= 85) return "text-green-600 bg-green-100 border-green-200";
-    if (score >= 70) return "text-blue-600 bg-blue-100 border-blue-200";
-    if (score >= 50) return "text-yellow-600 bg-yellow-100 border-yellow-200";
+    const numScore = Number(score) || 0;
+    if (numScore >= 85) return "text-green-600 bg-green-100 border-green-200";
+    if (numScore >= 70) return "text-blue-600 bg-blue-100 border-blue-200";
+    if (numScore >= 50)
+      return "text-yellow-600 bg-yellow-100 border-yellow-200";
     return "text-red-600 bg-red-100 border-red-200";
   };
 
   const getScoreLabel = (score) => {
-    if (score >= 85) return "Excellent";
-    if (score >= 70) return "Good";
-    if (score >= 50) return "Fair";
+    const numScore = Number(score) || 0;
+    if (numScore >= 85) return "Excellent";
+    if (numScore >= 70) return "Good";
+    if (numScore >= 50) return "Fair";
     return "Needs Work";
   };
 
@@ -160,11 +201,16 @@ const ReportsPage = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+    if (!dateString) return "N/A";
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch (error) {
+      return "Invalid Date";
+    }
   };
 
   const handleViewReport = (report) => {
@@ -173,6 +219,12 @@ const ReportsPage = () => {
         ? `/linkedin/report?id=${report.id}`
         : `/resume/report?id=${report.id}`;
     router.push(reportUrl);
+  };
+
+  // Use overall_score instead of score with null safety
+  const getReportScore = (report) => {
+    if (!report) return 0;
+    return Number(report.overall_score) || Number(report.score) || 0;
   };
 
   return (
@@ -187,9 +239,43 @@ const ReportsPage = () => {
             <p className="text-gray-600 text-lg">
               Track your LinkedIn and resume analysis progress over time.
             </p>
+            {statistics && (
+              <div className="flex items-center gap-6 mt-4">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm text-gray-600">
+                    {statistics.total_reports || 0} Total Reports
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  <span className="text-sm text-gray-600">
+                    Avg Score:{" "}
+                    {statistics.average_score
+                      ? statistics.average_score.toFixed(1)
+                      : "0.0"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Target className="h-4 w-4 text-purple-600" />
+                  <span className="text-sm text-gray-600">
+                    Best: {statistics.highest_score || 0}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              variant="outline"
+              size="sm"
+              className="rounded-full"
+            >
+              <SlidersHorizontal className="h-4 w-4 mr-2" />
+              Filters
+            </Button>
             <Button
               onClick={refresh}
               variant="outline"
@@ -205,18 +291,129 @@ const ReportsPage = () => {
           </div>
         </div>
 
+        {/* Advanced Filters */}
+        {showFilters && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <SlidersHorizontal className="h-5 w-5" />
+                Advanced Filters
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Sort Options */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sort By
+                  </label>
+                  <div className="flex gap-2">
+                    <Button
+                      variant={sortBy === "created_at" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleSortChange("created_at")}
+                      className="rounded-full"
+                    >
+                      {sortBy === "created_at" && sortOrder === "desc" ? (
+                        <SortDesc className="h-3 w-3 mr-1" />
+                      ) : (
+                        <SortAsc className="h-3 w-3 mr-1" />
+                      )}
+                      Date
+                    </Button>
+                    <Button
+                      variant={
+                        sortBy === "overall_score" ? "default" : "outline"
+                      }
+                      size="sm"
+                      onClick={() => handleSortChange("overall_score")}
+                      className="rounded-full"
+                    >
+                      {sortBy === "overall_score" && sortOrder === "desc" ? (
+                        <SortDesc className="h-3 w-3 mr-1" />
+                      ) : (
+                        <SortAsc className="h-3 w-3 mr-1" />
+                      )}
+                      Score
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Score Range */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Score Range
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      min="0"
+                      max="100"
+                      className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      onChange={(e) =>
+                        handleScoreFilter(e.target.value, filters.scoreMax)
+                      }
+                    />
+                    <span className="self-center text-gray-500">-</span>
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      min="0"
+                      max="100"
+                      className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                      onChange={(e) =>
+                        handleScoreFilter(filters.scoreMin, e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                {/* Quick Filters */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Quick Filters
+                  </label>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleScoreFilter(80, 100)}
+                      className="rounded-full"
+                    >
+                      High Scores
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleScoreFilter(0, 50)}
+                      className="rounded-full"
+                    >
+                      Needs Work
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
+        <Tabs
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className="mb-8"
+        >
           <div className="flex items-center justify-between mb-6">
             <TabsList className="grid w-full max-w-md grid-cols-3 rounded-xl">
               <TabsTrigger value="all" className="rounded-lg">
-                All Reports
+                All Reports ({totalCount})
               </TabsTrigger>
               <TabsTrigger value="linkedin" className="rounded-lg">
-                LinkedIn
+                LinkedIn ({statistics?.linkedin_count || 0})
               </TabsTrigger>
               <TabsTrigger value="resume" className="rounded-lg">
-                Resume
+                Resume ({statistics?.resume_count || 0})
               </TabsTrigger>
             </TabsList>
 
@@ -227,7 +424,7 @@ const ReportsPage = () => {
                 type="text"
                 placeholder="Search reports..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -235,52 +432,60 @@ const ReportsPage = () => {
 
           <TabsContent value="all" className="space-y-6">
             <ReportsGrid
-              reports={filteredReports}
+              reports={reports || []}
               loading={loading}
               hasMore={hasMore}
               loadMore={loadMore}
               onViewReport={handleViewReport}
+              onDeleteReport={handleDeleteReport}
               getScoreColor={getScoreColor}
               getScoreLabel={getScoreLabel}
               getTypeIcon={getTypeIcon}
               getTypeColor={getTypeColor}
               formatDate={formatDate}
+              getReportScore={getReportScore}
             />
           </TabsContent>
 
           <TabsContent value="linkedin" className="space-y-6">
             <ReportsGrid
-              reports={filteredReports.filter((r) => r.type === "linkedin")}
+              reports={(reports || []).filter(
+                (r) => r && r.type === "linkedin"
+              )}
               loading={loading}
               hasMore={hasMore}
               loadMore={loadMore}
               onViewReport={handleViewReport}
+              onDeleteReport={handleDeleteReport}
               getScoreColor={getScoreColor}
               getScoreLabel={getScoreLabel}
               getTypeIcon={getTypeIcon}
               getTypeColor={getTypeColor}
               formatDate={formatDate}
+              getReportScore={getReportScore}
             />
           </TabsContent>
 
           <TabsContent value="resume" className="space-y-6">
             <ReportsGrid
-              reports={filteredReports.filter((r) => r.type === "resume")}
+              reports={(reports || []).filter((r) => r && r.type === "resume")}
               loading={loading}
               hasMore={hasMore}
               loadMore={loadMore}
               onViewReport={handleViewReport}
+              onDeleteReport={handleDeleteReport}
               getScoreColor={getScoreColor}
               getScoreLabel={getScoreLabel}
               getTypeIcon={getTypeIcon}
               getTypeColor={getTypeColor}
               formatDate={formatDate}
+              getReportScore={getReportScore}
             />
           </TabsContent>
         </Tabs>
 
         {/* Empty State */}
-        {reports.length === 0 && !loading && (
+        {(!reports || reports.length === 0) && !loading && (
           <div className="text-center py-16">
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <FileText className="h-12 w-12 text-gray-400" />
@@ -323,13 +528,15 @@ const ReportsGrid = ({
   hasMore,
   loadMore,
   onViewReport,
+  onDeleteReport,
   getScoreColor,
   getScoreLabel,
   getTypeIcon,
   getTypeColor,
   formatDate,
+  getReportScore,
 }) => {
-  if (reports.length === 0 && !loading) {
+  if ((!reports || reports.length === 0) && !loading) {
     return (
       <div className="text-center py-12">
         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -348,97 +555,117 @@ const ReportsGrid = ({
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {reports.map((report) => (
-          <Card
-            key={report.id}
-            className="group hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-gray-200 rounded-xl"
-          >
-            <CardHeader className="pb-4">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`p-2 rounded-lg border-2 ${getTypeColor(
-                      report.type
-                    )}`}
-                  >
-                    <span className="text-lg">{getTypeIcon(report.type)}</span>
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">{report.title}</CardTitle>
-                    <CardDescription className="capitalize">
-                      {report.type} Analysis
-                    </CardDescription>
-                  </div>
-                </div>
-              </div>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              {/* Score */}
-              <div className="flex items-center justify-between">
-                <div className="text-center flex-1">
-                  <div className="text-3xl font-bold text-gray-900 mb-1">
-                    {Math.round(report.score)}
-                  </div>
-                  <div className="text-sm text-gray-500">Overall Score</div>
-                </div>
-
-                <div className="flex-1">
-                  <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+        {(reports || []).map((report) => {
+          if (!report || !report.id) return null;
+          return (
+            <Card
+              key={report.id}
+              className="group hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-gray-200 rounded-xl"
+            >
+              <CardHeader className="pb-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
                     <div
-                      className={`h-3 rounded-full transition-all duration-500 ${
-                        report.score >= 85
-                          ? "bg-green-500"
-                          : report.score >= 70
-                          ? "bg-blue-500"
-                          : report.score >= 50
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      }`}
-                      style={{ width: `${report.score}%` }}
-                    />
-                  </div>
-                  <div className="text-center">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium border ${getScoreColor(
-                        report.score
+                      className={`p-2 rounded-lg border-2 ${getTypeColor(
+                        report.type
                       )}`}
                     >
-                      {getScoreLabel(report.score)}
-                    </span>
+                      <span className="text-lg">
+                        {getTypeIcon(report.type)}
+                      </span>
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg">
+                        {report.type === "linkedin"
+                          ? "LinkedIn Profile"
+                          : "Resume"}{" "}
+                        Analysis
+                      </CardTitle>
+                      <CardDescription className="capitalize">
+                        {report.type} Analysis
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDeleteReport(report)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {/* Score */}
+                <div className="flex items-center justify-between">
+                  <div className="text-center flex-1">
+                    <div className="text-3xl font-bold text-gray-900 mb-1">
+                      {getReportScore(report)}
+                    </div>
+                    <div className="text-sm text-gray-500">Overall Score</div>
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+                      <div
+                        className={`h-3 rounded-full transition-all duration-500 ${
+                          getReportScore(report) >= 85
+                            ? "bg-green-500"
+                            : getReportScore(report) >= 70
+                            ? "bg-blue-500"
+                            : getReportScore(report) >= 50
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
+                        }`}
+                        style={{ width: `${getReportScore(report)}%` }}
+                      />
+                    </div>
+                    <div className="text-center">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium border ${getScoreColor(
+                          getReportScore(report)
+                        )}`}
+                      >
+                        {getScoreLabel(getReportScore(report))}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Summary */}
-              <div>
-                <p className="text-sm text-gray-600 line-clamp-3">
-                  {report.summary || "No summary available for this report."}
-                </p>
-              </div>
+                {/* Summary */}
+                <div>
+                  <p className="text-sm text-gray-600 line-clamp-3">
+                    {report.summary ||
+                      report.overall_summary ||
+                      "No summary available for this report."}
+                  </p>
+                </div>
 
-              {/* Date */}
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Calendar className="h-4 w-4" />
-                <span>{formatDate(report.created_at)}</span>
-              </div>
+                {/* Date */}
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Calendar className="h-4 w-4" />
+                  <span>{formatDate(report.created_at)}</span>
+                </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2 pt-2">
-                <Button
-                  onClick={() => onViewReport(report)}
-                  className="flex-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  View Report
-                </Button>
-                <Button variant="outline" size="sm" className="rounded-full">
-                  <Download className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                {/* Actions */}
+                <div className="flex items-center gap-2 pt-2">
+                  <Button
+                    onClick={() => onViewReport(report)}
+                    className="flex-1 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Report
+                  </Button>
+                  <Button variant="outline" size="sm" className="rounded-full">
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Load More */}

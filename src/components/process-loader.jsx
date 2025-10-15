@@ -18,17 +18,26 @@ export default function ProcessLoader({
   const clampedPercent = Math.min(Math.max(percent, 0), 100);
 
   return (
-    <Card className={cn("border-0 shadow-none bg-accent/30 dark:bg-input/20", className)}>
+    <Card
+      className={cn(
+        "border-0 shadow-none bg-accent/30 dark:bg-input/20",
+        className
+      )}
+    >
       <CardContent className="p-6 lg:p-8">
         <div className="grid gap-8 lg:grid-cols-[auto,1fr] items-center">
           {/* Visual */}
           <div className="relative">
             <AnimatedLines className="absolute -inset-6 text-muted-foreground/20" />
-            <CircularProgress size={120} strokeWidth={8} value={clampedPercent} />
+            <CircularProgress
+              size={120}
+              strokeWidth={8}
+              value={clampedPercent}
+            />
           </div>
 
           {/* Content */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="flex items-baseline gap-3">
               <h2 className="text-xl font-semibold">{stepTitle}</h2>
               <span className="text-xs text-muted-foreground">
@@ -38,9 +47,6 @@ export default function ProcessLoader({
             {stepSubtitle ? (
               <p className="text-sm text-muted-foreground">{stepSubtitle}</p>
             ) : null}
-            <div className="text-sm text-muted-foreground">
-              {clampedPercent}% complete
-            </div>
           </div>
         </div>
       </CardContent>
@@ -62,9 +68,18 @@ function AnimatedLines({ className }) {
         strokeWidth="1.5"
         strokeLinecap="round"
       >
-        <path className="animate-[dash_3s_linear_infinite]" d="M10 60 Q 80 10 150 60 T 290 60" />
-        <path className="animate-[dash_4s_linear_infinite] opacity-70" d="M10 100 Q 80 50 150 100 T 290 100" />
-        <path className="animate-[dash_5s_linear_infinite] opacity-50" d="M10 140 Q 80 90 150 140 T 290 140" />
+        <path
+          className="animate-[dash_3s_linear_infinite]"
+          d="M10 60 Q 80 10 150 60 T 290 60"
+        />
+        <path
+          className="animate-[dash_4s_linear_infinite] opacity-70"
+          d="M10 100 Q 80 50 150 100 T 290 100"
+        />
+        <path
+          className="animate-[dash_5s_linear_infinite] opacity-50"
+          d="M10 140 Q 80 90 150 140 T 290 140"
+        />
       </g>
       <style>{`
         @keyframes dash { to { stroke-dashoffset: -600; } }
@@ -73,5 +88,3 @@ function AnimatedLines({ className }) {
     </svg>
   );
 }
-
-

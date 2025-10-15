@@ -11,6 +11,8 @@ const Certification = ({ data }) => {
     return <div className="text-center py-8">No data available</div>;
   }
 
+  const certifications = data.profile?.certifications;
+
   const certificationData = data.section_scores?.find(
     (section) => section.name === "Certifications"
   );
@@ -41,6 +43,26 @@ const Certification = ({ data }) => {
           </div>
         </div>
       </div>
+      {certifications && certifications.length > 0 && (
+        <div className="mb-6 w-full bg-secondary/50 p-4 rounded-lg">
+          <ul className="space-y-3">
+            {Array.from(certifications).map((certification, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-green-600 dark:text-green-400 mr-2 mt-1">
+                  ✓
+                </span>
+                <span className="text-foreground">{certification.title}</span>
+                <span className="text-muted-foreground text-sm">
+                  {certification.issuing_organization}
+                </span>
+                <span className="text-muted-foreground text-sm">
+                  {certification.issue_date}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Summary */}
       <div className="mb-6 w-full">

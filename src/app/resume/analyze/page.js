@@ -16,6 +16,8 @@ import { api } from "@/components/api/api";
 import { handlePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { io } from "socket.io-client";
+import ProcessLoader from "@/components/process-loader";
+import { useRouter } from "next/navigation";
 const socket = io(process.env.NEXT_PUBLIC_API_URL);
 
 const ResumeAnalyze = () => {
@@ -38,8 +40,19 @@ const ResumeAnalyze = () => {
   });
   const [isLoadingPricing, setIsLoadingPricing] = useState(true);
 
+  // Process demo state
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [processData, setProcessData] = useState({
+    title: "Starting Analysis",
+    subtitle: "Initializing resume analysis",
+    currentStep: 1,
+    totalSteps: 5,
+    percentage: 0,
+  });
+
   const { user } = useUser();
   const { getToken } = useAuth();
+  const router = useRouter();
 
   const getRoles = async () => {
     const response = await api.get("/api/rag-data/roles");
@@ -165,9 +178,22 @@ const ResumeAnalyze = () => {
         formData.append("couponCode", appliedCoupon.code);
         formData.append("discountAmount", appliedCoupon.discount);
       }
+
+      // Start the analysis process
+      setIsAnalyzing(true);
+      setProcessData({
+        title: "Starting Analysis",
+        subtitle: "Initializing resume analysis",
+        currentStep: 1,
+        totalSteps: 5,
+        percentage: 0,
+      });
+
       await handlePayment("resume", token, user, formData, setIsSubmitting);
     } catch (error) {
       console.error("Form submission failed:", error);
+      setIsAnalyzing(false);
+      setErrors({ general: "Payment failed. Please try again." });
     } finally {
       setIsSubmitting(false);
     }
@@ -219,11 +245,63 @@ const ResumeAnalyze = () => {
   };
 
   useEffect(() => {
-    socket.emit("register", user?.id);
-    socket.on("updateProcess", (data) => {
-      console.log(data);
-    });
-  }, [user]);
+    if (user?.id) {
+      socket.emit("register", user.id);
+
+      socket.on("updateProcess", (data) => {
+        console.log("Process update received:", data);
+        setProcessData({
+          title: data.title || "Processing",
+          subtitle: data.subtitle || "Analyzing your resume",
+          currentStep: data.currentStep || 1,
+          totalSteps: data.totalSteps || 5,
+          percentage: data.percentage || 0,
+        });
+      });
+
+      socket.on("analysisComplete", (data) => {
+        console.log("Analysis complete:", data);
+        setIsAnalyzing(false);
+        // Navigate to results page
+        if (data.reportId) {
+          router.push(`/resume/report/${data.reportId}`);
+        } else {
+          router.push("/resume/reports");
+        }
+      });
+
+      socket.on("analysisError", (error) => {
+        console.error("Analysis error:", error);
+        setIsAnalyzing(false);
+        setErrors({ general: "Analysis failed. Please try again." });
+      });
+    }
+
+    return () => {
+      socket.off("updateProcess");
+      socket.off("analysisComplete");
+      socket.off("analysisError");
+    };
+  }, [user, router]);
+
+  // Show process demo screen during analysis
+  if (isAnalyzing) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="min-h-[70vh] flex items-center justify-center px-6 py-16">
+          <div className="w-full max-w-3xl">
+            <ProcessLoader
+              stepTitle={processData.title}
+              stepSubtitle={processData.subtitle}
+              currentStep={processData.currentStep}
+              totalSteps={processData.totalSteps}
+              percent={processData.percentage}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -243,6 +321,11 @@ const ResumeAnalyze = () => {
       <div className="container mx-auto px-4 pb-16">
         <Card className="w-full max-w-5xl mx-auto shadow-lg rounded-xl">
           <CardContent className="p-6">
+            {errors.general && (
+              <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+                <p className="text-sm text-destructive">{errors.general}</p>
+              </div>
+            )}
             <form onSubmit={handleSubmit}>
               {/* Two Column Layout */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">

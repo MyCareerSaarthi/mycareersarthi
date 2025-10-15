@@ -17,6 +17,10 @@ const Experience = ({ data }) => {
 
   if (!experienceData) return <div>No experience data available</div>;
 
+  const experiences = data.profile?.experiences;
+
+  console.log(experiences);
+
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8 flex items-center justify-between">
@@ -41,6 +45,30 @@ const Experience = ({ data }) => {
           </div>
         </div>
       </div>
+
+      {experiences && experiences.length > 0 && (
+        <div className="mb-6 w-full bg-secondary/50 p-4 rounded-lg">
+          <ul className="space-y-3">
+            {experiences.map((experience, index) => (
+              <li
+                key={index}
+                className="flex items-start justify-between gap-2 p-2"
+              >
+                <div>
+                  <div className="text-foreground">{experience.title}</div>
+
+                  <div className="text-muted-foreground text-sm">
+                    {experience.subtitle}, {experience.metadata}
+                  </div>
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  {experience.caption}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {/* Summary */}
       <div className="mb-6 w-full">

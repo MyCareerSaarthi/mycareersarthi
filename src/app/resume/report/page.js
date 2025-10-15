@@ -9,6 +9,7 @@ import Certification from "@/components/report/certification";
 import Projects from "@/components/report/projects";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/components/api/api";
+import { useAuth } from "@clerk/nextjs";
 
 const ResumeReport = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -17,6 +18,7 @@ const ResumeReport = () => {
   const id = searchParams.get("id");
   const [resumeReport, setResumeReport] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { getToken } = useAuth();
 
   // Check if device is mobile
   useEffect(() => {
@@ -69,7 +71,12 @@ const ResumeReport = () => {
   const getResumeReport = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/api/resume/${id}`);
+      const token = await getToken();
+      const response = await api.get(`/api/resume/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setResumeReport(response.data);
     } catch (error) {
       console.error("Error fetching resume report:", error);

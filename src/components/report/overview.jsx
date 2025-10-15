@@ -7,8 +7,6 @@ const Overview = ({ data, onNavigate }) => {
     return <div className="text-center py-8">No data available</div>;
   }
 
-  
-
   const { overall_score, overall_summary, section_scores } = data;
 
   // Determine color based on score - improved for light mode
@@ -35,14 +33,14 @@ const Overview = ({ data, onNavigate }) => {
   // Map section names to tab IDs
   const getSectionTabId = (sectionName) => {
     const sectionMap = {
-      Education: "education",
+      Headline: "headline",
+      "Profile Picture": "profile-picture",
+      About: "about",
       Experience: "experience",
       Skills: "skill",
+      Education: "education",
       Certifications: "certification",
       Projects: "projects",
-      Headline: "headline",
-      About: "about",
-      "Profile Picture": "profile-picture",
     };
     return (
       sectionMap[sectionName] || sectionName.toLowerCase().replace(/\s+/g, "-")
@@ -63,6 +61,25 @@ const Overview = ({ data, onNavigate }) => {
     const circumference = 2 * Math.PI * radius;
     return circumference - (score / 10) * circumference;
   };
+
+  const order = [
+    "headline",
+    "profile-picture",
+    "about",
+    "experience",
+    "skills",
+    "education",
+    "certifications",
+    "projects",
+  ];
+
+  const orderedSections = section_scores
+    ?.slice() // copy to avoid mutating original
+    .sort(
+      (a, b) =>
+        order.indexOf(a.name.toLowerCase()) -
+        order.indexOf(b.name.toLowerCase())
+    );
 
   return (
     <div className="max-w-6xl mx-auto animate-fade-in">
@@ -151,7 +168,7 @@ const Overview = ({ data, onNavigate }) => {
 
       {/* Section Scores Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-        {section_scores?.map((section, index) => (
+        {orderedSections?.map((section, index) => (
           <Card
             key={index}
             className={`border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-[1.02] ${

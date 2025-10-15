@@ -31,6 +31,7 @@ export const useDashboard = () => {
 
         // Get authentication token
         const token = await getToken();
+        console.log("token: ", token);
         if (!token) {
           throw new Error("No authentication token available");
         }

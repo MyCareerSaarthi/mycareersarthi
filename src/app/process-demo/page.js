@@ -4,10 +4,19 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ProcessLoader from "@/components/process-loader";
 
 const steps = [
-  { title: "Analyzing about section", subtitle: "Parsing your content and extracting signals" },
-  { title: "Performing analysis", subtitle: "Running models and comparing patterns" },
+  {
+    title: "Analyzing about section",
+    subtitle: "Parsing your content and extracting signals",
+  },
+  {
+    title: "Performing analysis",
+    subtitle: "Running models and comparing patterns",
+  },
   { title: "Calculating score", subtitle: "Aggregating the metrics" },
-  { title: "Preparing insights", subtitle: "Generating personalized recommendations" },
+  {
+    title: "Preparing insights",
+    subtitle: "Generating personalized recommendations",
+  },
   { title: "Finalizing", subtitle: "Wrapping things up" },
 ];
 
@@ -19,7 +28,8 @@ export default function ProcessDemoPage() {
 
   useEffect(() => {
     // Auto progress: smooth percentage increments, step bumps every ~1.2s
-    let p = 0, s = 1;
+    let p = 0,
+      s = 1;
     timerRef.current = setInterval(() => {
       p = Math.min(100, p + 3 + Math.random() * 3);
       s = Math.min(total, 1 + Math.floor((p / 100) * total));
@@ -30,7 +40,10 @@ export default function ProcessDemoPage() {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const { title, subtitle } = useMemo(() => steps[step - 1] ?? steps[0], [step]);
+  const { title, subtitle } = useMemo(
+    () => steps[step - 1] ?? steps[0],
+    [step]
+  );
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-6 py-16">
@@ -46,5 +59,3 @@ export default function ProcessDemoPage() {
     </div>
   );
 }
-
-

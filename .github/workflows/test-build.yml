@@ -9,6 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      NEXT_PUBLIC_RAG_API_URL: ${{ secrets.NEXT_PUBLIC_RAG_API_URL }}
+      NEXT_PUBLIC_RAZORPAY_KEY_ID: ${{ secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID }}
 
     strategy:
       matrix:
@@ -22,11 +27,12 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - name: Installing Dependencies
-        run: npm i
+        run: npm ci
+      - name: Creating .env file
+        run: |
+          echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}" >> .env
+          echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" >> .env
+          echo "NEXT_PUBLIC_RAG_API_URL=${NEXT_PUBLIC_RAG_API_URL}" >> .env
+          echo "NEXT_PUBLIC_RAZORPAY_KEY_ID=${NEXT_PUBLIC_RAZORPAY_KEY_ID}" >> .env
       - name: Creating Build
         run: npm run build
-        env:
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}
-          NEXT_PUBLIC_API_URL: ${{secrets.NEXT_PUBLIC_API_URL}}
-          NEXT_PUBLIC_RAG_API_URL: ${{secrets.NEXT_PUBLIC_RAG_API_URL}}
-          NEXT_PUBLIC_RAZORPAY_KEY_ID: ${{secrets.NEXT_PUBLIC_RAZORPAY_KEY_ID}}

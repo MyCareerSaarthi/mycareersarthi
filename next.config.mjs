@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     turbo: {
       resolveAlias: {
-        "@clerk/clerk-react": false,
+        "@clerk/clerk-react": "@clerk/nextjs",
       },
     },
   },

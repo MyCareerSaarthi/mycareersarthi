@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const isCI = process.env.CI === 'true';
+
 const nextConfig = {
   experimental: {
     turbo: !isCI, // disable Turbopack in CI builds

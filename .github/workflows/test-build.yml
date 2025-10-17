@@ -27,7 +27,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - name: Installing Dependencies
-        run: npm ci
+        run: npm i
       - name: Creating .env file
         run: |
           echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}" >> .env

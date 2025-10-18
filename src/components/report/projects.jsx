@@ -17,6 +17,8 @@ const Projects = ({ data }) => {
 
   if (!projectsData) return <div>No projects data available</div>;
 
+  const projects = data.profile?.projects;
+
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8 flex items-center justify-between">
@@ -41,6 +43,33 @@ const Projects = ({ data }) => {
           </div>
         </div>
       </div>
+
+      {projects && projects.length > 0 ? (
+        <div className="mb-6 w-full bg-secondary/50 p-4 rounded-lg">
+          <ul className="space-y-3">
+            {projects.map((project, index) => (
+              <li
+                key={index}
+                className="flex items-start justify-between gap-2 p-2"
+              >
+                <div>
+                  <div className="text-foreground">{project.title}</div>
+                  <div className="text-muted-foreground text-sm">
+                    {project.subtitle}
+                  </div>
+                </div>
+                <div className="text-muted-foreground text-sm">
+                  {project.description}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <div className="mb-6 w-full bg-secondary/50 p-4 rounded-lg">
+          <p className="text-foreground">No projects found</p>
+        </div>
+      )}
 
       {/* Summary */}
       <div className="mb-6 w-full">

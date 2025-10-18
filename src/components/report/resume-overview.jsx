@@ -152,7 +152,7 @@ const ResumeOverview = ({ data, onNavigate }) => {
                   alignmentBaseline="middle"
                   className={`fill-current ${getScoreColor(overall_score)}`}
                 >
-                  {overall_score}/10
+                  {overall_score.toFixed(1)}/10
                 </text>
               </svg>
             </div>

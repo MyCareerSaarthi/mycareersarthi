@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-};
+const isCI = process.env.CI === 'true';
+
+const nextConfig = {};
 
 export default nextConfig;

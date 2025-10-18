@@ -3,4 +3,5 @@ const isCI = process.env.CI === 'true';
 
 const nextConfig = {};
 
+
 export default nextConfig;

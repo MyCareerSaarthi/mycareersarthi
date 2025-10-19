@@ -1,6 +1,6 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -9,6 +9,7 @@ import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
 import SyncAuth from "@/components/auth/AuthSync";
 import { Suspense } from "react";
+import ClerkProviderNoSSR from "@/components/auth/ClerkProviderNoSSR";
 
 const poppins = Poppins({
   variable: "--font-poppins ",
@@ -24,7 +25,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider
+    <ClerkProviderNoSSR
       appearance={{
         baseTheme: [dark, shadcn],
       }}
@@ -39,7 +40,7 @@ export default function RootLayout({ children }) {
         </head>
         <body className={`${poppins.className} antialiased`}>
           <SignedIn>
-            <SyncAuth /> {/* runs sync whenever signed in */}
+            <SyncAuth />
           </SignedIn>
           <ThemeProvider
             attribute="class"
@@ -66,6 +67,6 @@ export default function RootLayout({ children }) {
           </ThemeProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </ClerkProviderNoSSR>
   );
 }

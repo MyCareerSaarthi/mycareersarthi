@@ -19,8 +19,6 @@ const Experience = ({ data }) => {
 
   const experiences = data.profile?.experiences;
 
-  console.log(experiences);
-
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8 flex items-center justify-between">

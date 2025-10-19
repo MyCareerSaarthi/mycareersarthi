@@ -19,8 +19,6 @@ const Education = ({ data }) => {
 
   if (!educationData) return <div>No education data available</div>;
 
-  console.log(educations);
-
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8 flex items-center justify-between">

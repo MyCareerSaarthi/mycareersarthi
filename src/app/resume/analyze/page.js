@@ -309,7 +309,6 @@ const ResumeAnalyze = () => {
       socket.emit("register", user.id);
 
       socket.on("updateProcess", (data) => {
-        console.log("Process update received:", data);
         setProcessData({
           title: data.title || "Processing",
           subtitle: data.subtitle || "Analyzing your resume",
@@ -320,7 +319,6 @@ const ResumeAnalyze = () => {
       });
 
       socket.on("analysisComplete", (data) => {
-        console.log("Analysis complete:", data);
         setIsAnalyzing(false);
         // Navigate to results page
         if (data.reportId) {

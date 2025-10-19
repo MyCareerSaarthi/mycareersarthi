@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
         </head>
         <body className={`${poppins.className} antialiased`}>
           <SignedIn>
-            <SyncAuth /> {/* runs sync whenever signed in */}
+            <SyncAuth />
           </SignedIn>
           <ThemeProvider
             attribute="class"

@@ -332,7 +332,6 @@ const LinkedinAnalyze = () => {
 
       // Handle updates from both servers
       const handleProgressUpdate = (data) => {
-        console.log("Process update received:", data);
         setProcessData({
           title: data.title || "Processing",
           subtitle: data.subtitle || "Analyzing your LinkedIn profile",
@@ -347,7 +346,6 @@ const LinkedinAnalyze = () => {
       ragSocket.on("updateProcess", handleProgressUpdate);
 
       socket.on("analysisComplete", (data) => {
-        console.log("Analysis complete:", data);
         setIsAnalyzing(false);
         // Navigate to results page
         if (data.reportId) {

@@ -1,15 +1,15 @@
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider, SignedIn } from "@clerk/nextjs";
+import { SignedIn } from "@clerk/nextjs";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ThemeProvider } from "@/components/theme-provider";
-import { dark, shadcn } from "@clerk/themes";
 import NextTopLoader from "nextjs-toploader";
 import Script from "next/script";
 import SyncAuth from "@/components/auth/AuthSync";
 import { Suspense } from "react";
-
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark, shadcn } from "@clerk/themes";
 const poppins = Poppins({
   variable: "--font-poppins ",
   display: "swap",
@@ -22,13 +22,15 @@ export const metadata = {
   description: "Career mentoring platform",
 };
 
+const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider
       appearance={{
         baseTheme: [dark, shadcn],
       }}
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      publishableKey={publishableKey}
     >
       <html lang="en" suppressHydrationWarning>
         <head>

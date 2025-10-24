@@ -51,17 +51,7 @@ const HeroSection = () => {
               <span className="block mt-2 text-primary">Expert Guidance</span>
             </motion.h1>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto leading-relaxed"
-            >
-              Elevate your professional presence with our comprehensive LinkedIn
-              optimization, resume creation, and personal branding services.
-              Designed specifically for experienced professionals ready to
-              advance their careers.
-            </motion.p>
+          
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -69,30 +59,7 @@ const HeroSection = () => {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
             >
-              <SignedOut>
-                <Button asChild size="lg" className="px-8 py-6 text-lg">
-                  <Link href="/signup">
-                    Get Started Today
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-              </SignedOut>
-              <SignedIn>
-                <Button asChild size="lg" className="px-8 py-6 text-lg">
-                  <Link href="/dashboard">
-                    Go to Dashboard
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-              </SignedIn>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="px-8 py-6 text-lg"
-              >
-                <Link href="#services">Explore Services</Link>
-              </Button>
+              
             </motion.div>
           </div>
 
@@ -131,6 +98,13 @@ const HeroSection = () => {
                     Experience section restructuring
                   </li>
                 </ul>
+                 <div className="mt-6 flex justify-center">
+    <Button 
+                        variant="outline"
+                        className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">
+                          <Link href="/linkedin/analyze">Get Started</Link>
+                        </Button>
+  </div>
               </CardContent>
             </Card>
 
@@ -162,6 +136,13 @@ const HeroSection = () => {
                     Format & structure enhancement
                   </li>
                 </ul>
+                <div className="mt-6 flex justify-center">
+    <Button 
+                        variant="outline"
+                        className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">
+                          <Link href="/resume/analyze">Get Started</Link>
+                        </Button>
+  </div>
               </CardContent>
             </Card>
 
@@ -190,6 +171,13 @@ const HeroSection = () => {
                     Professional networking guidance
                   </li>
                 </ul>
+                <div className="mt-6 flex justify-center">
+    <Button 
+                        variant="outline"
+                        className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">
+                          <Link href="/linkedin/analyze">Get Started</Link>
+                        </Button>
+  </div>
               </CardContent>
             </Card>
           </motion.div>

@@ -58,8 +58,8 @@ export default function RootLayout({ children }) {
               shadow="0 0 15px rgba(34, 153, 221, 0.5), 0 0 5px rgba(106, 17, 203, 0.5)"
             />
             <Suspense>
-            <Navbar />
-            <main className="pt-24">{children}</main>
+              <Navbar className="mt-0" />
+            <main className="pt-24 mt-0">{children}</main>
             <Footer />
             </Suspense>
           </ThemeProvider>

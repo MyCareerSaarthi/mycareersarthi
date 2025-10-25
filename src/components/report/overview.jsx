@@ -1,13 +1,15 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Briefcase } from "lucide-react";
 
 const Overview = ({ data, onNavigate }) => {
   if (!data) {
     return <div className="text-center py-8">No data available</div>;
   }
 
-  const { overall_score, overall_summary, section_scores } = data;
+  const { overall_score, overall_summary, section_scores, role_name, role_id } =
+    data;
 
   // Determine color based on score - improved for light mode
   const getScoreColor = (score) => {
@@ -85,12 +87,22 @@ const Overview = ({ data, onNavigate }) => {
     <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          Linkedin Analysis Overview
+          Analysis Overview
         </h1>
         <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-base">
-          Comprehensive analysis of your LinkedIn profile
+          Comprehensive analysis of your profile
         </p>
       </div>
+
+      {/* Target Role Badge */}
+      {(role_name || role_id) && (
+        <div className="mb-6 inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-lg px-4 py-2.5 shadow-sm">
+          <Briefcase className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-primary">
+            Target Role: {role_name || role_id}
+          </span>
+        </div>
+      )}
 
       {/* Score Section with Circular Gauge */}
       <Card className="mb-6 md:mb-8 border-border/50 bg-card/50 backdrop-blur-sm">
@@ -183,10 +195,10 @@ const Overview = ({ data, onNavigate }) => {
                 <span className="capitalize">{section.name}</span>
                 <span
                   className={`text-lg font-bold ${getSectionCardColor(
-                    section.score
+                    section.score.toFixed(1)
                   )}`}
                 >
-                  {section.score}/10
+                  {section.score.toFixed(1)}/10
                 </span>
               </CardTitle>
             </CardHeader>

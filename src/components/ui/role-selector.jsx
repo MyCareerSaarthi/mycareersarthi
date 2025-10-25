@@ -89,8 +89,6 @@ const RoleSelector = ({
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
     setSearchTerm(role.name);
-    setShowCustomInput(false);
-    setCustomRoleName("");
     setIsOpen(false);
 
     // Call onChange with role object containing both id and name

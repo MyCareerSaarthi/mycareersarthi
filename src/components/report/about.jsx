@@ -6,9 +6,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import SectionList from "./section-list";
+import {
+  ChevronDown,
+  TrendingUp,
+  AlertTriangle,
+  Lightbulb,
+} from "lucide-react";
 
 const About = ({ data }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isProfileDataExpanded, setIsProfileDataExpanded] = useState(true);
 
   const about = data.profile?.about;
   const aboutData = data.section_scores.find(
@@ -42,23 +50,75 @@ const About = ({ data }) => {
         </div>
       </div>
 
-      <div className="mb-6 w-full bg-secondary/50 p-4 rounded-lg">
-        <p className="text-foreground">
-          {isExpanded ? about : about.slice(0, 100) + "..."}
-        </p>
-        {about.length > 100 && (
-          <button
-            className="text-primary underline"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? "Read Less" : "Read More"}
-          </button>
-        )}
+      {/* Profile Data */}
+      <div className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm mb-6 overflow-hidden transition-all duration-300 ease-in-out">
+        <button
+          onClick={() => setIsProfileDataExpanded(!isProfileDataExpanded)}
+          className="w-full flex items-center justify-between p-6 hover:bg-accent/50 transition-colors"
+        >
+          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
+            Profile About Section
+          </h3>
+          <ChevronDown
+            className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${
+              isProfileDataExpanded ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            isProfileDataExpanded
+              ? "max-h-[1000px] opacity-100"
+              : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="px-6 pb-6 pt-0">
+            <div className="transition-all duration-300 ease-in-out overflow-hidden">
+              <p
+                className={`text-foreground text-base leading-relaxed ${
+                  !isExpanded ? "line-clamp-3" : ""
+                }`}
+              >
+                {about}
+              </p>
+            </div>
+            {about && about.length > 150 && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="mt-3 text-primary hover:text-primary/80 text-sm font-medium transition-colors flex items-center gap-1"
+              >
+                {isExpanded ? "Show less" : "Show more"}
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    isExpanded ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Summary */}
       <div className="mb-6 w-full">
-        <p className="text-foreground">{aboutData.summary}</p>
+        <h3 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
+          Evaluation Summary
+        </h3>
+        <p className="text-foreground leading-relaxed">{aboutData.summary}</p>
       </div>
 
       {/* Strengths */}
@@ -73,64 +133,72 @@ const About = ({ data }) => {
           className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm px-4"
         >
           <AccordionTrigger className="py-4 text-base md:text-lg font-medium">
-            <span className="flex items-center">💪 Strengths</span>
+            <span className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+              Strengths
+            </span>
           </AccordionTrigger>
           <AccordionContent className="pb-4">
-            <ul className="space-y-3">
-              {aboutData.strengths.map((strength, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-green-400 mr-2 mt-1">✓</span>
-                  <span className="text-foreground">{strength}</span>
-                </li>
-              ))}
-            </ul>
+            <SectionList
+              items={aboutData.strengths}
+              icon="✓"
+              iconColor="text-green-600 dark:text-green-400"
+            />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
 
       {/* Weaknesses */}
-      <Accordion type="single" collapsible className="mb-6 w-full">
+      <Accordion
+        type="single"
+        defaultValue="weaknesses"
+        collapsible
+        className="mb-6 w-full"
+      >
         <AccordionItem
           value="weaknesses"
           className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm px-4"
         >
           <AccordionTrigger className="py-4 text-base md:text-lg font-medium">
-            <span className="flex items-center">⚠️ Weaknesses</span>
+            <span className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+              Weaknesses
+            </span>
           </AccordionTrigger>
           <AccordionContent className="pb-4">
-            <ul className="space-y-3">
-              {aboutData.weaknesses.map((weakness, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-yellow-400 mr-2 mt-1">✦</span>
-                  <span className="text-foreground">{weakness}</span>
-                </li>
-              ))}
-            </ul>
+            <SectionList
+              items={aboutData.weaknesses}
+              icon="✦"
+              iconColor="text-yellow-600 dark:text-yellow-400"
+            />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
 
       {/* Improvement Suggestions */}
       {aboutData.suggestions && aboutData.suggestions.length > 0 && (
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion
+          type="single"
+          defaultValue="improvements"
+          collapsible
+          className="w-full"
+        >
           <AccordionItem
             value="improvements"
             className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm px-4"
           >
             <AccordionTrigger className="py-4 text-base md:text-lg font-medium">
-              <span className="flex items-center">
-                💡 Improvement Suggestions
+              <span className="flex items-center gap-2">
+                <Lightbulb className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                Improvement Suggestions
               </span>
             </AccordionTrigger>
             <AccordionContent className="pb-4">
-              <ul className="space-y-3">
-                {aboutData.suggestions.map((suggestion, index) => (
-                  <li key={index} className="flex items-start">
-                    <span className="text-blue-400 mr-2 mt-1">➤</span>
-                    <span className="text-foreground">{suggestion}</span>
-                  </li>
-                ))}
-              </ul>
+              <SectionList
+                items={aboutData.suggestions}
+                icon="➤"
+                iconColor="text-blue-600 dark:text-blue-400"
+              />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

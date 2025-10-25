@@ -32,6 +32,7 @@ const LinkedinAnalyze = () => {
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [selectedRole, setSelectedRole] = useState("");
   const [jobDescription, setJobDescription] = useState("");
+  const [customRoleName, setCustomRoleName] = useState("");
   const [inputMode, setInputMode] = useState("role"); // "role" or "jobDescription"
   const [isDragging, setIsDragging] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
@@ -96,7 +97,10 @@ const LinkedinAnalyze = () => {
   const getRoles = async () => {
     const response = await api.get("/api/rag-data/roles");
     const roles = response.data?.roles || [];
-    setRoles(roles.map((role) => ({ value: role.id, label: role.name })));
+    setRoles([
+      ...roles.map((role) => ({ value: role.id, label: role.name })),
+      { value: "other", label: "Other (Custom Role)" },
+    ]);
   };
 
   const getPricing = async () => {
@@ -209,6 +213,14 @@ const LinkedinAnalyze = () => {
         newErrors.role = "Please select a role";
       }
 
+      if (
+        inputMode === "role" &&
+        selectedRole === "other" &&
+        !customRoleName.trim()
+      ) {
+        newErrors.customRoleName = "Please enter a custom role name";
+      }
+
       if (inputMode === "jobDescription" && !jobDescription.trim()) {
         newErrors.jobDescription = "Please enter a job description";
       }
@@ -247,7 +259,11 @@ const LinkedinAnalyze = () => {
         formData.append("file", pdfFile);
       }
       if (inputMode === "role" && selectedRole) {
-        formData.append("roleId", selectedRole);
+        if (selectedRole === "other") {
+          formData.append("roleName", customRoleName);
+        } else {
+          formData.append("roleId", selectedRole);
+        }
       }
       if (inputMode === "jobDescription" && jobDescription) {
         formData.append("jobDescription", jobDescription);
@@ -609,6 +625,28 @@ const LinkedinAnalyze = () => {
                   {errors.role && (
                     <p className="text-sm text-destructive">{errors.role}</p>
                   )}
+
+                  {/* Show custom role input when "Other" is selected */}
+                  {selectedRole === "other" && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">
+                        Custom Role Name
+                      </Label>
+                      <Input
+                        placeholder="e.g., Senior Full Stack Developer, Data Scientist, Marketing Manager"
+                        value={customRoleName}
+                        onChange={(e) => setCustomRoleName(e.target.value)}
+                        className={`bg-background border-border hover:border-primary/50 transition-colors ${
+                          errors.customRoleName ? "border-destructive" : ""
+                        }`}
+                      />
+                      {errors.customRoleName && (
+                        <p className="text-sm text-destructive">
+                          {errors.customRoleName}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <JobDescriptionInput
@@ -814,6 +852,9 @@ const LinkedinAnalyze = () => {
               ? !linkedinUrl && !pdfFile
               : currentStep === 2
               ? (inputMode === "role" && !selectedRole) ||
+                (inputMode === "role" &&
+                  selectedRole === "other" &&
+                  !customRoleName.trim()) ||
                 (inputMode === "jobDescription" && !jobDescription.trim())
               : false
           }

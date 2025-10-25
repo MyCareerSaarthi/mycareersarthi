@@ -22,7 +22,7 @@ import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 const HeroSection = () => {
   return (
-    <section className="py-12 md:py-16">
+    <section className="py-2">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
@@ -31,7 +31,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mb-6"
+              className="mb-2"
             >
               <Badge
                 variant="secondary"
@@ -45,7 +45,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground"
+              className="text-5xl md:text-3xl lg:text-5xl font-bold text-foreground"
             >
               Transform Your Career with
               <span className="block mt-2 text-primary">Expert Guidance</span>
@@ -57,7 +57,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               
             </motion.div>
@@ -68,11 +68,11 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6"
           >
             <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
               <CardHeader className="pb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <Linkedin className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle className="text-xl">
@@ -84,21 +84,8 @@ const HeroSection = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    Profile headline & summary enhancement
-                  </li>
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    Keyword optimization for search algorithms
-                  </li>
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    Experience section restructuring
-                  </li>
-                </ul>
-                 <div className="mt-6 flex justify-center">
+               
+                 <div className="flex justify-center">
     <Button 
                         variant="outline"
                         className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">
@@ -110,11 +97,11 @@ const HeroSection = () => {
 
             <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
               <CardHeader className="pb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle className="text-xl">
-                  Resume Creation & Review
+                  Resume Review
                 </CardTitle>
                 <CardDescription className="text-base">
                   Create and optimize resumes that pass through applicant
@@ -122,21 +109,8 @@ const HeroSection = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    Professional resume creation from scratch
-                  </li>
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    ATS compatibility analysis
-                  </li>
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    Format & structure enhancement
-                  </li>
-                </ul>
-                <div className="mt-6 flex justify-center">
+     
+                <div className="flex justify-center">
     <Button 
                         variant="outline"
                         className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">
@@ -148,30 +122,17 @@ const HeroSection = () => {
 
             <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
               <CardHeader className="pb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <Users className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Personal Branding</CardTitle>
+                <CardTitle className="text-xl">Personal Branding Evaluation</CardTitle>
                 <CardDescription className="text-base">
                   Build a strong personal brand for experienced professionals
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2">
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    Personal brand strategy development
-                  </li>
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    Thought leadership positioning
-                  </li>
-                  <li className="flex items-center text-sm text-muted-foreground">
-                    <CheckCircle className="h-4 w-4 text-primary mr-2 flex-shrink-0" />
-                    Professional networking guidance
-                  </li>
-                </ul>
-                <div className="mt-6 flex justify-center">
+                
+                <div className="flex justify-center">
     <Button 
                         variant="outline"
                         className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">

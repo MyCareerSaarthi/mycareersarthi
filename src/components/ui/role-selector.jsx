@@ -26,17 +26,7 @@ const RoleSelector = ({
 
   // Don't load roles on mount - only when searching
 
-  // Filter roles based on search term
-  useEffect(() => {
-    if (searchTerm.trim()) {
-      const filtered = roles.filter((role) =>
-        role.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredRoles(filtered);
-    } else {
-      setFilteredRoles([]);
-    }
-  }, [searchTerm, roles]);
+  // No client-side filtering needed - server handles case-insensitive search
 
   // Close dropdown when clicking outside
   useEffect(() => {

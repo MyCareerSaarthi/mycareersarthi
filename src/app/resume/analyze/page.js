@@ -222,6 +222,7 @@ const ResumeAnalyze = () => {
           formData.append("roleName", selectedRole.roleName);
         } else {
           formData.append("roleId", selectedRole.roleId);
+          formData.append("roleName", selectedRole.roleName);
         }
       }
       if (inputMode === "jobDescription" && jobDescription) {

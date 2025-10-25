@@ -140,32 +140,6 @@ const LinkedinReport = () => {
 
   return (
     <div className="min-h-screen bg-background flex max-w-7xl mx-auto">
-      {/* Role Badge */}
-      {roleInfo && (
-        <div className="fixed top-4 right-4 z-30">
-          <div className="bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-lg px-4 py-2 shadow-lg">
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-4 h-4 text-primary"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"
-                />
-              </svg>
-              <span className="text-sm font-medium text-primary">
-                {linkedinReport.role_name || "Target Role"}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Desktop Sidebar - Fixed on the left */}
       {!isMobile && (
         <div className="hidden md:block w-64 backdrop-blur-lg border-r border-primary/10 h-screen sticky top-0 bg-background rounded-r-2xl">

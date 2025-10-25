@@ -1,13 +1,15 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Briefcase } from "lucide-react";
 
 const ResumeOverview = ({ data, onNavigate }) => {
   if (!data) {
     return <div className="text-center py-8">No data available</div>;
   }
 
-  const { overall_score, overall_summary, section_scores } = data;
+  const { overall_score, overall_summary, section_scores, role_name, role_id } =
+    data;
 
   // Determine color based on score - improved for light mode
   const getScoreColor = (score) => {
@@ -85,6 +87,16 @@ const ResumeOverview = ({ data, onNavigate }) => {
           Comprehensive analysis of your resume
         </p>
       </div>
+
+      {/* Target Role Badge */}
+      {(role_name || role_id) && (
+        <div className="mb-6 inline-flex items-center gap-2 bg-primary/10 backdrop-blur-sm border border-primary/20 rounded-lg px-4 py-2.5 shadow-sm">
+          <Briefcase className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-primary">
+            Role: {role_name || role_id}
+          </span>
+        </div>
+      )}
 
       {/* Score Section with Circular Gauge */}
       <Card className="mb-6 md:mb-8 border-border/50 bg-card/50 backdrop-blur-sm">

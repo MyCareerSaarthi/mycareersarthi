@@ -3,14 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import RoleSelector from "@/components/ui/role-selector";
 import JobDescriptionInput from "@/components/ui/job-description-input";
 import StepNavigation from "@/components/ui/step-navigation";
 import StepContainer from "@/components/ui/step-container";
@@ -30,9 +24,8 @@ const ragSocket = io(
 const LinkedinAnalyze = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
-  const [customRoleName, setCustomRoleName] = useState("");
   const [inputMode, setInputMode] = useState("role"); // "role" or "jobDescription"
   const [isDragging, setIsDragging] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
@@ -41,7 +34,6 @@ const LinkedinAnalyze = () => {
   const [formData, setFormData] = useState(null);
   const fileInputRef = useRef(null);
 
-  const [roles, setRoles] = useState([]);
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
@@ -94,14 +86,7 @@ const LinkedinAnalyze = () => {
     setCurrentStep(step);
   };
 
-  const getRoles = async () => {
-    const response = await api.get("/api/rag-data/roles");
-    const roles = response.data?.roles || [];
-    setRoles([
-      ...roles.map((role) => ({ value: role.id, label: role.name })),
-      { value: "other", label: "Other (Custom Role)" },
-    ]);
-  };
+  // Remove getRoles function as it's now handled by RoleSelector component
 
   const getPricing = async () => {
     try {
@@ -122,7 +107,6 @@ const LinkedinAnalyze = () => {
   };
 
   useEffect(() => {
-    getRoles();
     getPricing();
   }, []);
 
@@ -213,14 +197,6 @@ const LinkedinAnalyze = () => {
         newErrors.role = "Please select a role";
       }
 
-      if (
-        inputMode === "role" &&
-        selectedRole === "other" &&
-        !customRoleName.trim()
-      ) {
-        newErrors.customRoleName = "Please enter a custom role name";
-      }
-
       if (inputMode === "jobDescription" && !jobDescription.trim()) {
         newErrors.jobDescription = "Please enter a job description";
       }
@@ -259,10 +235,11 @@ const LinkedinAnalyze = () => {
         formData.append("file", pdfFile);
       }
       if (inputMode === "role" && selectedRole) {
-        if (selectedRole === "other") {
-          formData.append("roleName", customRoleName);
+        if (selectedRole.type === "custom") {
+          formData.append("roleName", selectedRole.roleName);
         } else {
-          formData.append("roleId", selectedRole);
+          formData.append("roleId", selectedRole.roleId);
+          formData.append("roleName", selectedRole.roleName);
         }
       }
       if (inputMode === "jobDescription" && jobDescription) {
@@ -604,50 +581,12 @@ const LinkedinAnalyze = () => {
               </div>
 
               {inputMode === "role" ? (
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Target Role</Label>
-                  <Select value={selectedRole} onValueChange={setSelectedRole}>
-                    <SelectTrigger
-                      className={`bg-background border-border hover:border-primary/50 transition-colors ${
-                        errors.role ? "border-destructive" : ""
-                      }`}
-                    >
-                      <SelectValue placeholder="Select your target role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {roles.map((role) => (
-                        <SelectItem key={role.value} value={role.value}>
-                          {role.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {errors.role && (
-                    <p className="text-sm text-destructive">{errors.role}</p>
-                  )}
-
-                  {/* Show custom role input when "Other" is selected */}
-                  {selectedRole === "other" && (
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">
-                        Custom Role Name
-                      </Label>
-                      <Input
-                        placeholder="e.g., Senior Full Stack Developer, Data Scientist, Marketing Manager"
-                        value={customRoleName}
-                        onChange={(e) => setCustomRoleName(e.target.value)}
-                        className={`bg-background border-border hover:border-primary/50 transition-colors ${
-                          errors.customRoleName ? "border-destructive" : ""
-                        }`}
-                      />
-                      {errors.customRoleName && (
-                        <p className="text-sm text-destructive">
-                          {errors.customRoleName}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
+                <RoleSelector
+                  value={selectedRole}
+                  onChange={setSelectedRole}
+                  error={errors.role}
+                  placeholder="Search and select your target role..."
+                />
               ) : (
                 <JobDescriptionInput
                   value={jobDescription}
@@ -852,9 +791,6 @@ const LinkedinAnalyze = () => {
               ? !linkedinUrl && !pdfFile
               : currentStep === 2
               ? (inputMode === "role" && !selectedRole) ||
-                (inputMode === "role" &&
-                  selectedRole === "other" &&
-                  !customRoleName.trim()) ||
                 (inputMode === "jobDescription" && !jobDescription.trim())
               : false
           }

@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { FileText, Lightbulb, ArrowRight } from "lucide-react";
 
 const ProfilePicture = ({ data }) => {
   const profileData = data?.section_scores?.find(
@@ -50,7 +51,10 @@ const ProfilePicture = ({ data }) => {
           className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm px-4"
         >
           <AccordionTrigger className="py-4 text-base md:text-lg font-medium">
-            <span className="flex items-center">📋 Summary</span>
+            <span className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              Summary
+            </span>
           </AccordionTrigger>
           <AccordionContent className="pb-4">
             <p className="text-foreground leading-relaxed">
@@ -69,13 +73,18 @@ const ProfilePicture = ({ data }) => {
               className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm px-4"
             >
               <AccordionTrigger className="py-4 text-base md:text-lg font-medium">
-                <span className="flex items-center">💡 Recommendations</span>
+                <span className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  Recommendations
+                </span>
               </AccordionTrigger>
               <AccordionContent className="pb-4">
                 <ul className="space-y-3">
                   {profileData.recommendations.map((recommendation, index) => (
                     <li key={index} className="flex items-start">
-                      <span className="text-blue-400 mr-2 mt-1">➤</span>
+                      <span className="text-blue-600 dark:text-blue-400 mr-2 mt-1">
+                        <ArrowRight className="h-4 w-4" />
+                      </span>
                       <span className="text-foreground">{recommendation}</span>
                     </li>
                   ))}

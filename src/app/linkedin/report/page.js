@@ -135,6 +135,9 @@ const LinkedinReport = () => {
     );
   }
 
+  // Get role information
+  const roleInfo = linkedinReport?.role_name || linkedinReport?.role_id;
+
   return (
     <div className="min-h-screen bg-background flex max-w-7xl mx-auto">
       {/* Desktop Sidebar - Fixed on the left */}

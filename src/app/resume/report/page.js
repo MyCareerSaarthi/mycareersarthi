@@ -112,6 +112,9 @@ const ResumeReport = () => {
     );
   }
 
+  // Get role information
+  const roleInfo = resumeReport?.role_name || resumeReport?.role_id;
+
   return (
     <div className="min-h-screen bg-background flex max-w-7xl mx-auto">
       {/* Desktop Sidebar - Fixed on the left */}

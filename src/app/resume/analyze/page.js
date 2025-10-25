@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -9,19 +10,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import JobDescriptionInput from "@/components/ui/job-description-input";
+import StepNavigation from "@/components/ui/step-navigation";
+import StepContainer from "@/components/ui/step-container";
 import { api } from "@/components/api/api";
 import { handlePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
 import { io } from "socket.io-client";
 import ProcessLoader from "@/components/process-loader";
 import { useRouter } from "next/navigation";
+
 const socket = io(process.env.NEXT_PUBLIC_API_URL);
 
 const ResumeAnalyze = () => {
+  const [currentStep, setCurrentStep] = useState(1);
   const [selectedRole, setSelectedRole] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [customRoleName, setCustomRoleName] = useState("");
+  const [inputMode, setInputMode] = useState("role"); // "role" or "jobDescription"
   const [isDragging, setIsDragging] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
   const [errors, setErrors] = useState({});
@@ -54,10 +61,42 @@ const ResumeAnalyze = () => {
   const { getToken } = useAuth();
   const router = useRouter();
 
+  // Step definitions
+  const steps = [
+    { title: "Resume Upload", description: "Upload your resume PDF" },
+    {
+      title: "Job Requirements",
+      description: "Select role or add description",
+    },
+    { title: "Payment", description: "Review and pay" },
+  ];
+
+  const totalSteps = steps.length;
+
+  // Navigation functions
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const previousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const goToStep = (step) => {
+    setCurrentStep(step);
+  };
+
   const getRoles = async () => {
     const response = await api.get("/api/rag-data/roles");
     const roles = response.data?.roles || [];
-    setRoles(roles.map((role) => ({ value: role.id, label: role.name })));
+    setRoles([
+      ...roles.map((role) => ({ value: role.id, label: role.name })),
+      { value: "other", label: "Other (Custom Role)" },
+    ]);
   };
 
   const getPricing = async () => {
@@ -144,23 +183,54 @@ const ResumeAnalyze = () => {
     setErrors((prev) => ({ ...prev, coupon: null }));
   };
 
-  const validateForm = () => {
+  const validateStep = (step) => {
     const newErrors = {};
 
-    if (!pdfFile) {
-      newErrors.resume = "Please upload a resume PDF file";
+    if (step === 1) {
+      // Resume upload step validation
+      if (!pdfFile) {
+        newErrors.resume = "Please upload a resume PDF file";
+      }
     }
 
-    if (!selectedRole) {
-      newErrors.role = "Please select a role";
+    if (step === 2) {
+      // Job requirements step validation
+      if (inputMode === "role" && !selectedRole) {
+        newErrors.role = "Please select a role";
+      }
+
+      if (
+        inputMode === "role" &&
+        selectedRole === "other" &&
+        !customRoleName.trim()
+      ) {
+        newErrors.customRoleName = "Please enter a custom role name";
+      }
+
+      if (inputMode === "jobDescription" && !jobDescription.trim()) {
+        newErrors.jobDescription = "Please enter a job description";
+      }
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validateForm = () => {
+    return validateStep(1) && validateStep(2);
+  };
+
+  const handleNextStep = () => {
+    if (validateStep(currentStep)) {
+      nextStep();
+    }
+  };
+
+  const handlePreviousStep = () => {
+    previousStep();
+  };
+
+  const handleStepSubmit = async () => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
@@ -171,8 +241,15 @@ const ResumeAnalyze = () => {
       if (pdfFile) {
         formData.append("file", pdfFile);
       }
-      if (selectedRole) {
-        formData.append("roleId", selectedRole);
+      if (inputMode === "role" && selectedRole) {
+        if (selectedRole === "other") {
+          formData.append("roleName", customRoleName);
+        } else {
+          formData.append("roleId", selectedRole);
+        }
+      }
+      if (inputMode === "jobDescription" && jobDescription) {
+        formData.append("jobDescription", jobDescription);
       }
       if (appliedCoupon) {
         formData.append("couponCode", appliedCoupon.code);
@@ -249,7 +326,6 @@ const ResumeAnalyze = () => {
       socket.emit("register", user.id);
 
       socket.on("updateProcess", (data) => {
-        console.log("Process update received:", data);
         setProcessData({
           title: data.title || "Processing",
           subtitle: data.subtitle || "Analyzing your resume",
@@ -260,7 +336,6 @@ const ResumeAnalyze = () => {
       });
 
       socket.on("analysisComplete", (data) => {
-        console.log("Analysis complete:", data);
         setIsAnalyzing(false);
         // Navigate to results page
         if (data.reportId) {
@@ -303,38 +378,55 @@ const ResumeAnalyze = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      {/* Minimal Header */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-            Resume Analysis
-          </h1>
-          <p className="text-muted-foreground">
-            Get AI-powered insights to optimize your resume
-          </p>
-        </div>
-      </div>
-
-      {/* Main Form Section */}
-      <div className="container mx-auto px-4 pb-16">
-        <Card className="w-full max-w-5xl mx-auto shadow-lg rounded-xl">
-          <CardContent className="p-6">
-            {errors.general && (
-              <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <p className="text-sm text-destructive">{errors.general}</p>
-              </div>
-            )}
-            <form onSubmit={handleSubmit}>
-              {/* Two Column Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                {/* Left Column - Form Inputs */}
-                <div className="bg-muted/30 rounded-lg p-6 space-y-6 border border-border/50">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+  // Render step content
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-6">
+            {/* PDF Upload */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <svg
+                  className="w-4 h-4 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+                Upload Resume
+              </Label>
+              <div
+                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                  isDragging
+                    ? "border-primary bg-primary/5"
+                    : errors.resume
+                    ? "border-destructive bg-destructive/5"
+                    : "border-border hover:border-primary/50"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept=".pdf"
+                  onChange={handleFileChange}
+                />
+                {pdfFile ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-center gap-2">
                       <svg
-                        className="w-4 h-4 text-primary"
+                        className="w-5 h-5 text-primary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -346,329 +438,365 @@ const ResumeAnalyze = () => {
                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                         />
                       </svg>
+                      <span className="font-medium text-sm">
+                        {pdfFile.name}
+                      </span>
                     </div>
-                    <h2 className="text-xl font-semibold">Resume Details</h2>
-                  </div>
-
-                  {/* PDF Upload */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4 text-blue-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                        />
-                      </svg>
-                      Upload Resume
-                    </Label>
-                    <div
-                      className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                        isDragging
-                          ? "border-primary bg-primary/5"
-                          : errors.resume
-                          ? "border-destructive bg-destructive/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                      onDragOver={handleDragOver}
-                      onDragLeave={handleDragLeave}
-                      onDrop={handleDrop}
-                      onClick={() => fileInputRef.current?.click()}
+                    <LoadingButton
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removePdf();
+                      }}
                     >
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        className="hidden"
-                        accept=".pdf"
-                        onChange={handleFileChange}
+                      Remove
+                    </LoadingButton>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <svg
+                      className="w-8 h-8 mx-auto text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                       />
-                      {pdfFile ? (
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-center gap-2">
-                            <svg
-                              className="w-5 h-5 text-primary"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            <span className="font-medium text-sm">
-                              {pdfFile.name}
-                            </span>
-                          </div>
-                          <LoadingButton
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removePdf();
-                            }}
-                          >
-                            Remove
-                          </LoadingButton>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <svg
-                            className="w-8 h-8 mx-auto text-muted-foreground"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
-                          <div>
-                            <p className="text-sm font-medium">
-                              Click to upload or drag and drop
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              PDF files only (max 10MB)
-                            </p>
-                          </div>
-                        </div>
+                    </svg>
+                    <div>
+                      <p className="text-sm font-medium">
+                        Click to upload or drag and drop
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        PDF files only (max 10MB)
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {errors.resume && (
+                <p className="text-sm text-destructive">{errors.resume}</p>
+              )}
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
+                <svg
+                  className="w-4 h-4 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold">Job Requirements</h3>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setInputMode("role")}
+                  className={`px-4 py-2 rounded-lg border transition-colors ${
+                    inputMode === "role"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-background border-border hover:border-primary/50"
+                  }`}
+                >
+                  Select A Role
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInputMode("jobDescription")}
+                  className={`px-4 py-2 rounded-lg border transition-colors ${
+                    inputMode === "jobDescription"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-background border-border hover:border-primary/50"
+                  }`}
+                >
+                  Paste Job Description
+                </button>
+              </div>
+
+              {inputMode === "role" ? (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Target Role</Label>
+                  <Select value={selectedRole} onValueChange={setSelectedRole}>
+                    <SelectTrigger
+                      className={`bg-background border-border hover:border-primary/50 transition-colors ${
+                        errors.role ? "border-destructive" : ""
+                      }`}
+                    >
+                      <SelectValue placeholder="Select your target role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roles.map((role) => (
+                        <SelectItem key={role.value} value={role.value}>
+                          {role.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.role && (
+                    <p className="text-sm text-destructive">{errors.role}</p>
+                  )}
+
+                  {/* Show custom role input when "Other" is selected */}
+                  {selectedRole === "other" && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">
+                        Custom Role Name
+                      </Label>
+                      <Input
+                        placeholder="e.g., Senior Full Stack Developer, Data Scientist, Marketing Manager"
+                        value={customRoleName}
+                        onChange={(e) => setCustomRoleName(e.target.value)}
+                        className={`bg-background border-border hover:border-primary/50 transition-colors ${
+                          errors.customRoleName ? "border-destructive" : ""
+                        }`}
+                      />
+                      {errors.customRoleName && (
+                        <p className="text-sm text-destructive">
+                          {errors.customRoleName}
+                        </p>
                       )}
                     </div>
-                    {errors.resume && (
-                      <p className="text-sm text-destructive">
-                        {errors.resume}
-                      </p>
-                    )}
-                  </div>
+                  )}
+                </div>
+              ) : (
+                <JobDescriptionInput
+                  value={jobDescription}
+                  onChange={setJobDescription}
+                  error={errors.jobDescription}
+                  placeholder="Enter the job description for the role you're targeting..."
+                />
+              )}
+            </div>
+          </div>
+        );
 
-                  {/* Role Selection */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4 text-green-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"
-                        />
-                      </svg>
-                      Target Role
-                    </Label>
-                    <Select
-                      value={selectedRole}
-                      onValueChange={setSelectedRole}
-                    >
-                      <SelectTrigger
-                        className={`bg-background border-border hover:border-primary/50 transition-colors ${
-                          errors.role ? "border-destructive" : ""
-                        }`}
-                      >
-                        <SelectValue placeholder="Select your target role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {roles.map((role) => (
-                          <SelectItem key={role.value} value={role.value}>
-                            {role.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.role && (
-                      <p className="text-sm text-destructive">{errors.role}</p>
-                    )}
-                  </div>
+      case 3:
+        return (
+          <div className="space-y-6">
+            <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-lg p-6 space-y-6 border border-blue-200/50 dark:border-blue-800/30">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+                  <svg
+                    className="w-4 h-4 text-blue-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-semibold">Order Summary</h2>
+              </div>
+
+              {/* Pricing */}
+              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm">Resume Analysis</span>
+                  <span className="font-semibold">
+                    {isLoadingPricing
+                      ? "Loading..."
+                      : `₹${pricing.originalPrice}`}
+                  </span>
                 </div>
 
-                {/* Right Column - Pricing & Actions */}
-                <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-lg p-6 space-y-6 border border-blue-200/50 dark:border-blue-800/30">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                      <svg
-                        className="w-4 h-4 text-blue-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </div>
-                    <h2 className="text-xl font-semibold">Order Summary</h2>
+                {appliedCoupon && (
+                  <div className="flex justify-between items-center text-green-600">
+                    <span className="text-sm">
+                      Coupon ({appliedCoupon.code})
+                    </span>
+                    <span className="text-sm font-medium">
+                      -₹{appliedCoupon.discount}
+                    </span>
                   </div>
+                )}
 
-                  {/* Pricing */}
-                  <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Resume Analysis</span>
-                      <span className="font-semibold">
+                <div className="border-t border-border pt-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">Total</span>
+                    <div className="text-right">
+                      {pricing.discount > 0 && (
+                        <div className="text-xs text-muted-foreground line-through">
+                          ₹{pricing.originalPrice}
+                        </div>
+                      )}
+                      <div className="text-lg font-bold text-primary">
                         {isLoadingPricing
                           ? "Loading..."
-                          : `₹${pricing.originalPrice}`}
-                      </span>
-                    </div>
-
-                    {appliedCoupon && (
-                      <div className="flex justify-between items-center text-green-600">
-                        <span className="text-sm">
-                          Coupon ({appliedCoupon.code})
-                        </span>
-                        <span className="text-sm font-medium">
-                          -₹{appliedCoupon.discount}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="border-t border-border pt-3">
-                      <div className="flex justify-between items-center">
-                        <span className="font-semibold">Total</span>
-                        <div className="text-right">
-                          {pricing.discount > 0 && (
-                            <div className="text-xs text-muted-foreground line-through">
-                              ₹{pricing.originalPrice}
-                            </div>
-                          )}
-                          <div className="text-lg font-bold text-primary">
-                            {isLoadingPricing
-                              ? "Loading..."
-                              : `₹${pricing.finalPrice}`}
-                          </div>
-                        </div>
+                          : `₹${pricing.finalPrice}`}
                       </div>
                     </div>
-                  </div>
-
-                  {/* Coupon Code */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium flex items-center gap-2">
-                      <svg
-                        className="w-4 h-4 text-orange-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                        />
-                      </svg>
-                      Coupon Code (Optional)
-                    </Label>
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Enter coupon code"
-                        value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)}
-                        className={`flex-1 bg-background border-border hover:border-primary/50 transition-colors ${
-                          errors.coupon ? "border-destructive" : ""
-                        }`}
-                        disabled={isApplyingCoupon || !!appliedCoupon}
-                      />
-                      {appliedCoupon ? (
-                        <LoadingButton
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={removeCoupon}
-                          disabled={isApplyingCoupon}
-                        >
-                          Remove
-                        </LoadingButton>
-                      ) : (
-                        <LoadingButton
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={applyCoupon}
-                          isLoading={isApplyingCoupon}
-                          loadingText="Applying..."
-                          disabled={!couponCode.trim()}
-                        >
-                          Apply
-                        </LoadingButton>
-                      )}
-                    </div>
-                    {errors.coupon && (
-                      <p className="text-sm text-destructive">
-                        {errors.coupon}
-                      </p>
-                    )}
-                    {appliedCoupon && (
-                      <div className="flex items-center gap-2 text-green-600 text-sm">
-                        <svg
-                          className="w-4 h-4"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <span>
-                          Coupon applied! You saved ₹{appliedCoupon.discount}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-4 border-t border-border/50">
-                    <LoadingButton
-                      type="submit"
-                      className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-                      isLoading={isSubmitting}
-                      loadingText="Processing..."
-                    >
-                      <span className="flex items-center justify-center gap-2">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                          />
-                        </svg>
-                        Analyze Resume
-                      </span>
-                    </LoadingButton>
-                    <p className="text-xs text-muted-foreground text-center mt-3">
-                      Get detailed insights and recommendations
-                    </p>
                   </div>
                 </div>
               </div>
-            </form>
-          </CardContent>
-        </Card>
+
+              {/* Coupon Code */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
+                  <svg
+                    className="w-4 h-4 text-orange-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                    />
+                  </svg>
+                  Coupon Code (Optional)
+                </Label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Enter coupon code"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    className={`flex-1 px-3 py-2 border rounded-md bg-background border-border hover:border-primary/50 transition-colors ${
+                      errors.coupon ? "border-destructive" : ""
+                    }`}
+                    disabled={isApplyingCoupon || !!appliedCoupon}
+                  />
+                  {appliedCoupon ? (
+                    <LoadingButton
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={removeCoupon}
+                      disabled={isApplyingCoupon}
+                    >
+                      Remove
+                    </LoadingButton>
+                  ) : (
+                    <LoadingButton
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={applyCoupon}
+                      isLoading={isApplyingCoupon}
+                      loadingText="Applying..."
+                      disabled={!couponCode.trim()}
+                    >
+                      Apply
+                    </LoadingButton>
+                  )}
+                </div>
+                {errors.coupon && (
+                  <p className="text-sm text-destructive">{errors.coupon}</p>
+                )}
+                {appliedCoupon && (
+                  <div className="flex items-center gap-2 text-green-600 text-sm">
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>
+                      Coupon applied! You saved ₹{appliedCoupon.discount}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="text-center max-w-2xl mx-auto">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            Resume Analysis
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Get AI-powered insights to optimize your resume
+          </p>
+        </div>
+      </div>
+
+      {/* Step Navigation */}
+      <div className="container mx-auto px-4 mb-4">
+        <StepNavigation
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+          steps={steps}
+        />
+      </div>
+
+      {/* Step Content */}
+      <div className="container mx-auto px-4 pb-12">
+        {errors.general && (
+          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg max-w-2xl mx-auto">
+            <p className="text-sm text-destructive">{errors.general}</p>
+          </div>
+        )}
+
+        <StepContainer
+          title={steps[currentStep - 1]?.title}
+          description={steps[currentStep - 1]?.description}
+          onNext={
+            currentStep === totalSteps ? handleStepSubmit : handleNextStep
+          }
+          onPrevious={handlePreviousStep}
+          nextText={currentStep === totalSteps ? "Start Analysis" : "Next"}
+          previousText="Previous"
+          isNextDisabled={
+            currentStep === 1
+              ? !pdfFile
+              : currentStep === 2
+              ? (inputMode === "role" && !selectedRole) ||
+                (inputMode === "role" &&
+                  selectedRole === "other" &&
+                  !customRoleName.trim()) ||
+                (inputMode === "jobDescription" && !jobDescription.trim())
+              : false
+          }
+          isPreviousDisabled={currentStep === 1}
+          showNext={true}
+          showPrevious={currentStep > 1}
+        >
+          {renderStepContent()}
+        </StepContainer>
       </div>
     </div>
   );

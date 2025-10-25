@@ -44,7 +44,6 @@ const Payment = () => {
         image: "https://example.com/your_logo",
         order_id: orderId, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
         handler: function (response) {
-          console.log(response);
           handleVerifyPayment(response);
         },
         prefill: {
@@ -80,7 +79,6 @@ const Payment = () => {
           },
         }
       );
-      console.log(verifyResponse);
     } catch (error) {
       console.error("Payment verification failed:", error);
     } finally {
@@ -93,7 +91,6 @@ const Payment = () => {
 
     // Listen for messages from server
     socket.on("updateProcess", (data) => {
-      console.log(data);
     });
   }, [socket]);
   return (

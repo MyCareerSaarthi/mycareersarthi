@@ -20,7 +20,7 @@ export default function SyncAuth() {
         },
       })
         .then((res) => res.json())
-        .then((data) => console.log("Auth sync result:", data))
+        .then((data) => {})
         .catch((err) => console.error("Auth sync error:", err));
     };
 

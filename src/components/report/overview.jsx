@@ -85,7 +85,7 @@ const Overview = ({ data, onNavigate }) => {
     <div className="max-w-6xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-          Profile Analysis Overview
+          Linkedin Analysis Overview
         </h1>
         <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-base">
           Comprehensive analysis of your LinkedIn profile
@@ -158,7 +158,7 @@ const Overview = ({ data, onNavigate }) => {
                   alignmentBaseline="middle"
                   className={`fill-current ${getScoreColor(overall_score)}`}
                 >
-                  {overall_score}/10
+                  {overall_score.toFixed(1)}/10
                 </text>
               </svg>
             </div>

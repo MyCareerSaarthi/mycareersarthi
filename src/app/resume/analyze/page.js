@@ -247,7 +247,13 @@ const ResumeAnalyze = () => {
     } catch (error) {
       console.error("Form submission failed:", error);
       setIsAnalyzing(false);
-      setErrors({ general: "Payment failed. Please try again." });
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Payment initiation failed. Please try again.";
+      setErrors({ general: errorMessage });
+      // Stay on payment step so user can see the error
+      setCurrentStep(3);
     } finally {
       setIsSubmitting(false);
     }
@@ -325,7 +331,11 @@ const ResumeAnalyze = () => {
       socket.on("analysisError", (error) => {
         console.error("Analysis error:", error);
         setIsAnalyzing(false);
-        setErrors({ general: "Analysis failed. Please try again." });
+        const errorMessage =
+          error?.message || "Analysis failed. Please try again.";
+        setErrors({ general: errorMessage });
+        // Reset to payment step so user can see the error and try again
+        setCurrentStep(3);
       });
     }
 

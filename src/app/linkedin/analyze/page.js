@@ -15,11 +15,8 @@ import { io } from "socket.io-client";
 import ProcessLoader from "@/components/process-loader";
 import { useRouter } from "next/navigation";
 
-// Connect to both main server and RAG API WebSocket
+// Connect to main server WebSocket
 const socket = io(process.env.NEXT_PUBLIC_API_URL);
-const ragSocket = io(
-  process.env.NEXT_PUBLIC_RAG_API_URL || "http://localhost:8000"
-);
 
 const LinkedinAnalyze = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -264,7 +261,13 @@ const LinkedinAnalyze = () => {
     } catch (error) {
       console.error("Form submission failed:", error);
       setIsAnalyzing(false);
-      setErrors({ general: "Payment failed. Please try again." });
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Payment initiation failed. Please try again.";
+      setErrors({ general: errorMessage });
+      // Stay on payment step so user can see the error
+      setCurrentStep(3);
     } finally {
       setIsSubmitting(false);
     }
@@ -320,11 +323,8 @@ const LinkedinAnalyze = () => {
       // Register with main server
       socket.emit("register", user.id);
 
-      // Register with RAG API
-      ragSocket.emit("register_user", { user_id: user.id });
-
-      // Handle updates from both servers
-      const handleProgressUpdate = (data) => {
+      // Handle updates from server
+      socket.on("updateProcess", (data) => {
         setProcessData({
           title: data.title || "Processing",
           subtitle: data.subtitle || "Analyzing your LinkedIn profile",
@@ -332,11 +332,7 @@ const LinkedinAnalyze = () => {
           totalSteps: data.totalSteps || 12,
           percentage: data.percentage || 0,
         });
-      };
-
-      // Listen to both WebSocket connections
-      socket.on("updateProcess", handleProgressUpdate);
-      ragSocket.on("updateProcess", handleProgressUpdate);
+      });
 
       socket.on("analysisComplete", (data) => {
         setIsAnalyzing(false);
@@ -351,7 +347,11 @@ const LinkedinAnalyze = () => {
       socket.on("analysisError", (error) => {
         console.error("Analysis error:", error);
         setIsAnalyzing(false);
-        setErrors({ general: "Analysis failed. Please try again." });
+        const errorMessage =
+          error?.message || "Analysis failed. Please try again.";
+        setErrors({ general: errorMessage });
+        // Reset to payment step so user can see the error and try again
+        setCurrentStep(3);
       });
     }
 
@@ -359,7 +359,6 @@ const LinkedinAnalyze = () => {
       socket.off("updateProcess");
       socket.off("analysisComplete");
       socket.off("analysisError");
-      ragSocket.off("updateProcess");
     };
   }, [user, router]);
 

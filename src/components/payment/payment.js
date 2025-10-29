@@ -67,9 +67,14 @@ const handleVerifyPayment = async (
         },
       }
     );
-    window.location.href = `/${serviceType}/report?id=${verifyResponse?.data?.reportId}`;
+    // Only redirect if we have a reportId
+    if (verifyResponse?.data?.reportId) {
+      window.location.href = `/${serviceType}/report?id=${verifyResponse?.data?.reportId}`;
+    }
   } catch (error) {
     console.error("Payment verification failed:", error);
+    // Don't throw here - let the error be handled by the calling component
+    // The error will be caught by the socket listener or component error handler
     throw error;
   } finally {
     onLoadingChange?.(false);

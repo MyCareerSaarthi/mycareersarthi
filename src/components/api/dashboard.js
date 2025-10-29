@@ -1,91 +1,150 @@
 import { api } from "./api.js";
 
 /**
- * Improved Dashboard API service with better error handling and performance
+ * Dashboard API service with enhanced features and better UX
  */
 export const DashboardAPI = {
   /**
-   * Get comprehensive dashboard data (single optimized request)
+   * Get comprehensive dashboard analytics (single optimized request)
    * @param {string} token - Clerk authentication token
-   * @returns {Promise<Object>} Complete dashboard data
+   * @returns {Promise<Object>} Complete dashboard analytics
    */
-  async getDashboardData(token) {
+  async getDashboardAnalytics(token) {
     try {
-      const response = await api.get("/api/dashboard/data", {
+      const response = await api.get("/api/dashboard/analytics", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching dashboard data:", error);
+      console.error("Error fetching dashboard analytics:", error);
       throw this.handleError(error);
     }
   },
 
   /**
-   * Get user statistics
-   * @param {string} token - Clerk authentication token
-   * @returns {Promise<Object>} User statistics
-   */
-  async getStats(token) {
-    try {
-      const response = await api.get("/api/dashboard/stats", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching stats:", error);
-      throw this.handleError(error);
-    }
-  },
-
-  /**
-   * Get user reports with pagination
+   * Get detailed performance metrics
    * @param {string} token - Clerk authentication token
    * @param {Object} options - Query options
-   * @param {string} options.type - Report type (linkedin, resume, all)
-   * @param {number} options.limit - Number of reports
-   * @param {number} options.page - Page number
-   * @returns {Promise<Object>} Reports data
+   * @param {string} options.period - Time period (30d, 7d, 90d)
+   * @returns {Promise<Object>} Performance metrics
    */
-  async getReports(token, options = {}) {
+  async getPerformanceMetrics(token, options = {}) {
     try {
       const params = new URLSearchParams();
-      if (options.type) params.append("type", options.type);
-      if (options.limit) params.append("limit", options.limit.toString());
-      if (options.page) params.append("page", options.page.toString());
+      if (options.period) params.append("period", options.period);
 
-      const response = await api.get(`/api/dashboard/reports?${params}`, {
+      const response = await api.get(`/api/dashboard/metrics?${params}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching reports:", error);
+      console.error("Error fetching performance metrics:", error);
       throw this.handleError(error);
     }
   },
 
   /**
-   * Get activity timeline
+   * Get personalized recommendations
    * @param {string} token - Clerk authentication token
-   * @param {number} days - Number of days to look back
-   * @returns {Promise<Object>} Activity timeline
+   * @returns {Promise<Object>} Smart recommendations
    */
-  async getActivity(token, days = 30) {
+  async getSmartRecommendations(token) {
     try {
-      const response = await api.get(`/api/dashboard/activity?days=${days}`, {
+      const response = await api.get("/api/dashboard/recommendations", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       return response.data;
     } catch (error) {
-      console.error("Error fetching activity:", error);
+      console.error("Error fetching recommendations:", error);
+      throw this.handleError(error);
+    }
+  },
+
+  /**
+   * Get progress tracking data
+   * @param {string} token - Clerk authentication token
+   * @returns {Promise<Object>} Progress tracking data
+   */
+  async getProgressTracking(token) {
+    try {
+      const response = await api.get("/api/dashboard/progress", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching progress tracking:", error);
+      throw this.handleError(error);
+    }
+  },
+
+  /**
+   * Get achievement badges
+   * @param {string} token - Clerk authentication token
+   * @returns {Promise<Object>} Achievement badges data
+   */
+  async getAchievementBadges(token) {
+    try {
+      const response = await api.get("/api/dashboard/achievements", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching achievement badges:", error);
+      throw this.handleError(error);
+    }
+  },
+
+  /**
+   * Get recent activity timeline
+   * @param {string} token - Clerk authentication token
+   * @param {Object} options - Query options
+   * @param {number} options.limit - Number of activities
+   * @param {string} options.type - Activity type filter
+   * @returns {Promise<Object>} Activity timeline
+   */
+  async getRecentActivity(token, options = {}) {
+    try {
+      const params = new URLSearchParams();
+      if (options.limit) params.append("limit", options.limit);
+      if (options.type) params.append("type", options.type);
+
+      const response = await api.get(`/api/dashboard/activity?${params}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching recent activity:", error);
+      throw this.handleError(error);
+    }
+  },
+
+  /**
+   * Get AI-powered insights
+   * @param {string} token - Clerk authentication token
+   * @returns {Promise<Object>} AI insights
+   */
+  async getAIInsights(token) {
+    try {
+      const response = await api.get("/api/dashboard/insights", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching AI insights:", error);
       throw this.handleError(error);
     }
   },

@@ -1,23 +1,31 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { DashboardAPI } from "@/components/api/dashboard";
 
 /**
- * Improved dashboard hook with better state management and error handling
+ * Dashboard hook with advanced features and better state management
  */
 export const useDashboard = () => {
   const { user, isLoaded } = useUser();
   const { getToken } = useAuth();
 
-  // State management
+  // Main state management
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastFetched, setLastFetched] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Fetch dashboard data
-  const fetchData = useCallback(
+  // Individual data states for granular updates
+  const [metrics, setMetrics] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
+  const [progress, setProgress] = useState(null);
+  const [achievements, setAchievements] = useState(null);
+  const [activity, setActivity] = useState([]);
+  const [insights, setInsights] = useState(null);
+
+  // Fetch comprehensive dashboard data
+  const fetchDashboardData = useCallback(
     async (isRefresh = false) => {
       if (!user || !isLoaded) return;
 
@@ -29,18 +37,24 @@ export const useDashboard = () => {
         }
         setError(null);
 
-        // Get authentication token
         const token = await getToken();
         if (!token) {
           throw new Error("No authentication token available");
         }
 
-        // Fetch dashboard data
-        const response = await DashboardAPI.getDashboardData(token);
+        const response = await DashboardAPI.getDashboardAnalytics(token);
 
         if (response.success) {
           setData(response.data);
           setLastFetched(new Date());
+
+          // Update individual states
+          setMetrics(response.data.overview);
+          setRecommendations(response.data.recommendations || []);
+          setProgress(response.data.progress);
+          setAchievements(response.data.achievements);
+          setActivity(response.data.activity || []);
+          setInsights(response.data.insights);
         } else {
           throw new Error(response.error || "Failed to fetch dashboard data");
         }
@@ -55,46 +69,217 @@ export const useDashboard = () => {
     [user, isLoaded, getToken]
   );
 
+  // Fetch specific data sections
+  const fetchMetrics = useCallback(async () => {
+    if (!user || !isLoaded) return;
+
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await DashboardAPI.getPerformanceMetrics(token);
+      if (response.success) {
+        setMetrics(response.data.metrics);
+      }
+    } catch (err) {
+      console.error("Metrics fetch error:", err);
+    }
+  }, [user, isLoaded, getToken]);
+
+  const fetchRecommendations = useCallback(async () => {
+    if (!user || !isLoaded) return;
+
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await DashboardAPI.getSmartRecommendations(token);
+      if (response.success) {
+        setRecommendations(response.data.recommendations || []);
+      }
+    } catch (err) {
+      console.error("Recommendations fetch error:", err);
+    }
+  }, [user, isLoaded, getToken]);
+
+  const fetchProgress = useCallback(async () => {
+    if (!user || !isLoaded) return;
+
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await DashboardAPI.getProgressTracking(token);
+      if (response.success) {
+        setProgress(response.data);
+      }
+    } catch (err) {
+      console.error("Progress fetch error:", err);
+    }
+  }, [user, isLoaded, getToken]);
+
+  const fetchAchievements = useCallback(async () => {
+    if (!user || !isLoaded) return;
+
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await DashboardAPI.getAchievementBadges(token);
+      if (response.success) {
+        setAchievements(response.data);
+      }
+    } catch (err) {
+      console.error("Achievements fetch error:", err);
+    }
+  }, [user, isLoaded, getToken]);
+
+  const fetchActivity = useCallback(
+    async (options = {}) => {
+      if (!user || !isLoaded) return;
+
+      try {
+        const token = await getToken();
+        if (!token) return;
+
+        const response = await DashboardAPI.getRecentActivity(token, options);
+        if (response.success) {
+          setActivity(response.data.activities || []);
+        }
+      } catch (err) {
+        console.error("Activity fetch error:", err);
+      }
+    },
+    [user, isLoaded, getToken]
+  );
+
+  const fetchInsights = useCallback(async () => {
+    if (!user || !isLoaded) return;
+
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const response = await DashboardAPI.getAIInsights(token);
+      if (response.success) {
+        setInsights(response.data);
+      }
+    } catch (err) {
+      console.error("Insights fetch error:", err);
+    }
+  }, [user, isLoaded, getToken]);
+
   // Initial data fetch
   useEffect(() => {
     if (isLoaded && user) {
-      fetchData();
+      fetchDashboardData();
     }
-  }, [isLoaded, user, fetchData]);
+  }, [isLoaded, user, fetchDashboardData]);
 
   // Auto-refresh every 5 minutes
   useEffect(() => {
     if (!data) return;
 
     const interval = setInterval(() => {
-      fetchData(true);
-    }, 5 * 60 * 1000); // 5 minutes
+      fetchDashboardData(true);
+    }, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [data, fetchData]);
+  }, [data, fetchDashboardData]);
 
   // Manual refresh
   const refresh = useCallback(() => {
-    fetchData(true);
-  }, [fetchData]);
+    fetchDashboardData(true);
+  }, [fetchDashboardData]);
 
-  // Get specific data sections
-  const stats = data?.stats || null;
-  const recentReports = data?.recentReports || [];
-  const recentPayments = data?.recentPayments || [];
-  const recommendations = data?.recommendations || [];
-  const monthlyTrends = data?.monthlyTrends || [];
-  const userInfo = data?.user || null;
+  // Refresh specific sections
+  const refreshMetrics = useCallback(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
+
+  const refreshRecommendations = useCallback(() => {
+    fetchRecommendations();
+  }, [fetchRecommendations]);
+
+  const refreshProgress = useCallback(() => {
+    fetchProgress();
+  }, [fetchProgress]);
+
+  const refreshAchievements = useCallback(() => {
+    fetchAchievements();
+  }, [fetchAchievements]);
+
+  const refreshActivity = useCallback(
+    (options = {}) => {
+      fetchActivity(options);
+    },
+    [fetchActivity]
+  );
+
+  const refreshInsights = useCallback(() => {
+    fetchInsights();
+  }, [fetchInsights]);
+
+  // Computed values
+  const userProfile = useMemo(() => data?.user || null, [data]);
+  const overviewMetrics = useMemo(
+    () => data?.overview || metrics,
+    [data, metrics]
+  );
+  const performanceInsights = useMemo(() => data?.performance || null, [data]);
+
+  const highPriorityRecommendations = useMemo(
+    () => recommendations.filter((r) => r.priority === "high"),
+    [recommendations]
+  );
+
+  const mediumPriorityRecommendations = useMemo(
+    () => recommendations.filter((r) => r.priority === "medium"),
+    [recommendations]
+  );
+
+  const lowPriorityRecommendations = useMemo(
+    () => recommendations.filter((r) => r.priority === "low"),
+    [recommendations]
+  );
+
+  const earnedBadges = useMemo(
+    () => achievements?.earned || [],
+    [achievements]
+  );
+
+  const availableBadges = useMemo(
+    () => achievements?.available || [],
+    [achievements]
+  );
+
+  const recentActivity = useMemo(() => activity.slice(0, 5), [activity]);
+
+  const overallProgress = useMemo(
+    () => progress?.overall_progress || { percentage: 0, level: "Beginner" },
+    [progress]
+  );
 
   return {
-    // Data
+    // Main data
     data,
-    stats,
-    recentReports,
-    recentPayments,
+    userProfile,
+    overviewMetrics,
+    performanceInsights,
     recommendations,
-    monthlyTrends,
-    userInfo,
+    progress,
+    achievements,
+    activity,
+    insights,
+
+    // Computed values
+    highPriorityRecommendations,
+    mediumPriorityRecommendations,
+    lowPriorityRecommendations,
+    earnedBadges,
+    availableBadges,
+    recentActivity,
+    overallProgress,
 
     // State
     loading,
@@ -105,31 +290,40 @@ export const useDashboard = () => {
 
     // Actions
     refresh,
-    refetch: fetchData,
+    refreshMetrics,
+    refreshRecommendations,
+    refreshProgress,
+    refreshAchievements,
+    refreshActivity,
+    refreshInsights,
+
+    // Individual fetch functions
+    fetchMetrics,
+    fetchRecommendations,
+    fetchProgress,
+    fetchAchievements,
+    fetchActivity,
+    fetchInsights,
   };
 };
 
 /**
- * Hook for reports page with pagination
+ * Hook for dashboard analytics and insights
  */
-export const useReports = (type = "all", limit = 10) => {
+export const useDashboardAnalytics = () => {
   const { user, isLoaded } = useUser();
   const { getToken } = useAuth();
 
-  const [reports, setReports] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
 
-  const fetchReports = useCallback(
-    async (pageNum = 1, isLoadMore = false) => {
+  const fetchAnalytics = useCallback(
+    async (period = "30d") => {
       if (!user || !isLoaded) return;
 
       try {
-        if (!isLoadMore) {
-          setLoading(true);
-        }
+        setLoading(true);
         setError(null);
 
         const token = await getToken();
@@ -137,117 +331,35 @@ export const useReports = (type = "all", limit = 10) => {
           throw new Error("No authentication token available");
         }
 
-        const response = await DashboardAPI.getReports(token, {
-          type,
-          limit,
-          page: pageNum,
+        const response = await DashboardAPI.getPerformanceMetrics(token, {
+          period,
         });
-
         if (response.success) {
-          const newReports = response.data;
-
-          if (isLoadMore) {
-            setReports((prev) => [...prev, ...newReports]);
-          } else {
-            setReports(newReports);
-          }
-
-          setHasMore(newReports.length === limit);
-          setPage(pageNum);
+          setAnalytics(response.data);
         } else {
-          throw new Error(response.error || "Failed to fetch reports");
+          throw new Error(response.error || "Failed to fetch analytics");
         }
       } catch (err) {
-        console.error("Reports fetch error:", err);
-        setError(err.message || "Failed to fetch reports");
+        console.error("Analytics fetch error:", err);
+        setError(err.message || "Failed to fetch analytics");
       } finally {
         setLoading(false);
       }
     },
-    [user, isLoaded, getToken, type, limit]
+    [user, isLoaded, getToken]
   );
 
-  // Initial fetch
   useEffect(() => {
     if (isLoaded && user) {
-      fetchReports(1, false);
+      fetchAnalytics();
     }
-  }, [isLoaded, user, fetchReports]);
-
-  // Load more
-  const loadMore = useCallback(() => {
-    if (!loading && hasMore) {
-      fetchReports(page + 1, true);
-    }
-  }, [loading, hasMore, page, fetchReports]);
-
-  // Refresh
-  const refresh = useCallback(() => {
-    setPage(1);
-    setHasMore(true);
-    fetchReports(1, false);
-  }, [fetchReports]);
+  }, [isLoaded, user, fetchAnalytics]);
 
   return {
-    reports,
+    analytics,
     loading,
     error,
-    hasMore,
-    loadMore,
-    refresh,
-    isAuthenticated: !!user,
-  };
-};
-
-/**
- * Hook for activity timeline
- */
-export const useActivity = (days = 30) => {
-  const { user, isLoaded } = useUser();
-  const { getToken } = useAuth();
-
-  const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchActivity = useCallback(async () => {
-    if (!user || !isLoaded) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const token = await getToken();
-      if (!token) {
-        throw new Error("No authentication token available");
-      }
-
-      const response = await DashboardAPI.getActivity(token, days);
-
-      if (response.success) {
-        setActivities(response.data);
-      } else {
-        throw new Error(response.error || "Failed to fetch activity");
-      }
-    } catch (err) {
-      console.error("Activity fetch error:", err);
-      setError(err.message || "Failed to fetch activity");
-    } finally {
-      setLoading(false);
-    }
-  }, [user, isLoaded, getToken, days]);
-
-  useEffect(() => {
-    if (isLoaded && user) {
-      fetchActivity();
-    }
-  }, [isLoaded, user, fetchActivity]);
-
-  return {
-    activities,
-    loading,
-    error,
-    refresh: fetchActivity,
+    fetchAnalytics,
     isAuthenticated: !!user,
   };
 };

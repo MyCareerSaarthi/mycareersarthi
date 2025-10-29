@@ -51,10 +51,10 @@ const Overview = ({ data, onNavigate }) => {
 
   // Get emoji based on score
   const getScoreEmoji = (score) => {
-    if (score >= 7) return "🏆";
-    if (score >= 5) return "👍";
-    if (score >= 3) return "🤔";
-    return "😞";
+    if (score >= 7) return "🏆"; // excellent
+    if (score >= 6) return "👍"; // good
+    if (score >= 4) return "🤔"; // needs improvement
+    return "⚠️"; // significant improvement needed (1-3)
   };
 
   // Calculate stroke dasharray for circular progress
@@ -124,11 +124,11 @@ const Overview = ({ data, onNavigate }) => {
                 {getScoreEmoji(overall_score)}{" "}
                 {overall_score >= 7
                   ? "Excellent"
-                  : overall_score >= 5
+                  : overall_score >= 6
                   ? "Good"
-                  : overall_score >= 3
-                  ? "Fair"
-                  : "Poor"}
+                  : overall_score >= 4
+                  ? "Needs Improvement"
+                  : "Significant Improvement Needed"}
               </div>
             </div>
 

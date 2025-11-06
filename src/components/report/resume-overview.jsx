@@ -39,7 +39,6 @@ const ResumeOverview = ({ data, onNavigate }) => {
       Experience: "experience",
       Skills: "skill",
       Certifications: "certification",
-      Projects: "projects",
     };
     return (
       sectionMap[sectionName] || sectionName.toLowerCase().replace(/\s+/g, "-")
@@ -67,7 +66,6 @@ const ResumeOverview = ({ data, onNavigate }) => {
     "experience",
     "education",
     "certifications",
-    "projects",
   ];
   const orderedSections = section_scores
     ?.slice()

@@ -35,17 +35,27 @@ const Overview = ({ data, onNavigate }) => {
   // Map section names to tab IDs
   const getSectionTabId = (sectionName) => {
     const sectionMap = {
-      Headline: "headline",
-      "Profile Picture": "profile-picture",
-      About: "about",
-      Experience: "experience",
-      Skills: "skill",
-      Education: "education",
-      Certifications: "certification",
-      Projects: "projects",
+      headline: "headline",
+      headline: "headline",
+      "profile picture": "profile-picture",
+      "profile-picture": "profile-picture",
+      banner: "banner",
+      banner: "banner",
+      about: "about",
+      about: "about",
+      experience: "experience",
+      experience: "experience",
+      skills: "skill",
+      skills: "skill",
+      education: "education",
+      education: "education",
+      certifications: "certification",
+      certifications: "certification",
     };
+    const normalizedName = sectionName?.toLowerCase() || "";
     return (
-      sectionMap[sectionName] || sectionName.toLowerCase().replace(/\s+/g, "-")
+      sectionMap[normalizedName] ||
+      sectionName.toLowerCase().replace(/\s+/g, "-")
     );
   };
 
@@ -67,12 +77,12 @@ const Overview = ({ data, onNavigate }) => {
   const order = [
     "headline",
     "profile-picture",
+    "banner",
     "about",
     "experience",
     "skills",
     "education",
     "certifications",
-    "projects",
   ];
 
   const orderedSections = section_scores

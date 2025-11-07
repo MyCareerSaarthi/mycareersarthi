@@ -6,15 +6,16 @@ import Overview from "@/components/report/overview";
 import ProfileInfo from "@/components/report/profile-info";
 import Headline from "@/components/report/headline";
 import ProfilePicture from "@/components/report/profile-picture";
+import Banner from "@/components/report/banner";
 import About from "@/components/report/about";
 import Experience from "@/components/report/experience";
 import Skill from "@/components/report/skill";
 import Education from "@/components/report/education";
 import Certification from "@/components/report/certification";
-import Projects from "@/components/report/projects";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/components/api/api";
 import { useAuth } from "@clerk/nextjs";
+import { useRef } from "react";
 
 const LinkedinReport = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -24,6 +25,15 @@ const LinkedinReport = () => {
   const [linkedinReport, setLinkedinReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const { getToken } = useAuth();
+  const [showCompare, setShowCompare] = useState(false);
+  const [compareLoading, setCompareLoading] = useState(false);
+  const [compareError, setCompareError] = useState("");
+  const [compareResult, setCompareResult] = useState(null);
+  const resumeFileRef = useRef(null);
+  const [roleId, setRoleId] = useState("");
+  const [jobDescriptionText, setJobDescriptionText] = useState("");
+  const [generateJD, setGenerateJD] = useState(false);
+  const [roleName, setRoleName] = useState("");
 
   // Check if device is mobile
   useEffect(() => {
@@ -60,6 +70,11 @@ const LinkedinReport = () => {
       component: <ProfilePicture data={linkedinReport} />,
     },
     {
+      id: "banner",
+      label: "Banner",
+      component: <Banner data={linkedinReport} />,
+    },
+    {
       id: "about",
       label: "About",
       component: <About data={linkedinReport} />,
@@ -83,11 +98,6 @@ const LinkedinReport = () => {
       id: "certification",
       label: "Certifications",
       component: <Certification data={linkedinReport} />,
-    },
-    {
-      id: "projects",
-      label: "Projects",
-      component: <Projects data={linkedinReport} />,
     },
   ];
 
@@ -113,6 +123,46 @@ const LinkedinReport = () => {
       getLinkedinReport();
     }
   }, [id]);
+
+  const onCompare = async () => {
+    try {
+      setCompareLoading(true);
+      setCompareError("");
+      setCompareResult(null);
+      const fd = new FormData();
+      fd.append("mode", "existing");
+      fd.append(
+        "existing_linkedin_profile_json",
+        JSON.stringify(linkedinReport?.profile || {})
+      );
+      const f = resumeFileRef.current?.files?.[0];
+      if (f) fd.append("resume_pdf", f);
+      if (roleId) fd.append("role_id", roleId);
+      if (jobDescriptionText)
+        fd.append("job_description_text", jobDescriptionText);
+      if (generateJD) fd.append("generate_job_description", "true");
+      if (roleName) fd.append("role_name", roleName);
+
+      const token = await getToken();
+      const res = await fetch(`/api/comparison/compare`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: fd,
+      });
+      if (!res.ok) {
+        const t = await res.text();
+        throw new Error(t || "Request failed");
+      }
+      const data = await res.json();
+      setCompareResult(data);
+    } catch (e) {
+      setCompareError(e.message || "Comparison failed");
+    } finally {
+      setCompareLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -264,11 +314,93 @@ const LinkedinReport = () => {
         <div className="">
           <div className="p-4 md:p-6">
             <div className="max-w-7xl mx-auto">
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={() => setShowCompare(true)}
+                  className="px-4 py-2 rounded bg-primary text-primary-foreground hover:opacity-90"
+                >
+                  Compare with Resume
+                </button>
+              </div>
               {tabs.find((tab) => tab.id === activeTab)?.component}
             </div>
           </div>
         </div>
       </div>
+
+      {showCompare && (
+        <div className="fixed inset-0 z-30 bg-black/40 flex items-center justify-center">
+          <div className="bg-background rounded-lg shadow-xl w-full max-w-xl p-4 border border-border">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-lg font-semibold">Compare with Resume</h3>
+              <button onClick={() => setShowCompare(false)} className="text-sm">
+                Close
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Resume PDF
+                </label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  ref={resumeFileRef}
+                />
+              </div>
+              <div className="border-t pt-3">
+                <div className="text-sm font-medium mb-2">Optional Role/JD</div>
+                <input
+                  className="border rounded px-3 py-2 w-full mb-2"
+                  placeholder="role_id (use existing JD)"
+                  value={roleId}
+                  onChange={(e) => setRoleId(e.target.value)}
+                />
+                <textarea
+                  className="border rounded px-3 py-2 w-full mb-2"
+                  rows={3}
+                  placeholder="job_description_text"
+                  value={jobDescriptionText}
+                  onChange={(e) => setJobDescriptionText(e.target.value)}
+                />
+                <label className="inline-flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={generateJD}
+                    onChange={(e) => setGenerateJD(e.target.checked)}
+                  />{" "}
+                  Generate JD
+                </label>
+                {generateJD && (
+                  <input
+                    className="border rounded px-3 py-2 w-full mt-2"
+                    placeholder="role_name (for JD generation)"
+                    value={roleName}
+                    onChange={(e) => setRoleName(e.target.value)}
+                  />
+                )}
+              </div>
+              <div className="flex items-center gap-3 mt-2">
+                <button
+                  onClick={onCompare}
+                  disabled={compareLoading}
+                  className="px-4 py-2 rounded bg-black text-white disabled:opacity-50"
+                >
+                  {compareLoading ? "Comparing..." : "Run Comparison"}
+                </button>
+                {compareError ? (
+                  <span className="text-sm text-red-600">{compareError}</span>
+                ) : null}
+              </div>
+              {compareResult && (
+                <div className="mt-3 max-h-64 overflow-auto border rounded p-2 text-xs bg-accent/30">
+                  <pre>{JSON.stringify(compareResult, null, 2)}</pre>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

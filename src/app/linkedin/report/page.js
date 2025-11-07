@@ -323,6 +323,9 @@ const LinkedinReport = () => {
                 </button>
               </div>
               {tabs.find((tab) => tab.id === activeTab)?.component}
+              <div className="mt-6 flex justify-end">
+                <GeneratePdfButton reportId={id} />
+              </div>
             </div>
           </div>
         </div>

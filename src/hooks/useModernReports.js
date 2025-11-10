@@ -227,13 +227,20 @@ export const useModernReports = (initialOptions = {}) => {
           // Update statistics
           setStatistics((prev) => {
             const currentStats = prev || {};
+            const countKey =
+              reportType === "linkedin"
+                ? "linkedin_count"
+                : reportType === "resume"
+                ? "resume_count"
+                : reportType === "comparison"
+                ? "comparison_count"
+                : null;
             return {
               ...currentStats,
               total_reports: (currentStats.total_reports || 0) - 1,
-              [reportType === "linkedin" ? "linkedin_count" : "resume_count"]:
-                (currentStats[
-                  reportType === "linkedin" ? "linkedin_count" : "resume_count"
-                ] || 0) - 1,
+              ...(countKey && {
+                [countKey]: (currentStats[countKey] || 0) - 1,
+              }),
             };
           });
 

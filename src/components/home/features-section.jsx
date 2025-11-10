@@ -24,7 +24,7 @@ const features = [
   {
     title: "Expert Guidance",
     description:
-      "Connect with industry experts who provide personalized guidance for your career materials and personal branding.",
+      "Connect with industry experts who provide personalized guidance for your career materials.", // Removed "and personal branding"
     icon: Users,
     delay: 0.2,
   },

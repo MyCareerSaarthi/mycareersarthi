@@ -38,18 +38,19 @@ const services = [
     ],
     icon: FileText,
   },
-  {
-    title: "Personal Branding for Experienced Professionals",
-    description:
-      "Develop a strong personal brand that positions you as an industry leader and attracts the right opportunities.",
-    features: [
-      "Personal brand strategy development",
-      "Thought leadership positioning",
-      "Content strategy & messaging",
-      "Professional networking guidance",
-    ],
-    icon: Users,
-  },
+  // Personal Branding - Commented out
+  // {
+  //   title: "Personal Branding for Experienced Professionals",
+  //   description:
+  //     "Develop a strong personal brand that positions you as an industry leader and attracts the right opportunities.",
+  //   features: [
+  //     "Personal brand strategy development",
+  //     "Thought leadership positioning",
+  //     "Content strategy & messaging",
+  //     "Professional networking guidance",
+  //   ],
+  //   icon: Users,
+  // },
 ];
 
 const ServicesSection = () => {
@@ -72,7 +73,7 @@ const ServicesSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (

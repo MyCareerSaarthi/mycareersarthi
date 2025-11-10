@@ -50,7 +50,7 @@ const ResumeAnalyze = () => {
   });
 
   const { user } = useUser();
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
   // Step definitions
@@ -102,9 +102,76 @@ const ResumeAnalyze = () => {
     }
   };
 
+  // Check authentication - must be before early return
   useEffect(() => {
-    getPricing();
-  }, []);
+    if (isLoaded && !isSignedIn) {
+      router.push("/login?redirect=/resume/analyze");
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  // Get pricing - must be before early return
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      getPricing();
+    }
+  }, [isLoaded, isSignedIn]);
+
+  // Socket connection - must be before early return
+  useEffect(() => {
+    if (user?.id) {
+      // Register with main server
+      socket.emit("register", user.id);
+
+      // Handle updates from server
+      socket.on("updateProcess", (data) => {
+        setProcessData({
+          title: data.title || "Processing",
+          subtitle: data.subtitle || "Analyzing your resume",
+          currentStep: data.currentStep || 1,
+          totalSteps: data.totalSteps || 5,
+          percentage: data.percentage || 0,
+        });
+      });
+
+      socket.on("analysisComplete", (data) => {
+        setIsAnalyzing(false);
+        // Navigate to results page
+        if (data.reportId) {
+          router.push(`/resume/report/${data.reportId}`);
+        } else {
+          router.push("/resume/reports");
+        }
+      });
+
+      socket.on("analysisError", (error) => {
+        console.error("Analysis error:", error);
+        setIsAnalyzing(false);
+        const errorMessage =
+          error?.message || "Analysis failed. Please try again.";
+        setErrors({ general: errorMessage });
+        // Reset to payment step so user can see the error and try again
+        setCurrentStep(3);
+      });
+    }
+
+    return () => {
+      socket.off("updateProcess");
+      socket.off("analysisComplete");
+      socket.off("analysisError");
+    };
+  }, [user, router]);
+
+  // Show loading state while checking auth - AFTER all hooks
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const applyCoupon = async () => {
     if (!couponCode.trim()) {
@@ -304,47 +371,7 @@ const ResumeAnalyze = () => {
     }
   };
 
-  useEffect(() => {
-    if (user?.id) {
-      socket.emit("register", user.id);
-
-      socket.on("updateProcess", (data) => {
-        setProcessData({
-          title: data.title || "Processing",
-          subtitle: data.subtitle || "Analyzing your resume",
-          currentStep: data.currentStep || 1,
-          totalSteps: data.totalSteps || 5,
-          percentage: data.percentage || 0,
-        });
-      });
-
-      socket.on("analysisComplete", (data) => {
-        setIsAnalyzing(false);
-        // Navigate to results page
-        if (data.reportId) {
-          router.push(`/resume/report/${data.reportId}`);
-        } else {
-          router.push("/resume/reports");
-        }
-      });
-
-      socket.on("analysisError", (error) => {
-        console.error("Analysis error:", error);
-        setIsAnalyzing(false);
-        const errorMessage =
-          error?.message || "Analysis failed. Please try again.";
-        setErrors({ general: errorMessage });
-        // Reset to payment step so user can see the error and try again
-        setCurrentStep(3);
-      });
-    }
-
-    return () => {
-      socket.off("updateProcess");
-      socket.off("analysisComplete");
-      socket.off("analysisError");
-    };
-  }, [user, router]);
+  // Socket useEffect moved above - removed duplicate
 
   // Show process demo screen during analysis
   if (isAnalyzing) {

@@ -44,9 +44,9 @@ const ProfileInfo = ({ data }) => {
                 Name
               </label>
               <p className="text-foreground font-semibold">
-                {profile.full_name || "Not provided"}
+                {profile.fullname || "Not provided"}
               </p>
-              {!profile.full_name && (
+              {!profile.fullname && (
                 <p className="text-sm text-destructive mt-1">
                   ❌ Missing: Name should be clearly visible
                 </p>

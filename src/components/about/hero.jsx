@@ -42,10 +42,9 @@ const AboutHero = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             We help experienced professionals unlock their true potential
-            through comprehensive LinkedIn optimization, resume creation, and
-            personal branding services.
+            through comprehensive LinkedIn optimization and resume creation
+            services. {/* Removed "and personal branding" */}
           </motion.p>
-
         </div>
       </div>
     </section>

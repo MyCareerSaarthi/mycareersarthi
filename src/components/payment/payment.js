@@ -67,9 +67,40 @@ const handleVerifyPayment = async (
         },
       }
     );
-    // Only redirect if we have a reportId
+    // Only redirect if we have a reportId or comparisonId
     if (verifyResponse?.data?.reportId) {
       window.location.href = `/${serviceType}/report?id=${verifyResponse?.data?.reportId}`;
+    } else if (verifyResponse?.data?.comparisonId) {
+      // For comparison, redirect to report page
+      // If we have comparison data, store it and use storageKey
+      if (verifyResponse?.data?.comparisonResult) {
+        const storageKey = `comparison_${Date.now()}`;
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(
+              storageKey,
+              JSON.stringify(verifyResponse.data.comparisonResult)
+            );
+          } catch (e) {
+            console.error("Error storing in localStorage:", e);
+          }
+        }
+        try {
+          const resultParam = encodeURIComponent(
+            JSON.stringify(verifyResponse.data.comparisonResult)
+          );
+          if (resultParam.length < 1500) {
+            window.location.href = `/compare/report?result=${resultParam}`;
+          } else {
+            window.location.href = `/compare/report?storageKey=${storageKey}`;
+          }
+        } catch (err) {
+          window.location.href = `/compare/report?storageKey=${storageKey}`;
+        }
+      } else {
+        // Just use ID to fetch from API
+        window.location.href = `/compare/report?id=${verifyResponse?.data?.comparisonId}`;
+      }
     }
   } catch (error) {
     console.error("Payment verification failed:", error);

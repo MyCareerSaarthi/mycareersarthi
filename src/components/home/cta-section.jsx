@@ -36,8 +36,8 @@ const CtaSection = () => {
                 viewport={{ once: true }}
               >
                 Join experienced professionals who have accelerated their
-                careers with our comprehensive LinkedIn optimization, resume
-                creation, and personal branding services.
+                careers with our comprehensive LinkedIn optimization and resume
+                creation services. {/* Removed "and personal branding" */}
               </motion.p>
 
               <motion.div

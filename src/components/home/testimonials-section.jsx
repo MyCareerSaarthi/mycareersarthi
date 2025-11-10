@@ -21,22 +21,23 @@ const testimonials = [
     testimonial:
       "The resume optimization service is outstanding. My new resume passed through ATS systems and I landed 3 interviews within a month. Highly recommend for experienced professionals.",
   },
-  {
-    id: 3,
-    name: "Dr. Priya Sharma",
-    designation: "Senior Data Scientist",
-    company: "DataFlow Inc",
-    testimonial:
-      "The personal branding guidance helped me establish thought leadership in my field. I'm now regularly invited to speak at conferences and my network has grown significantly.",
-  },
-  {
-    id: 4,
-    name: "James Wilson",
-    designation: "VP of Marketing",
-    company: "GrowthCo",
-    testimonial:
-      "As an experienced professional, I needed help positioning myself for C-level roles. MyCareerSarthi's strategic approach to personal branding was exactly what I needed.",
-  },
+  // Personal Branding testimonials - Commented out
+  // {
+  //   id: 3,
+  //   name: "Dr. Priya Sharma",
+  //   designation: "Senior Data Scientist",
+  //   company: "DataFlow Inc",
+  //   testimonial:
+  //     "The personal branding guidance helped me establish thought leadership in my field. I'm now regularly invited to speak at conferences and my network has grown significantly.",
+  // },
+  // {
+  //   id: 4,
+  //   name: "James Wilson",
+  //   designation: "VP of Marketing",
+  //   company: "GrowthCo",
+  //   testimonial:
+  //     "As an experienced professional, I needed help positioning myself for C-level roles. MyCareerSarthi's strategic approach to personal branding was exactly what I needed.",
+  // },
   {
     id: 5,
     name: "Lisa Thompson",

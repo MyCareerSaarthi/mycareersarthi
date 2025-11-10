@@ -239,6 +239,7 @@ const ActivityItem = ({ activity }) => {
       report: {
         linkedin: <Briefcase className="h-4 w-4" />,
         resume: <FileCheck className="h-4 w-4" />,
+        comparison: <BarChart3 className="h-4 w-4" />,
       },
       payment: {
         transaction: <CreditCard className="h-4 w-4" />,
@@ -246,6 +247,7 @@ const ActivityItem = ({ activity }) => {
       analysis_request: {
         linkedin: <Brain className="h-4 w-4" />,
         resume: <Brain className="h-4 w-4" />,
+        comparison: <Brain className="h-4 w-4" />,
       },
     };
     return icons[type]?.[subtype] || <Activity className="h-4 w-4" />;
@@ -256,6 +258,7 @@ const ActivityItem = ({ activity }) => {
       report: {
         linkedin: "text-blue-600 bg-blue-100 dark:bg-blue-900",
         resume: "text-purple-600 bg-purple-100 dark:bg-purple-900",
+        comparison: "text-orange-600 bg-orange-100 dark:bg-orange-900",
       },
       payment: {
         transaction: "text-green-600 bg-green-100 dark:bg-green-900",
@@ -263,6 +266,7 @@ const ActivityItem = ({ activity }) => {
       analysis_request: {
         linkedin: "text-orange-600 bg-orange-100 dark:bg-orange-900",
         resume: "text-orange-600 bg-orange-100 dark:bg-orange-900",
+        comparison: "text-orange-600 bg-orange-100 dark:bg-orange-900",
       },
     };
     return (
@@ -279,9 +283,16 @@ const ActivityItem = ({ activity }) => {
     });
   };
 
+  const getReportUrl = (subType, Id) => {
+    if (subType === "linkedin") return `/linkedin/report?id=${Id}`;
+    if (subType === "resume") return `/resume/report?id=${Id}`;
+    if (subType === "comparison") return `/compare/report?id=${Id}`;
+    return `/${subType}/report?id=${Id}`;
+  };
+
   return (
     <Link
-      href={`/${subType}/report?id=${Id}`}
+      href={getReportUrl(subType, Id)}
       className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
     >
       <div
@@ -482,7 +493,7 @@ const Dashboard = () => {
         <MetricsCard
           title="Total Reports"
           value={overviewMetrics?.reports?.total || 0}
-          subtitle="LinkedIn & Resume analyses"
+          subtitle="LinkedIn, Resume & Comparison analyses"
           icon={BarChart3}
           trend="up"
           trendValue="Active"
@@ -586,6 +597,20 @@ const Dashboard = () => {
                         <div className="font-semibold">Resume Analysis</div>
                         <div className="text-sm opacity-90">
                           Improve your resume
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </Button>
+
+                <Button asChild variant="outline" className="w-full h-16">
+                  <Link href="/compare">
+                    <div className="flex items-center gap-3">
+                      <BarChart3 className="h-5 w-5" />
+                      <div className="text-left">
+                        <div className="font-semibold">Profile Comparison</div>
+                        <div className="text-sm opacity-90">
+                          Compare LinkedIn & Resume
                         </div>
                       </div>
                     </div>

@@ -51,16 +51,12 @@ const HeroSection = () => {
               <span className="block mt-2 text-primary">Expert Guidance</span>
             </motion.h1>
 
-          
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              
-            </motion.div>
+            ></motion.div>
           </div>
 
           {/* Service Cards - Now visible without scrolling */}
@@ -68,7 +64,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6"
           >
             <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
               <CardHeader className="pb-4">
@@ -84,14 +80,14 @@ const HeroSection = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-               
-                 <div className="flex justify-center">
-    <Button 
-                        variant="outline"
-                        className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">
-                          <Link href="/linkedin/analyze">Get Started</Link>
-                        </Button>
-  </div>
+                <div className="flex justify-center">
+                  <Button
+                    variant="outline"
+                    className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    <Link href="/linkedin/analyze">Get Started</Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
@@ -100,26 +96,25 @@ const HeroSection = () => {
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-xl">
-                  Resume Review
-                </CardTitle>
+                <CardTitle className="text-xl">Resume Review</CardTitle>
                 <CardDescription className="text-base">
                   Create and optimize resumes that pass through applicant
                   tracking systems
                 </CardDescription>
               </CardHeader>
               <CardContent>
-     
                 <div className="flex justify-center">
-    <Button 
-                        variant="outline"
-                        className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">
-                          <Link href="/resume/analyze">Get Started</Link>
-                        </Button>
-  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    <Link href="/resume/analyze">Get Started</Link>
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
+            {/* Personal Branding Card - Commented out
             <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
               <CardHeader className="pb-4">
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -141,6 +136,7 @@ const HeroSection = () => {
   </div>
               </CardContent>
             </Card>
+            */}
           </motion.div>
         </div>
       </div>

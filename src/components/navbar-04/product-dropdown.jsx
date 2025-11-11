@@ -12,18 +12,15 @@ import {
   ChevronDownIcon,
   FileTextIcon,
   LinkedinIcon,
-  CrownIcon,
+  // CrownIcon, // Commented out - Personal Branding service
   SparklesIcon,
+  ArrowLeftRight,
 } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 
 export const ProductDropdown = () => {
   const { isSignedIn } = useAuth();
-
-  if (!isSignedIn) {
-    return null;
-  }
 
   return (
     <DropdownMenu>
@@ -52,6 +49,7 @@ export const ProductDropdown = () => {
             <span>Resume Services</span>
           </Link>
         </DropdownMenuItem>
+        {/* Personal Branding - Commented out
         <DropdownMenuItem asChild>
           <Link
             href="/services/personal-branding"
@@ -61,19 +59,39 @@ export const ProductDropdown = () => {
             <span>Personal Branding</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
+        */}
         <DropdownMenuItem asChild>
-          <Link href="/resume/analyze" className="flex items-center gap-2">
-            <SparklesIcon className="h-4 w-4" />
-            <span>Quick Resume Analysis</span>
+          <Link href="/services/comparison" className="flex items-center gap-2">
+            <ArrowLeftRight className="h-4 w-4" />
+            <span>Profile Comparison</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/linkedin/analyze" className="flex items-center gap-2">
-            <SparklesIcon className="h-4 w-4" />
-            <span>Quick LinkedIn Analysis</span>
-          </Link>
-        </DropdownMenuItem>
+        {isSignedIn && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/resume/analyze" className="flex items-center gap-2">
+                <SparklesIcon className="h-4 w-4" />
+                <span>Quick Resume Analysis</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href="/linkedin/analyze"
+                className="flex items-center gap-2"
+              >
+                <SparklesIcon className="h-4 w-4" />
+                <span>Quick LinkedIn Analysis</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/compare" className="flex items-center gap-2">
+                <SparklesIcon className="h-4 w-4" />
+                <span>Linkedin & Resume Comparison</span>
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -191,13 +191,20 @@ const ReportsPage = () => {
   };
 
   const getTypeIcon = (type) => {
-    return type === "linkedin" ? "💼" : "📄";
+    if (type === "linkedin") return "💼";
+    if (type === "resume") return "📄";
+    if (type === "comparison") return "⚖️";
+    return "📊";
   };
 
   const getTypeColor = (type) => {
-    return type === "linkedin"
-      ? "bg-blue-500/10 border-blue-500/20 text-blue-700"
-      : "bg-purple-500/10 border-purple-500/20 text-purple-700";
+    if (type === "linkedin")
+      return "bg-blue-500/10 border-blue-500/20 text-blue-700";
+    if (type === "resume")
+      return "bg-purple-500/10 border-purple-500/20 text-purple-700";
+    if (type === "comparison")
+      return "bg-orange-500/10 border-orange-500/20 text-orange-700";
+    return "bg-gray-500/10 border-gray-500/20 text-gray-700";
   };
 
   const formatDate = (dateString) => {
@@ -214,16 +221,28 @@ const ReportsPage = () => {
   };
 
   const handleViewReport = (report) => {
-    const reportUrl =
-      report.type === "linkedin"
-        ? `/linkedin/report?id=${report.id}`
-        : `/resume/report?id=${report.id}`;
+    let reportUrl;
+    if (report.type === "linkedin") {
+      reportUrl = `/linkedin/report?id=${report.id}`;
+    } else if (report.type === "resume") {
+      reportUrl = `/resume/report?id=${report.id}`;
+    } else if (report.type === "comparison") {
+      reportUrl = `/compare/report?id=${report.id}`;
+    } else {
+      reportUrl = `/reports`;
+    }
     router.push(reportUrl);
   };
 
   // Use overall_score instead of score with null safety
+  // For comparison reports, use overall_alignment_score
   const getReportScore = (report) => {
     if (!report) return 0;
+    if (report.type === "comparison") {
+      // Comparison reports use overall_alignment_score (0-10 scale)
+      const alignmentScore = Number(report.overall_alignment_score) || 0;
+      return Math.round(alignmentScore * 10); // Convert 0-10 to 0-100 for display
+    }
     return Number(report.overall_score) || Number(report.score) || 0;
   };
 
@@ -237,7 +256,8 @@ const ReportsPage = () => {
               Your Reports 📊
             </h1>
             <p className="text-gray-600 text-lg">
-              Track your LinkedIn and resume analysis progress over time.
+              Track your LinkedIn, resume, and comparison analysis progress over
+              time.
             </p>
             {statistics && (
               <div className="flex items-center gap-6 mt-4">
@@ -405,7 +425,7 @@ const ReportsPage = () => {
           className="mb-8"
         >
           <div className="flex items-center justify-between mb-6">
-            <TabsList className="grid w-full max-w-md grid-cols-3 rounded-xl">
+            <TabsList className="grid w-full max-w-2xl grid-cols-4 rounded-xl">
               <TabsTrigger value="all" className="rounded-lg">
                 All Reports ({totalCount})
               </TabsTrigger>
@@ -414,6 +434,9 @@ const ReportsPage = () => {
               </TabsTrigger>
               <TabsTrigger value="resume" className="rounded-lg">
                 Resume ({statistics?.resume_count || 0})
+              </TabsTrigger>
+              <TabsTrigger value="comparison" className="rounded-lg">
+                Comparison ({statistics?.comparison_count || 0})
               </TabsTrigger>
             </TabsList>
 
@@ -482,6 +505,25 @@ const ReportsPage = () => {
               getReportScore={getReportScore}
             />
           </TabsContent>
+
+          <TabsContent value="comparison" className="space-y-6">
+            <ReportsGrid
+              reports={(reports || []).filter(
+                (r) => r && r.type === "comparison"
+              )}
+              loading={loading}
+              hasMore={hasMore}
+              loadMore={loadMore}
+              onViewReport={handleViewReport}
+              onDeleteReport={handleDeleteReport}
+              getScoreColor={getScoreColor}
+              getScoreLabel={getScoreLabel}
+              getTypeIcon={getTypeIcon}
+              getTypeColor={getTypeColor}
+              formatDate={formatDate}
+              getReportScore={getReportScore}
+            />
+          </TabsContent>
         </Tabs>
 
         {/* Empty State */}
@@ -495,9 +537,10 @@ const ReportsPage = () => {
             </h3>
             <p className="text-gray-600 mb-8 max-w-md mx-auto">
               You haven't created any analysis reports yet. Start by analyzing
-              your LinkedIn profile or resume to see your reports here.
+              your LinkedIn profile, resume, or comparing them to see your
+              reports here.
             </p>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-4 flex-wrap">
               <Button
                 asChild
                 className="rounded-full bg-gradient-to-r from-blue-500 to-blue-600"
@@ -511,6 +554,12 @@ const ReportsPage = () => {
                 <Link href="/resume/analyze">
                   <Plus className="h-4 w-4 mr-2" />
                   Resume Analysis
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="rounded-full">
+                <Link href="/compare">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Compare Profiles
                 </Link>
               </Button>
             </div>
@@ -578,11 +627,15 @@ const ReportsGrid = ({
                       <CardTitle className="text-lg">
                         {report.type === "linkedin"
                           ? "LinkedIn Profile"
-                          : "Resume"}{" "}
+                          : report.type === "resume"
+                          ? "Resume"
+                          : "Profile Comparison"}{" "}
                         Analysis
                       </CardTitle>
                       <CardDescription className="capitalize">
-                        {report.type} Analysis
+                        {report.type === "comparison"
+                          ? "Comparison Analysis"
+                          : `${report.type} Analysis`}
                       </CardDescription>
                     </div>
                   </div>

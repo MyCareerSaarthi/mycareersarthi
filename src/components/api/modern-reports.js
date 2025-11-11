@@ -10,7 +10,7 @@ export const ModernReportsAPI = {
    * @param {Object} options - Query options
    * @param {number} options.page - Page number (default: 1)
    * @param {number} options.limit - Items per page (default: 10)
-   * @param {string} options.type - Report type filter ('all', 'linkedin', 'resume')
+   * @param {string} options.type - Report type filter ('all', 'linkedin', 'resume', 'comparison')
    * @param {string} options.sortBy - Sort field ('created_at', 'updated_at', 'score')
    * @param {string} options.sortOrder - Sort order ('asc', 'desc')
    * @param {string} options.search - Search term
@@ -50,7 +50,7 @@ export const ModernReportsAPI = {
       if (options.dateTo) params.append("dateTo", options.dateTo);
       if (options.status) params.append("status", options.status);
 
-      const response = await api.get(`/api/dashboard/v3/reports?${params}`, {
+      const response = await api.get(`/api/dashboard/reports?${params}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,13 +67,13 @@ export const ModernReportsAPI = {
    * Get a specific report by ID and type
    * @param {string} token - Clerk authentication token
    * @param {string} reportId - Report ID
-   * @param {string} reportType - Report type ('linkedin' or 'resume')
+   * @param {string} reportType - Report type ('linkedin', 'resume', or 'comparison')
    * @returns {Promise<Object>} Report data
    */
   async getReportById(token, reportId, reportType) {
     try {
       const response = await api.get(
-        `/api/dashboard/v3/reports/${reportType}/${reportId}`,
+        `/api/dashboard/reports/${reportType}/${reportId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -92,13 +92,13 @@ export const ModernReportsAPI = {
    * Delete a specific report by ID and type
    * @param {string} token - Clerk authentication token
    * @param {string} reportId - Report ID
-   * @param {string} reportType - Report type ('linkedin' or 'resume')
+   * @param {string} reportType - Report type ('linkedin', 'resume', or 'comparison')
    * @returns {Promise<Object>} Deletion result
    */
   async deleteReport(token, reportId, reportType) {
     try {
       const response = await api.delete(
-        `/api/dashboard/v3/reports/${reportType}/${reportId}`,
+        `/api/dashboard/reports/${reportType}/${reportId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -120,7 +120,7 @@ export const ModernReportsAPI = {
    */
   async getReportsStatistics(token) {
     try {
-      const response = await api.get("/api/dashboard/v3/reports/statistics", {
+      const response = await api.get("/api/dashboard/reports/statistics", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

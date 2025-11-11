@@ -1,14 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 
-const GeneratePdfButton = ({ reportId }) => {
+const GeneratePdfButton = ({ reportId, reportType }) => {
   const [loading, setLoading] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
 
   const handleGenerate = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`http://localhost:5000/api/linkedin/generate-pdf/${reportId}`);
+      const res = await axios.get(`http://localhost:5000/api/${reportType}/generate-pdf/${reportId}`);
       setPdfUrl(res.data.pdfUrl);
     } catch (err) {
       console.error("PDF generation failed:", err);

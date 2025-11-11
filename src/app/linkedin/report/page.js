@@ -12,6 +12,7 @@ import Experience from "@/components/report/experience";
 import Skill from "@/components/report/skill";
 import Education from "@/components/report/education";
 import Certification from "@/components/report/certification";
+import GeneratePdfButton from "@/components/ui/generatePdfButton";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/components/api/api";
 import { useAuth } from "@clerk/nextjs";
@@ -324,7 +325,7 @@ const LinkedinReport = () => {
               </div>
               {tabs.find((tab) => tab.id === activeTab)?.component}
               <div className="mt-6 flex justify-end">
-                <GeneratePdfButton reportId={id} />
+                <GeneratePdfButton reportId={id} reportType="linkedin" />
               </div>
             </div>
           </div>

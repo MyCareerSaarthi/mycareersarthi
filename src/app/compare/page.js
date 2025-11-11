@@ -4,8 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Label } from "@/components/ui/label";
-import RoleSelector from "@/components/ui/role-selector";
-import JobDescriptionInput from "@/components/ui/job-description-input";
+// Role/JD components removed - comparison is LinkedIn vs Resume only
 import StepNavigation from "@/components/ui/step-navigation";
 import StepContainer from "@/components/ui/step-container";
 import { api } from "@/components/api/api";
@@ -30,10 +29,7 @@ export default function ComparePage() {
   const fileInputRefLinkedin = useRef(null);
   const fileInputRefResume = useRef(null);
 
-  // Role/JD options
-  const [selectedRole, setSelectedRole] = useState(null);
-  const [jobDescription, setJobDescription] = useState("");
-  const [inputMode, setInputMode] = useState("role"); // "role" or "jobDescription"
+  // Role/JD options removed - comparison is LinkedIn vs Resume only
 
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -61,10 +57,6 @@ export default function ComparePage() {
   // Step definitions
   const steps = [
     { title: "Sources", description: "Add LinkedIn and Resume" },
-    {
-      title: "Job Requirements",
-      description: "Select role or add description (optional)",
-    },
     { title: "Payment", description: "Review and pay" },
   ];
 
@@ -317,17 +309,7 @@ export default function ComparePage() {
         formData.append("resumePdf", resumePdf);
       }
 
-      // Add role/JD data if provided
-      if (inputMode === "role" && selectedRole) {
-        if (selectedRole.type === "custom") {
-          formData.append("roleName", selectedRole.roleName);
-        } else {
-          formData.append("roleId", selectedRole.roleId);
-          formData.append("roleName", selectedRole.roleName);
-        }
-      } else if (inputMode === "jobDescription" && jobDescription) {
-        formData.append("jobDescription", jobDescription);
-      }
+      // No role/JD data - comparison is LinkedIn vs Resume only
 
       if (appliedCoupon) {
         formData.append("couponCode", appliedCoupon.code);
@@ -738,81 +720,6 @@ export default function ComparePage() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-semibold">
-                  Job Requirements (Optional)
-                </h2>
-              </div>
-
-              <p className="text-sm text-muted-foreground mb-4">
-                Optionally select a target role or paste a job description to
-                get role-specific alignment insights.
-              </p>
-
-              {/* Mode Toggle */}
-              <div className="flex gap-2 mb-4">
-                <button
-                  type="button"
-                  onClick={() => setInputMode("role")}
-                  className={`px-4 py-2 rounded-lg border transition-colors ${
-                    inputMode === "role"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background border-border hover:border-primary/50"
-                  }`}
-                >
-                  Select Role
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setInputMode("jobDescription")}
-                  className={`px-4 py-2 rounded-lg border transition-colors ${
-                    inputMode === "jobDescription"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background border-border hover:border-primary/50"
-                  }`}
-                >
-                  Paste Job Description
-                </button>
-              </div>
-
-              {inputMode === "role" ? (
-                <RoleSelector
-                  value={selectedRole}
-                  onChange={setSelectedRole}
-                  error={errors.role}
-                  placeholder="Search and select your target role..."
-                />
-              ) : (
-                <JobDescriptionInput
-                  value={jobDescription}
-                  onChange={setJobDescription}
-                  error={errors.jobDescription}
-                  placeholder="Enter the job description for the role you're targeting..."
-                />
-              )}
-            </div>
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-6">
-            <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-lg p-6 space-y-6 border border-blue-200/50 dark:border-blue-800/30">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <svg
-                    className="w-4 h-4 text-blue-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
@@ -953,8 +860,8 @@ export default function ComparePage() {
             LinkedIn ↔ Resume Comparison
           </h1>
           <p className="text-muted-foreground text-sm">
-            Compare your LinkedIn profile with your resume to identify gaps and
-            improve alignment
+            Compare your LinkedIn profile with your resume to identify gaps,
+            mismatches, alignments, and inconsistencies
           </p>
         </div>
       </div>
@@ -988,6 +895,8 @@ export default function ComparePage() {
           isNextDisabled={
             currentStep === 1
               ? (!linkedinUrl && !linkedinPdf) || !resumePdf
+              : currentStep === 2
+              ? isSubmitting
               : false
           }
           isPreviousDisabled={currentStep === 1}

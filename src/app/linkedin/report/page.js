@@ -46,7 +46,6 @@ const LinkedinReport = () => {
   const [compareError, setCompareError] = useState("");
   const [compareResult, setCompareResult] = useState(null);
   const resumeFileRef = useRef(null);
-  const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [resumePdfFile, setResumePdfFile] = useState(null);
   const [isComparing, setIsComparing] = useState(false);
@@ -350,64 +349,6 @@ const LinkedinReport = () => {
     }
   };
 
-  const handleDownloadPdf = async () => {
-    try {
-      setDownloadingPdf(true);
-      const token = await getToken();
-      const response = await api.get(`/api/pdf/linkedin/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/pdf",
-        },
-        responseType: "blob",
-      });
-
-      // Check if blob is valid
-      if (!response.data || response.data.size === 0) {
-        throw new Error("Received empty PDF file");
-      }
-
-      // Create a download link
-      const url = window.URL.createObjectURL(response.data);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `linkedin-report-${id}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-
-      // Clean up
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error("Error downloading PDF:", error);
-      let errorMessage = "Failed to generate PDF";
-
-      if (error.response?.data) {
-        // If response data is a blob, try to parse it as JSON (error response)
-        if (error.response.data instanceof Blob) {
-          try {
-            const text = await error.response.data.text();
-            const errorData = JSON.parse(text);
-            errorMessage = errorData.error || errorData.message || errorMessage;
-          } catch (e) {
-            errorMessage = error.message || errorMessage;
-          }
-        } else {
-          errorMessage =
-            error.response.data.error ||
-            error.response.data.message ||
-            errorMessage;
-        }
-      } else {
-        errorMessage = error.message || errorMessage;
-      }
-
-      alert(`Failed to download PDF: ${errorMessage}. Please try again.`);
-    } finally {
-      setDownloadingPdf(false);
-    }
-  };
-
   // Show process loader during comparison
   if (isComparing) {
     return (
@@ -578,31 +519,6 @@ const LinkedinReport = () => {
           <div className="p-4 md:p-6">
             <div className="max-w-7xl mx-auto">
               <div className="flex justify-end gap-3 mb-4">
-                {/*<LoadingButton
-                  onClick={handleDownloadPdf}
-                  isLoading={downloadingPdf}
-                  loadingText=""
-                  variant="outline"
-                  className="flex items-center justify-center p-2"
-                  title="Download PDF"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                </LoadingButton>
-                */}
                 <Dialog
                   open={showCompareModal}
                   onOpenChange={setShowCompareModal}

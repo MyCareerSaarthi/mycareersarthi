@@ -40,7 +40,6 @@ import {
   GraduationCap,
   Award,
   MessageSquare,
-  Target,
   ChevronRight,
   Lightbulb,
   BarChart3,
@@ -450,7 +449,7 @@ const ComparisonReportPage = () => {
     );
   }
 
-  const { overall_alignment_score, role_fit_score, sections, recommendations } =
+  const { overall_alignment_score, sections, recommendations } =
     comparisonData || {};
   const overallPercentage = (overall_alignment_score || 0) * 10; // Convert 0-10 to 0-100
 
@@ -530,36 +529,6 @@ const ComparisonReportPage = () => {
                     {generateOneLineSummary()}
                   </p>
                 </div>
-
-                {role_fit_score !== null &&
-                  role_fit_score !== undefined &&
-                  role_fit_score > 0 && (
-                    <div className="pt-4 border-t">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Target className="h-5 w-5 text-primary" />
-                        <h3 className="font-semibold">Role Fit Score</h3>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <div className="text-2xl font-bold">
-                          <span className={getScoreColor(role_fit_score || 0)}>
-                            {(role_fit_score || 0).toFixed(1)}
-                          </span>
-                          <span className="text-muted-foreground text-lg">
-                            /10
-                          </span>
-                        </div>
-                        <Badge
-                          variant={getScoreBadgeVariant(role_fit_score || 0)}
-                        >
-                          {(role_fit_score || 0) >= 8
-                            ? "Excellent Fit"
-                            : (role_fit_score || 0) >= 6
-                            ? "Good Fit"
-                            : "Needs Work"}
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
               </div>
             </div>
           </CardContent>
@@ -845,6 +814,69 @@ const ComparisonReportPage = () => {
           </div>
         )}
 
+        {/* Mismatches - Same skill, different representation */}
+        {skills.mismatches && skills.mismatches.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-orange-600" />
+              Mismatches ({skills.mismatches.length}) - Same Skill, Different
+              Representation
+            </h4>
+            <div className="space-y-3">
+              {skills.mismatches.map((mismatch, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800/30"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium text-sm">
+                      {mismatch.concept || "Skill"}:
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">LinkedIn:</span>
+                    <Badge variant="outline">{mismatch.linkedin_value}</Badge>
+                    <span className="text-muted-foreground">→</span>
+                    <span className="text-muted-foreground">Resume:</span>
+                    <Badge variant="outline">{mismatch.resume_value}</Badge>
+                  </div>
+                  {mismatch.reason && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Reason: {mismatch.reason}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Alignments - Properly matched skills */}
+        {skills.alignments && skills.alignments.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              Alignments ({skills.alignments.length}) - Properly Matched Skills
+            </h4>
+            <div className="space-y-2">
+              {skills.alignments.map((alignment, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-3 w-3 text-green-600" />
+                  <span className="font-medium">
+                    {alignment.concept || "Skill"}:
+                  </span>
+                  <Badge variant="default">{alignment.linkedin_value}</Badge>
+                  <span className="text-muted-foreground">↔</span>
+                  <Badge variant="default">{alignment.resume_value}</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {alignment.match_type}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {skills.comments && (
           <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
             <h4 className="font-semibold mb-2 flex items-center gap-2">
@@ -950,6 +982,70 @@ const ComparisonReportPage = () => {
             </div>
           )}
 
+        {/* Mismatches - Same experience, different representation */}
+        {experience.mismatches && experience.mismatches.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-orange-600" />
+              Mismatches ({experience.mismatches.length}) - Same Experience,
+              Different Representation
+            </h4>
+            <div className="space-y-3">
+              {experience.mismatches.map((mismatch, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800/30"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium text-sm">
+                      {mismatch.concept || "Experience"}:
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">LinkedIn:</span>
+                    <Badge variant="outline">{mismatch.linkedin_value}</Badge>
+                    <span className="text-muted-foreground">→</span>
+                    <span className="text-muted-foreground">Resume:</span>
+                    <Badge variant="outline">{mismatch.resume_value}</Badge>
+                  </div>
+                  {mismatch.reason && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Reason: {mismatch.reason}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Alignments - Properly matched experience */}
+        {experience.alignments && experience.alignments.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              Alignments ({experience.alignments.length}) - Properly Matched
+              Experience
+            </h4>
+            <div className="space-y-2">
+              {experience.alignments.map((alignment, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-3 w-3 text-green-600" />
+                  <span className="font-medium">
+                    {alignment.concept || "Experience"}:
+                  </span>
+                  <Badge variant="default">{alignment.linkedin_value}</Badge>
+                  <span className="text-muted-foreground">↔</span>
+                  <Badge variant="default">{alignment.resume_value}</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {alignment.match_type}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {experience.responsibility_alignment && (
           <div>
             <h4 className="font-semibold mb-2">Responsibility Alignment</h4>
@@ -1053,6 +1149,69 @@ const ComparisonReportPage = () => {
           </div>
         )}
 
+        {/* Mismatches - Same element, different representation */}
+        {about.mismatches && about.mismatches.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-orange-600" />
+              Mismatches ({about.mismatches.length}) - Same Element, Different
+              Representation
+            </h4>
+            <div className="space-y-3">
+              {about.mismatches.map((mismatch, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800/30"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium text-sm">
+                      {mismatch.concept || "Element"}:
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">LinkedIn:</span>
+                    <Badge variant="outline">{mismatch.linkedin_value}</Badge>
+                    <span className="text-muted-foreground">→</span>
+                    <span className="text-muted-foreground">Resume:</span>
+                    <Badge variant="outline">{mismatch.resume_value}</Badge>
+                  </div>
+                  {mismatch.reason && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Reason: {mismatch.reason}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Alignments - Properly matched elements */}
+        {about.alignments && about.alignments.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              Alignments ({about.alignments.length}) - Properly Matched Elements
+            </h4>
+            <div className="space-y-2">
+              {about.alignments.map((alignment, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-3 w-3 text-green-600" />
+                  <span className="font-medium">
+                    {alignment.concept || "Element"}:
+                  </span>
+                  <Badge variant="default">{alignment.linkedin_value}</Badge>
+                  <span className="text-muted-foreground">↔</span>
+                  <Badge variant="default">{alignment.resume_value}</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {alignment.match_type}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {about.comments && (
           <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
             <h4 className="font-semibold mb-2 flex items-center gap-2">
@@ -1122,6 +1281,70 @@ const ComparisonReportPage = () => {
               </ul>
             </div>
           )}
+
+        {/* Mismatches - Same education, different representation */}
+        {education.mismatches && education.mismatches.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-orange-600" />
+              Mismatches ({education.mismatches.length}) - Same Education,
+              Different Representation
+            </h4>
+            <div className="space-y-3">
+              {education.mismatches.map((mismatch, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800/30"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium text-sm">
+                      {mismatch.concept || "Education"}:
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">LinkedIn:</span>
+                    <Badge variant="outline">{mismatch.linkedin_value}</Badge>
+                    <span className="text-muted-foreground">→</span>
+                    <span className="text-muted-foreground">Resume:</span>
+                    <Badge variant="outline">{mismatch.resume_value}</Badge>
+                  </div>
+                  {mismatch.reason && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Reason: {mismatch.reason}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Alignments - Properly matched education */}
+        {education.alignments && education.alignments.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              Alignments ({education.alignments.length}) - Properly Matched
+              Education
+            </h4>
+            <div className="space-y-2">
+              {education.alignments.map((alignment, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-3 w-3 text-green-600" />
+                  <span className="font-medium">
+                    {alignment.concept || "Education"}:
+                  </span>
+                  <Badge variant="default">{alignment.linkedin_value}</Badge>
+                  <span className="text-muted-foreground">↔</span>
+                  <Badge variant="default">{alignment.resume_value}</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {alignment.match_type}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {education.comments && (
           <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
@@ -1194,6 +1417,70 @@ const ComparisonReportPage = () => {
                 <Badge key={idx} variant="secondary" className="text-sm">
                   {keyword}
                 </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mismatches - Same keyword, different representation */}
+        {keywords.mismatches && keywords.mismatches.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-orange-600" />
+              Mismatches ({keywords.mismatches.length}) - Same Keyword,
+              Different Representation
+            </h4>
+            <div className="space-y-3">
+              {keywords.mismatches.map((mismatch, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800/30"
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-medium text-sm">
+                      {mismatch.concept || "Keyword"}:
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">LinkedIn:</span>
+                    <Badge variant="outline">{mismatch.linkedin_value}</Badge>
+                    <span className="text-muted-foreground">→</span>
+                    <span className="text-muted-foreground">Resume:</span>
+                    <Badge variant="outline">{mismatch.resume_value}</Badge>
+                  </div>
+                  {mismatch.reason && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Reason: {mismatch.reason}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Alignments - Properly matched keywords */}
+        {keywords.alignments && keywords.alignments.length > 0 && (
+          <div>
+            <h4 className="font-semibold mb-3 flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              Alignments ({keywords.alignments.length}) - Properly Matched
+              Keywords
+            </h4>
+            <div className="space-y-2">
+              {keywords.alignments.map((alignment, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-3 w-3 text-green-600" />
+                  <span className="font-medium">
+                    {alignment.concept || "Keyword"}:
+                  </span>
+                  <Badge variant="default">{alignment.linkedin_value}</Badge>
+                  <span className="text-muted-foreground">↔</span>
+                  <Badge variant="default">{alignment.resume_value}</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    {alignment.match_type}
+                  </Badge>
+                </div>
               ))}
             </div>
           </div>

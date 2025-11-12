@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Overview from "@/components/report/overview";
 import ProfileInfo from "@/components/report/profile-info";
 import Headline from "@/components/report/headline";
@@ -11,26 +11,10 @@ import Experience from "@/components/report/experience";
 import Skill from "@/components/report/skill";
 import Education from "@/components/report/education";
 import Certification from "@/components/report/certification";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { api } from "@/components/api/api";
 import { useAuth } from "@clerk/nextjs";
-import { io } from "socket.io-client";
 import { LoadingButton } from "@/components/ui/loading-button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { handlePayment } from "@/components/payment/payment";
-import { useUser } from "@clerk/nextjs";
-import ProcessLoader from "@/components/process-loader";
 
 const LinkedinReport = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -40,34 +24,7 @@ const LinkedinReport = () => {
   const [linkedinReport, setLinkedinReport] = useState(null);
   const [loading, setLoading] = useState(true);
   const { getToken } = useAuth();
-  const { user } = useUser();
-  const router = useRouter();
-  const [compareLoading, setCompareLoading] = useState(false);
-  const [compareError, setCompareError] = useState("");
-  const [compareResult, setCompareResult] = useState(null);
-  const resumeFileRef = useRef(null);
-  const [showCompareModal, setShowCompareModal] = useState(false);
-  const [resumePdfFile, setResumePdfFile] = useState(null);
-  const [isComparing, setIsComparing] = useState(false);
-  const [processData, setProcessData] = useState({
-    title: "Starting Comparison",
-    subtitle: "Initializing LinkedIn and Resume comparison",
-    currentStep: 1,
-    totalSteps: 12,
-    percentage: 0,
-  });
-  const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
-  const [couponError, setCouponError] = useState(null);
-  const [pricing, setPricing] = useState({
-    originalPrice: 199,
-    finalPrice: 199,
-    discount: 0,
-  });
-  const [isLoadingPricing, setIsLoadingPricing] = useState(true);
-
-  // Resume PDF is always required for comparison
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -158,215 +115,80 @@ const LinkedinReport = () => {
     }
   }, [id]);
 
-  // Fetch pricing for comparison
-  const getPricing = async () => {
+  // Generate and download PDF (streaming)
+  const handleDownloadPdf = async () => {
+    if (!id) return;
+
     try {
-      const response = await api.get("/api/pricing?serviceType=comparison");
-      if (response.data.success) {
-        const pricingData = response.data.pricing;
-        setPricing({
-          originalPrice: pricingData.originalPrice,
-          finalPrice: pricingData.originalPrice,
-          discount: 0,
-        });
-      }
-    } catch (error) {
-      console.error("Failed to fetch pricing:", error);
-    } finally {
-      setIsLoadingPricing(false);
-    }
-  };
-
-  useEffect(() => {
-    getPricing();
-  }, []);
-
-  // Apply coupon code
-  const applyCoupon = async () => {
-    if (!couponCode.trim()) {
-      setCouponError("Please enter a coupon code");
-      return;
-    }
-
-    setIsApplyingCoupon(true);
-    setCouponError(null);
-    try {
+      setIsGeneratingPdf(true);
       const token = await getToken();
-      const response = await api.post(
-        "/api/pricing/apply-coupon",
+
+      // Fetch PDF as blob (API now streams the PDF directly)
+      const response = await fetch(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
+        }/api/linkedin/generate-pdf/${id}`,
         {
-          code: couponCode.trim(),
-          userId: user?.id,
-          orderAmount: pricing.originalPrice,
-        },
-        {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      if (response.data.success) {
-        setAppliedCoupon({
-          code: couponCode.trim(),
-          discount: response.data.discount,
-        });
-        setPricing((prev) => ({
-          ...prev,
-          finalPrice: response.data.finalAmount,
-          discount: response.data.discount,
-        }));
-        setCouponError(null);
+      if (!response.ok) {
+        // Try to parse error message from JSON response
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            errorData.error ||
+            `Failed to generate PDF: ${response.statusText}`
+        );
+      }
+
+      // Check if response is PDF (content-type should be application/pdf)
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/pdf")) {
+        // Get the blob from the streaming response
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        // Get filename from Content-Disposition header or use default
+        const contentDisposition = response.headers.get("content-disposition");
+        let filename = `linkedin-report-${id}.pdf`;
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+          if (filenameMatch) {
+            filename = filenameMatch[1];
+          }
+        }
+
+        // Create a temporary anchor element to trigger download
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up the object URL
+        window.URL.revokeObjectURL(url);
+      } else {
+        // Response is not a PDF, might be an error JSON
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || errorData.error || "Invalid response from server"
+        );
       }
     } catch (error) {
+      console.error("Error generating PDF:", error);
       const errorMessage =
-        error.response?.data?.message || "Failed to apply coupon";
-      setCouponError(errorMessage);
-      setAppliedCoupon(null);
-      setPricing((prev) => ({
-        ...prev,
-        finalPrice: prev.originalPrice,
-        discount: 0,
-      }));
+        error.message || "Failed to generate PDF. Please try again.";
+      alert(errorMessage);
     } finally {
-      setIsApplyingCoupon(false);
+      setIsGeneratingPdf(false);
     }
   };
-
-  // Remove coupon
-  const removeCoupon = () => {
-    setCouponCode("");
-    setAppliedCoupon(null);
-    setPricing((prev) => ({
-      ...prev,
-      finalPrice: prev.originalPrice,
-      discount: 0,
-    }));
-    setCouponError(null);
-  };
-
-  // Socket.io for comparison progress updates
-  useEffect(() => {
-    if (user?.id && isComparing) {
-      const socket = io(process.env.NEXT_PUBLIC_API_URL);
-
-      // Register with main server
-      socket.emit("register", user.id);
-
-      // Handle updates from server
-      socket.on("updateProcess", (data) => {
-        setProcessData({
-          title: data.title || "Processing",
-          subtitle: data.subtitle || "Comparing your LinkedIn and Resume",
-          currentStep: data.currentStep || 1,
-          totalSteps: data.totalSteps || 12,
-          percentage: data.percentage || 0,
-        });
-      });
-
-      socket.on("comparisonComplete", (data) => {
-        setIsComparing(false);
-        // Payment handler will redirect, but we can also handle here if needed
-      });
-
-      socket.on("comparisonError", (error) => {
-        console.error("Comparison error:", error);
-        setIsComparing(false);
-        const errorMessage =
-          error?.message || "Comparison failed. Please try again.";
-        setCompareError(errorMessage);
-      });
-
-      return () => {
-        socket.off("updateProcess");
-        socket.off("comparisonComplete");
-        socket.off("comparisonError");
-        socket.disconnect();
-      };
-    }
-  }, [user, isComparing]);
-
-  const onCompare = async () => {
-    try {
-      setCompareLoading(true);
-      setCompareError("");
-      setCompareResult(null);
-
-      // Validate inputs - Resume PDF is always required
-      const resumeFile = resumePdfFile || resumeFileRef.current?.files?.[0];
-      if (!resumeFile) {
-        setCompareError("Please upload a resume PDF file");
-        return;
-      }
-
-      const token = await getToken();
-      const formData = new FormData();
-      formData.append("userId", user?.id);
-
-      // Use existing mode - server will fetch LinkedIn profile from existing_linkedin_analysis_id
-      formData.append("mode", "existing");
-      formData.append("existing_linkedin_analysis_id", id);
-
-      // Resume PDF is always required
-      formData.append("resumePdf", resumeFile);
-
-      // Role/JD will be automatically extracted from linkedinReport by the server
-      // The server will use linkedinReport.role_id and linkedinReport.role_name if available
-
-      // Add coupon code if applied
-      if (appliedCoupon) {
-        formData.append("couponCode", appliedCoupon.code);
-        formData.append("discountAmount", appliedCoupon.discount.toString());
-      }
-
-      // Start the comparison process with payment
-      setIsComparing(true);
-      setProcessData({
-        title: "Starting Comparison",
-        subtitle: "Initializing LinkedIn and Resume comparison",
-        currentStep: 1,
-        totalSteps: 12,
-        percentage: 0,
-      });
-
-      await handlePayment(
-        "comparison",
-        token,
-        user,
-        formData,
-        setCompareLoading
-      );
-    } catch (error) {
-      console.error("Comparison failed:", error);
-      setIsComparing(false);
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Comparison failed. Please try again.";
-      setCompareError(errorMessage);
-    } finally {
-      setCompareLoading(false);
-    }
-  };
-
-  // Show process loader during comparison
-  if (isComparing) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="min-h-[70vh] flex items-center justify-center px-6 py-16">
-          <div className="w-full max-w-3xl">
-            <ProcessLoader
-              stepTitle={processData.title}
-              stepSubtitle={processData.subtitle}
-              currentStep={processData.currentStep}
-              totalSteps={processData.totalSteps}
-              percent={processData.percentage}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (loading) {
     return (
@@ -519,213 +341,14 @@ const LinkedinReport = () => {
           <div className="p-4 md:p-6">
             <div className="max-w-7xl mx-auto">
               <div className="flex justify-end gap-3 mb-4">
-                <Dialog
-                  open={showCompareModal}
-                  onOpenChange={setShowCompareModal}
+                <LoadingButton
+                  onClick={handleDownloadPdf}
+                  loading={isGeneratingPdf}
+                  disabled={isGeneratingPdf || !id}
+                  className="px-4 py-2 rounded bg-secondary text-secondary-foreground hover:opacity-90"
                 >
-                  <DialogTrigger asChild>
-                    <Button className="px-4 py-2 rounded bg-primary text-primary-foreground hover:opacity-90">
-                      Compare with Resume
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>Compare with Resume</DialogTitle>
-                      <DialogDescription>
-                        Upload a resume PDF to compare with your LinkedIn
-                        profile.
-                      </DialogDescription>
-                    </DialogHeader>
-
-                    <div className="mt-6 space-y-6">
-                      {/* Upload Resume PDF */}
-                      <div className="space-y-2">
-                        <Label htmlFor="resume-pdf">
-                          Upload Resume PDF (Required)
-                        </Label>
-                        <input
-                          id="resume-pdf"
-                          type="file"
-                          accept=".pdf"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            setResumePdfFile(file);
-                          }}
-                          className="w-full px-3 py-2 border border-input rounded-md bg-background text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Resume PDF is required for comparison
-                        </p>
-                      </div>
-
-                      {/* Info: Role/JD will be extracted from existing LinkedIn analysis */}
-                      {linkedinReport?.role_name || linkedinReport?.role_id ? (
-                        <div className="space-y-2 border-t pt-4">
-                          <p className="text-xs text-muted-foreground">
-                            <strong>Note:</strong> Role and job description will
-                            be automatically extracted from your LinkedIn
-                            analysis (
-                            {linkedinReport.role_name ||
-                              "Role ID: " + linkedinReport.role_id}
-                            ).
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="space-y-2 border-t pt-4">
-                          <p className="text-xs text-muted-foreground">
-                            <strong>Note:</strong> Comparison will be performed
-                            without role-specific analysis as no role was found
-                            in your LinkedIn report.
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Pricing Section */}
-                      <div className="space-y-4 border-t pt-4">
-                        <h3 className="text-sm font-semibold">Pricing</h3>
-                        {isLoadingPricing ? (
-                          <p className="text-sm text-muted-foreground">
-                            Loading pricing...
-                          </p>
-                        ) : (
-                          <div className="space-y-2">
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm text-muted-foreground">
-                                Comparison Service
-                              </span>
-                              <span className="text-sm font-medium">
-                                ₹{pricing.originalPrice}
-                              </span>
-                            </div>
-                            {appliedCoupon && (
-                              <div className="flex justify-between items-center text-green-600">
-                                <span className="text-sm">
-                                  Coupon ({appliedCoupon.code})
-                                </span>
-                                <span className="text-sm font-medium">
-                                  -₹{appliedCoupon.discount}
-                                </span>
-                              </div>
-                            )}
-                            <div className="flex justify-between items-center pt-2 border-t">
-                              <span className="text-sm font-semibold">
-                                Total Amount
-                              </span>
-                              <span className="text-lg font-bold text-primary">
-                                ₹{pricing.finalPrice}
-                              </span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Coupon Code */}
-                      <div className="space-y-2 border-t pt-4">
-                        <Label className="text-sm font-medium flex items-center gap-2">
-                          <svg
-                            className="w-4 h-4 text-orange-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                            />
-                          </svg>
-                          Coupon Code (Optional)
-                        </Label>
-                        <div className="flex gap-2">
-                          <Input
-                            placeholder="Enter coupon code"
-                            value={couponCode}
-                            onChange={(e) => setCouponCode(e.target.value)}
-                            className={`flex-1 bg-background border-border hover:border-primary/50 transition-colors ${
-                              couponError ? "border-destructive" : ""
-                            }`}
-                            disabled={isApplyingCoupon || !!appliedCoupon}
-                          />
-                          {appliedCoupon ? (
-                            <LoadingButton
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={removeCoupon}
-                              disabled={isApplyingCoupon}
-                            >
-                              Remove
-                            </LoadingButton>
-                          ) : (
-                            <LoadingButton
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={applyCoupon}
-                              isLoading={isApplyingCoupon}
-                              loadingText="Applying..."
-                              disabled={!couponCode.trim()}
-                            >
-                              Apply
-                            </LoadingButton>
-                          )}
-                        </div>
-                        {couponError && (
-                          <p className="text-sm text-destructive">
-                            {couponError}
-                          </p>
-                        )}
-                        {appliedCoupon && (
-                          <div className="flex items-center gap-2 text-green-600 text-sm">
-                            <svg
-                              className="w-4 h-4"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                            <span>
-                              Coupon applied! You saved ₹
-                              {appliedCoupon.discount}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Error Message */}
-                      {compareError && (
-                        <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm">
-                          {compareError}
-                        </div>
-                      )}
-
-                      {/* Action Buttons */}
-                      <div className="flex gap-3 pt-4 border-t">
-                        <Button
-                          variant="outline"
-                          onClick={() => setShowCompareModal(false)}
-                          className="flex-1"
-                        >
-                          Cancel
-                        </Button>
-                        <LoadingButton
-                          onClick={onCompare}
-                          isLoading={compareLoading}
-                          loadingText="Comparing..."
-                          className="flex-1"
-                          disabled={!resumePdfFile}
-                        >
-                          Start Comparison
-                        </LoadingButton>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                  {isGeneratingPdf ? "Generating PDF..." : "Download PDF"}
+                </LoadingButton>
               </div>
               {tabs.find((tab) => tab.id === activeTab)?.component}
             </div>

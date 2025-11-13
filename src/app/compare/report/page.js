@@ -87,158 +87,154 @@ const ComparisonReportPage = () => {
   };
 
   useEffect(() => {
-    const fetchComparisonData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Try to get ID first (for fetching from API)
-        const id = searchParams.get("id");
-        const resultParam = searchParams.get("result");
-        const storageKey = searchParams.get("storageKey");
-
-        if (storageKey) {
-          // Fetch from localStorage using storage key (highest priority)
-          try {
-            const storedData = getLocalStorageItem(storageKey);
-            if (storedData) {
-              setComparisonData(JSON.parse(storedData));
-            } else {
-              setError(
-                "Comparison data not found in storage. It may have expired."
-              );
-            }
-          } catch (parseError) {
-            console.error("Error parsing stored comparison data:", parseError);
-            setError("Invalid comparison data format in storage");
-          }
-        } else if (resultParam) {
-          // Parse from URL parameter
-          try {
-            const decoded = JSON.parse(decodeURIComponent(resultParam));
-            if (
-              decoded &&
-              typeof decoded === "object" &&
-              decoded.overall_alignment_score !== undefined
-            ) {
-              setComparisonData(decoded);
-              // Store in localStorage for future access
-              const newStorageKey = `comparison_${Date.now()}`;
-              setLocalStorageItem(newStorageKey, JSON.stringify(decoded));
-            } else {
-              throw new Error("Invalid comparison data structure");
-            }
-          } catch (parseError) {
-            console.error("Error parsing comparison data:", parseError);
-            // Try to get from localStorage if URL parsing fails
-            const keys = getLocalStorageKeys();
-            if (keys.length > 0) {
-              const lastKey = keys.sort().reverse()[0];
-              try {
-                const storedData = getLocalStorageItem(lastKey);
-                if (storedData) {
-                  const parsed = JSON.parse(storedData);
-                  if (parsed && parsed.overall_alignment_score !== undefined) {
-                    setComparisonData(parsed);
-                  } else {
-                    setError("Invalid comparison data format in URL");
-                  }
-                } else {
-                  setError("Invalid comparison data format in URL");
-                }
-              } catch {
-                setError("Invalid comparison data format in URL");
-              }
-            } else {
-              setError("Invalid comparison data format in URL");
-            }
-          }
-        } else if (id) {
-          // Fetch from API using ID
-          try {
-            const token = await getToken();
-            const response = await api.get(`/api/comparison/${id}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-
-            if (
-              response.data &&
-              response.data.overall_alignment_score !== undefined
-            ) {
-              setComparisonData(response.data);
-              // Also store in localStorage for future access
-              const storageKey = `comparison_${id}`;
-              setLocalStorageItem(storageKey, JSON.stringify(response.data));
-            } else {
-              setError("Invalid comparison data format from API");
-            }
-          } catch (apiError) {
-            console.error("Error fetching comparison from API:", apiError);
-            // Fallback to localStorage
-            const storedData = getLocalStorageItem(`comparison_${id}`);
-            if (storedData) {
-              try {
-                const parsed = JSON.parse(storedData);
-                if (parsed && parsed.overall_alignment_score !== undefined) {
-                  setComparisonData(parsed);
-                } else {
-                  setError("Invalid comparison data format");
-                }
-              } catch {
-                setError("Failed to parse stored comparison data");
-              }
-            } else {
-              const errorMessage =
-                apiError?.response?.data?.error ||
-                apiError?.message ||
-                "Comparison report not found";
-              setError(errorMessage);
-            }
-          }
-        } else {
-          // Try to get from localStorage as last resort
-          const keys = getLocalStorageKeys();
-          if (keys.length > 0) {
-            const lastKey = keys.sort().reverse()[0];
-            try {
-              const storedData = getLocalStorageItem(lastKey);
-              if (storedData) {
-                const parsed = JSON.parse(storedData);
-                if (parsed && parsed.overall_alignment_score !== undefined) {
-                  setComparisonData(parsed);
-                } else {
-                  setError(
-                    "No comparison data found. Please provide 'id', 'result', or 'storageKey' parameter."
-                  );
-                }
-              } else {
-                setError(
-                  "No comparison data found. Please provide 'id', 'result', or 'storageKey' parameter."
-                );
-              }
-            } catch {
-              setError(
-                "No comparison data found. Please provide 'id', 'result', or 'storageKey' parameter."
-              );
-            }
-          } else {
-            setError(
-              "No comparison data found. Please provide 'id', 'result', or 'storageKey' parameter."
-            );
-          }
-        }
-      } catch (err) {
-        console.error("Error loading comparison report:", err);
-        setError(err.message || "Failed to load comparison report");
-      } finally {
-        setLoading(false);
-      }
+    const mockData = {
+      success: true,
+      jd_gaps: null,
+      sections: {
+        skills: {
+          score: 8.5,
+          jd_gaps: null,
+          matches: [
+            "DevOps",
+            "Amazon Web Services (AWS)",
+            "Google Cloud Platform (GCP)",
+            "Python",
+            "JavaScript",
+            "Django",
+            "FastAPI",
+            "MySQL",
+            "PostgreSQL",
+            "Git",
+            "Redis",
+            "Linux",
+            "Docker",
+            "Terraform",
+            "Kubernetes",
+            "GitHub Actions",
+            "React",
+            "Next.js",
+          ],
+          summary:
+            "Good alignment of skills with some minor omissions in both documents.",
+          comments:
+            "Skills are generally well-aligned. The LinkedIn profile lists a few more specific tools (Prometheus, Grafana, MongoDB) while the resume lists Expressjs. The resume also includes 'Your Skill' twice, which should be removed.",
+          extra_notes:
+            "Express.js and Expressjs are considered the same. React.js and React are considered the same.",
+          missing_in_resume: [
+            "MERN Stack",
+            "MongoDB",
+            "Docker Products",
+            "Prometheus.io",
+            "Grafana",
+          ],
+          missing_in_linkedin: ["Expressjs"],
+        },
+        education: {
+          score: 9.5,
+          matches: [
+            "Government School of Excellence, Maheshwar - High school (10+2), Physics Chemistry and Mathematics",
+          ],
+          summary: "Excellent alignment in education details.",
+          comments:
+            "The education section is perfectly aligned. The resume does not include the certifications listed on LinkedIn, which is a minor omission.",
+          missing_in_resume: [],
+          missing_in_linkedin: [],
+        },
+        experience: {
+          score: 9,
+          matches: [
+            "Freelance Backend & DevOps Engineer at CareerTech Innovation Project",
+            "Back End Developer at Epikdoc AI",
+            "Full Stack Developer (transitioning to DevOps)",
+            "Full Stack Developer at Hysus",
+            "Full Stack Developer at Srijcon",
+          ],
+          summary:
+            "Excellent consistency in work experience details across both documents.",
+          comments:
+            "All work experiences are present in both documents with consistent details. The descriptions of responsibilities are also highly aligned.",
+          contradictions: [],
+          missing_in_resume: [],
+          missing_in_linkedin: [],
+          responsibility_alignment: "High",
+        },
+        "about/summary": {
+          score: 7.5,
+          summary:
+            "Good alignment in messaging, but the resume summary is slightly less detailed.",
+          comments:
+            "Both the LinkedIn 'About' section and the Resume 'Summary' convey the same core message about transitioning from Full Stack to DevOps.",
+          alignment: "High",
+          tone_comparison:
+            "LinkedIn tone: Narrative, slightly forward-looking; Resume tone: Concise, achievement-oriented.",
+          missing_elements: [],
+        },
+        keywords_tone: {
+          score: 7,
+          summary:
+            "Good keyword overlap, but the resume has a stronger focus on achievements.",
+          comments:
+            "There is a strong overlap in core technical keywords. The resume emphasizes quantifiable achievements, while the LinkedIn profile highlights specific technologies and future interests.",
+          resume_only: [
+            "User Engagement",
+            "Deployment Efficiency",
+            "System Performance Improvement",
+            "Team Leadership",
+          ],
+          tone_summary:
+            "LinkedIn tone: Informative, aspirational; Resume tone: Achievement-focused, concise.",
+          linkedin_only: [
+            "Real-time",
+            "Authentication",
+            "Monitoring",
+            "Observability",
+            "AI-driven",
+            "LangChain",
+            "Gemini",
+            "RAG",
+            "Qdrant",
+            "Semantic Queries",
+            "Vector Search",
+          ],
+          common_keywords: [
+            "Full Stack",
+            "DevOps",
+            "AWS",
+            "GCP",
+            "Scalable",
+            "Backend",
+            "Frontend",
+            "Cloud",
+            "Docker",
+            "Kubernetes",
+            "CI/CD",
+            "MySQL",
+            "PostgreSQL",
+            "API",
+            "Deployment",
+            "Performance",
+            "Healthcare",
+          ],
+        },
+      },
+      overall_alignment_score: 8.2,
+      recommendations: [
+        "Add certifications to the resume for completeness.",
+        "Consider adding a 'Current Focus' or 'Interests' section to the resume to align with the LinkedIn profile.",
+        "Remove the placeholder 'Your Skill' entries from the resume's skills section.",
+        "Consider adding quantifiable achievements to the LinkedIn profile to match the resume's achievement-oriented tone.",
+        "Update the LinkedIn profile to include the AI and vector search keywords from the CareerTech Innovation Project experience.",
+      ],
     };
 
-    fetchComparisonData();
-  }, [searchParams, getToken]);
+  
+
+    setComparisonData(mockData);
+    setLoading(false);
+  }, []);
+
+
+
 
   // Helper functions
   const getScoreColor = (score) => {
@@ -248,9 +244,9 @@ const ComparisonReportPage = () => {
   };
 
   const getScoreBadgeVariant = (score) => {
-    if (score >= 8) return "default";
-    if (score >= 6) return "secondary";
-    return "destructive";
+    if (score >= 8) return "green";
+    if (score >= 6) return "yellow";
+    return "red";
   };
 
   const getStatusIcon = (score) => {
@@ -451,7 +447,7 @@ const ComparisonReportPage = () => {
 
   const { overall_alignment_score, sections, recommendations } =
     comparisonData || {};
-  const overallPercentage = (overall_alignment_score || 0) * 10; // Convert 0-10 to 0-100
+  const overallPercentage = (overall_alignment_score || 0) * 10; 
 
   return (
     <div className="min-h-screen bg-background">
@@ -464,7 +460,7 @@ const ComparisonReportPage = () => {
             </h1>
             <Button
               onClick={() => router.push("/compare")}
-              variant="outline"
+              variant="default"
               className="hidden md:flex"
             >
               New Comparison
@@ -474,67 +470,164 @@ const ComparisonReportPage = () => {
             Detailed comparison between your LinkedIn profile and Resume
           </p>
         </div>
+        {/* Overall Score + Section Summary Combined Layout */}
+<div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8 ">
+  {/* Left Panel — Overall Score */}
+  <div className="lg:col-span-2">
+  <Card className="rounded-2xl shadow-sm">
+  <CardContent className="p-4 md:p-8 !pt-4">
+    <div className="flex flex-col items-center text-center space-y-8">
+      
+      {/* Heading */}
+      <h2 className="text-3xl font-bold text-foreground">
+        Overall Score
+      </h2>
 
-        {/* Summary Score Card (Top Banner) */}
-        <Card className="mb-8 bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-          <CardContent className="p-6 md:p-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              {/* Circular Progress */}
-              <div className="flex flex-col items-center gap-4">
-                <CircularProgress
-                  size={160}
-                  strokeWidth={12}
-                  value={overallPercentage}
-                  className={
-                    (overall_alignment_score || 0) >= 8
-                      ? "text-green-600"
-                      : (overall_alignment_score || 0) >= 6
-                      ? "text-yellow-600"
-                      : "text-red-600"
-                  }
-                  indicatorClassName={
-                    (overall_alignment_score || 0) >= 8
-                      ? "text-green-600"
-                      : (overall_alignment_score || 0) >= 6
-                      ? "text-yellow-600"
-                      : "text-red-600"
-                  }
-                >
-                  <div className="text-center">
-                    <div className="text-4xl font-bold">
-                      {(overall_alignment_score || 0).toFixed(1)}
-                    </div>
-                    <div className="text-sm text-muted-foreground">/ 10</div>
-                  </div>
-                </CircularProgress>
-                <div className="text-center">
-                  <Badge
-                    variant={getScoreBadgeVariant(overall_alignment_score)}
-                    className="text-lg px-4 py-1"
-                  >
-                    {overall_alignment_score >= 8
-                      ? "🟢 Excellent Alignment"
-                      : overall_alignment_score >= 6
-                      ? "🟡 Fair Alignment"
-                      : "🔴 Needs Improvement"}
+      {/* Circular Chart */}
+      <CircularProgress
+        size={170}
+        strokeWidth={10}
+        value={overallPercentage}
+        className={
+          (overall_alignment_score || 0) >= 8
+            ? "text-green-600"
+            : (overall_alignment_score || 0) >= 6
+            ? "text-yellow-600"
+            : "text-red-600"
+        }
+        indicatorClassName={
+          (overall_alignment_score || 0) >= 8
+            ? "text-green-600"
+            : (overall_alignment_score || 0) >= 6
+            ? "text-yellow-600"
+            : "text-red-600"
+        }
+      >
+        <div className="text-center">
+          <div className="text-4xl font-bold">
+            {(overall_alignment_score || 0).toFixed(1)}
+          </div>
+          <div className="text-sm text-muted-foreground">/ 10</div>
+        </div>
+      </CircularProgress>
+
+      {/* Badge */}
+      <Badge
+        variant={"secondary"}
+        className="text-base px-6 py-2 rounded-full flex items-center gap-2"
+      >
+        {overall_alignment_score >= 8 ? ( 
+          <>
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-600 animate-pulse" />
+            Excellent Alignment
+          </>
+        ) : overall_alignment_score >= 6 ? (
+          <>
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-yellow-600 animate-pulse" />
+            Fair Alignment
+          </>
+        ) : (
+          <>
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-600 animate-pulse" />
+            Needs Improvement
+          </>
+        )}
+      </Badge>
+
+      {/* Summary Paragraph */}
+      <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
+        {generateOneLineSummary()}
+      </p>
+    </div>
+  </CardContent>
+</Card>
+  </div>
+  {/* Right Panel — Section-Wise Summary Table */}
+  <div className="lg:col-span-3">
+<Card className="mb-8 rounded-2xl shadow-sm">
+  <CardHeader>
+    <CardTitle className="flex items-center gap-2">
+      <BarChart3 className="h-5 w-5" />
+      Section-Wise Alignment Summary
+    </CardTitle>
+    <CardDescription>
+      Overview of section-level alignment between LinkedIn and Resume
+    </CardDescription>
+  </CardHeader>
+
+  <CardContent>
+    <Table>
+      <TableHeader>
+        <TableRow className="bg-muted/50">
+          <TableHead className="w-[200px]">Section</TableHead>
+          <TableHead className="w-[100px]">Score</TableHead>
+          <TableHead className="w-[120px]">Status</TableHead>
+          <TableHead>Quick Insight</TableHead>
+        </TableRow>
+      </TableHeader>
+
+      <TableBody>
+        {sectionData.map((section) => {
+          const Icon = section.icon;
+          return (
+            <TableRow key={section.id} className="hover:bg-accent/40 transition"
+            onClick={() => {
+              const el=document.getElementById(`accordion-${section.id}`);
+              if (el) {
+  const yOffset = -100; 
+  const y =
+    el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+  window.scrollTo({ top: y, behavior: "smooth" });
+  setExpandedSection(section.id);
+   el.classList.add("bg-secondary", "transition-all", "duration-10");
+
+    
+    setTimeout(() => {
+      el.classList.remove("bg-secondary");
+    }, 1500);
+}
+              
+            }}>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Icon className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">{section.name}</span>
+                </div>
+              </TableCell>
+
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <span className={`font-bold ${getScoreColor(section.score)}`}>
+                    {section.score.toFixed(1)}
+                  </span>
+                  <span className="text-muted-foreground text-sm">/10</span>
+                </div>
+              </TableCell>
+
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Badge variant={getScoreBadgeVariant(section.score)}>
+                    {getStatusText(section.score)}
                   </Badge>
                 </div>
-              </div>
+              </TableCell>
 
-              {/* Summary Text */}
-              <div className="flex-1 space-y-4">
-                <div>
-                  <h2 className="text-2xl font-semibold mb-2">Overall Score</h2>
-                  <p className="text-lg text-muted-foreground">
-                    {generateOneLineSummary()}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              <TableCell>
+                <span className="text-sm text-muted-foreground">
+                  {section.quickInsight}
+                </span>
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
+  </CardContent>
+</Card>
+</div>
+</div>
 
-        {/* Section-Wise Summary Table */}
+        {/* Section-Wise Summary Table 
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -626,57 +719,22 @@ const ComparisonReportPage = () => {
           </CardContent>
         </Card>
 
-        {/* Charts Panel */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Visual Score Breakdown
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {sectionData.map((section) => {
-                const percentage = section.score * 10;
-                const Icon = section.icon;
-
-                return (
-                  <div key={section.id} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">{section.name}</span>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <span
-                          className={`text-sm font-bold ${getScoreColor(
-                            section.score
-                          )}`}
-                        >
-                          {section.score.toFixed(1)}/10
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {percentage.toFixed(0)}%
-                        </span>
-                      </div>
-                    </div>
-                    <Progress value={percentage} className="h-3" />
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+  
 
         {/* Detailed Accordion Panels */}
-        <Accordion type="single" collapsible className="w-full space-y-4 mb-8">
+        <Accordion type="single" collapsible
+         value={expandedSection}
+         onValueChange={setExpandedSection}
+        className="w-full space-y-6 mb-8">
           {sectionData.map((section) => {
             const Icon = section.icon;
             return (
               <AccordionItem
                 key={section.id}
                 value={section.id}
-                className="border rounded-lg px-4"
+                id={`accordion-${section.id}`}
+                className="border rounded-lg px-4 bg-card"
+                
               >
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3 flex-1">
@@ -704,7 +762,7 @@ const ComparisonReportPage = () => {
 
         {/* Recommendations */}
         {recommendations && recommendations.length > 0 && (
-          <Card className="mb-8">
+          <Card className="mb-8 bg-accent/50 border border-accent/70">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Lightbulb className="h-5 w-5" />

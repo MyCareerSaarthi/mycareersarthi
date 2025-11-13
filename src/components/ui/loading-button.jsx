@@ -10,12 +10,25 @@ const LoadingButton = React.forwardRef(
       size,
       asChild = false,
       isLoading = false,
+      loading = false, // Support both isLoading and loading props
       loadingText = "Loading...",
       children,
       ...props
     },
     ref
   ) => {
+    // Use either isLoading or loading prop
+    const isActuallyLoading = isLoading || loading;
+
+    // Explicitly exclude loading-related props from being passed to Button
+    // (they're already destructured, but this ensures they never reach the DOM)
+    const {
+      loading: _loading,
+      isLoading: _isLoading,
+      loadingText: _loadingText,
+      ...buttonProps
+    } = props;
+
     return (
       <Button
         ref={ref}
@@ -23,10 +36,10 @@ const LoadingButton = React.forwardRef(
         variant={variant}
         size={size}
         asChild={asChild}
-        disabled={isLoading || props.disabled}
-        {...props}
+        disabled={isActuallyLoading || buttonProps.disabled}
+        {...buttonProps}
       >
-        {isLoading ? (
+        {isActuallyLoading ? (
           <>
             <svg
               xmlns="http://www.w3.org/2000/svg"

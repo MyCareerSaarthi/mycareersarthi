@@ -338,7 +338,7 @@ const ComparisonReportPage = () => {
       },
       {
         id: "education",
-        name: "Education & Certs",
+        name: "Education & Certifications",
         icon: GraduationCap,
         score: sections.education?.score || 0,
         quickInsight: generateQuickInsight("education", sections.education),

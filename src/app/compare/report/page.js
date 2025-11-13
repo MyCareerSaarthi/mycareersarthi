@@ -669,7 +669,11 @@ const ComparisonReportPage = () => {
         </Card>
 
         {/* Detailed Accordion Panels */}
-        <Accordion type="single" collapsible className="w-full space-y-4 mb-8">
+        <Accordion
+          type="multiple"
+          collapsible
+          className="w-full space-y-4 mb-8"
+        >
           {sectionData.map((section) => {
             const Icon = section.icon;
             return (

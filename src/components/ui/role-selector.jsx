@@ -84,6 +84,28 @@ const RoleSelector = ({
     }
   };
 
+  // Fetch job descriptions by role ID
+  const fetchJobDescriptionsByRoleId = async (roleId) => {
+    if (!roleId) {
+      setJobDescriptions([]);
+      return;
+    }
+
+    try {
+      setIsSearchingJobDescriptions(true);
+      const response = await api.get(
+        `/api/rag-data/job-descriptions/role/${roleId}`
+      );
+      const jds = response.data?.job_descriptions || [];
+      setJobDescriptions(jds);
+    } catch (error) {
+      console.error("Failed to fetch job descriptions by role ID:", error);
+      setJobDescriptions([]);
+    } finally {
+      setIsSearchingJobDescriptions(false);
+    }
+  };
+
   // Search for roles
   const searchRoles = async (term) => {
     if (!term.trim()) {
@@ -123,11 +145,30 @@ const RoleSelector = ({
 
   const handleSearchChange = (e) => {
     const term = e.target.value;
+
+    // If user starts typing and there's a selected role, clear the selection
+    // so they can search for a new role
+    if (
+      term !== selectedRole?.name &&
+      term !== selectedJobDescription?.role?.name
+    ) {
+      if (selectedRole || selectedJobDescription) {
+        setSelectedRole(null);
+        setSelectedJobDescription(null);
+      }
+    }
+
     setSearchTerm(term);
 
     // Debounce search
     const timeoutId = setTimeout(() => {
-      searchRoles(term);
+      if (term.trim()) {
+        searchRoles(term);
+      } else {
+        setRoles([]);
+        setFilteredRoles([]);
+        setJobDescriptions([]);
+      }
     }, 300);
 
     return () => clearTimeout(timeoutId);
@@ -135,8 +176,12 @@ const RoleSelector = ({
 
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
+    setSelectedJobDescription(null);
     setSearchTerm(role.name);
     setIsOpen(false);
+
+    // Fetch job descriptions for this role
+    fetchJobDescriptionsByRoleId(role.id);
 
     // Call onChange with role object containing id, name, and experience level
     onChange({
@@ -149,7 +194,10 @@ const RoleSelector = ({
 
   const handleJobDescriptionSelect = (jd) => {
     setSelectedJobDescription(jd);
-    setSearchTerm(jd.role?.name || searchTerm);
+    setSelectedRole(null);
+    // Set search term to the actual role name from the job description
+    const roleName = jd.role?.name || jd.role_name || searchTerm;
+    setSearchTerm(roleName);
     setIsOpen(false);
 
     // Call onChange with job description
@@ -157,7 +205,7 @@ const RoleSelector = ({
       type: "jobDescription",
       jobDescriptionId: jd.id,
       roleId: jd.role_id,
-      roleName: jd.role?.name || searchTerm,
+      roleName: roleName,
       experienceLevel: jd.experience_level || experienceLevel,
       jobDescription: jd,
     });
@@ -171,10 +219,13 @@ const RoleSelector = ({
     onChange(null);
   };
 
+  // Display the actual role name from database when selected, otherwise show search term
   const displayValue = selectedJobDescription
-    ? `${selectedJobDescription.role?.name || searchTerm} (${
-        selectedJobDescription.experience_level || experienceLevel
-      })`
+    ? `${
+        selectedJobDescription.role?.name ||
+        selectedJobDescription.role_name ||
+        searchTerm
+      } (${selectedJobDescription.experience_level || experienceLevel})`
     : selectedRole
     ? `${selectedRole.name} (${
         selectedRole.experience_level || experienceLevel
@@ -277,7 +328,7 @@ const RoleSelector = ({
                     >
                       <div className="flex flex-col">
                         <span className="font-medium">
-                          {jd.role?.name || searchTerm}
+                          {jd.role?.name || jd.role_name || searchTerm}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {jd.experience_level || experienceLevel} •{" "}
@@ -308,8 +359,7 @@ const RoleSelector = ({
                       <div className="flex flex-col">
                         <span>{role.name}</span>
                         <span className="text-xs text-muted-foreground">
-                          {role.experience_level || experienceLevel} • No job
-                          description yet
+                          {role.experience_level || experienceLevel}
                         </span>
                       </div>
                       {selectedRole?.id === role.id && (
@@ -349,6 +399,23 @@ const RoleSelector = ({
                   No results found
                 </div>
               )}
+              <button
+                type="button"
+                onClick={() => {
+                  if (onGenerateJobDescription && searchTerm.trim()) {
+                    onGenerateJobDescription(
+                      searchTerm.trim(),
+                      experienceLevel
+                    );
+                    setIsOpen(false);
+                  }
+                }}
+                disabled={!searchTerm.trim()}
+                className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors text-primary font-medium border border-primary/20 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ✨ Generate Job Description for "{searchTerm}" (
+                {experienceLevel})
+              </button>
             </div>
           )}
         </div>

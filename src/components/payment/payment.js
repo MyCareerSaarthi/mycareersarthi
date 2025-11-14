@@ -5,7 +5,8 @@ const handlePayment = async (
   token,
   user,
   formData,
-  onLoadingChange
+  onLoadingChange,
+  onErrorChange
 ) => {
   try {
     onLoadingChange?.(true);
@@ -22,27 +23,51 @@ const handlePayment = async (
     const orderId = response?.data?.id;
     const amount = response?.data?.amount;
     const analysisRequestId = response?.data?.analysis_request_id;
+
+    if (!orderId || !amount) {
+      throw new Error("Invalid order response - missing order ID or amount");
+    }
+
     var options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: amount,
       currency: "INR",
       name: "MyCareerSarthi",
       order_id: orderId,
-      handler: function (response) {
-        handleVerifyPayment(response, token, serviceType, onLoadingChange);
+      handler: function (razorpayResponse) {
+        handleVerifyPayment(
+          razorpayResponse,
+          token,
+          serviceType,
+          onLoadingChange,
+          onErrorChange
+        );
       },
       prefill: {
-        name: `${user?.firstName} ${user?.lastName}`, //your customer's name
+        name: `${user?.firstName} ${user?.lastName}`,
         email: user?.emailAddresses?.[0]?.emailAddress,
       },
       notes: {
         analysis_request_id: analysisRequestId,
+      },
+      modal: {
+        ondismiss: function () {
+          onErrorChange?.(
+            "Payment cancelled. Please try again if you wish to proceed."
+          );
+        },
       },
     };
     var rzp1 = new window.Razorpay(options);
     rzp1.open();
   } catch (error) {
     console.error("Payment initiation failed:", error);
+    const errorMessage =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message ||
+      "Failed to initiate payment. Please try again or contact support.";
+    onErrorChange?.(errorMessage);
     throw error;
   } finally {
     onLoadingChange?.(false);
@@ -53,7 +78,8 @@ const handleVerifyPayment = async (
   response,
   token,
   serviceType,
-  onLoadingChange
+  onLoadingChange,
+  onErrorChange
 ) => {
   try {
     onLoadingChange?.(true);
@@ -67,6 +93,10 @@ const handleVerifyPayment = async (
         },
       }
     );
+
+    // Small delay to ensure database is updated
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     // Only redirect if we have a reportId or comparisonId
     if (verifyResponse?.data?.reportId) {
       window.location.href = `/${serviceType}/report?id=${verifyResponse?.data?.reportId}`;
@@ -104,12 +134,17 @@ const handleVerifyPayment = async (
     }
   } catch (error) {
     console.error("Payment verification failed:", error);
-    // Don't throw here - let the error be handled by the calling component
-    // The error will be caught by the socket listener or component error handler
+    // Extract error message from response
+    const errorMessage =
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message ||
+      "Payment verification failed. Please try again or contact support.";
+
+    onErrorChange?.(errorMessage);
     throw error;
   } finally {
     onLoadingChange?.(false);
   }
 };
-
 export { handlePayment, handleVerifyPayment };

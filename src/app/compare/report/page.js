@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { CircularProgress } from "@/components/ui/circular-progress";
 import {
   Accordion,
@@ -30,17 +29,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  TrendingUp,
-  TrendingDown,
   CheckCircle2,
   XCircle,
   AlertCircle,
   FileText,
+  Loader2,
   Briefcase,
   GraduationCap,
   Award,
   MessageSquare,
-  ChevronRight,
   Lightbulb,
   BarChart3,
 } from "lucide-react";
@@ -53,6 +50,7 @@ const ComparisonReportPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedSection, setExpandedSection] = useState(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   // Helper function to safely access localStorage
   const getLocalStorageItem = (key) => {
@@ -87,154 +85,219 @@ const ComparisonReportPage = () => {
   };
 
   useEffect(() => {
-    const mockData = {
-      success: true,
-      jd_gaps: null,
-      sections: {
-        skills: {
-          score: 8.5,
-          jd_gaps: null,
-          matches: [
-            "DevOps",
-            "Amazon Web Services (AWS)",
-            "Google Cloud Platform (GCP)",
-            "Python",
-            "JavaScript",
-            "Django",
-            "FastAPI",
-            "MySQL",
-            "PostgreSQL",
-            "Git",
-            "Redis",
-            "Linux",
-            "Docker",
-            "Terraform",
-            "Kubernetes",
-            "GitHub Actions",
-            "React",
-            "Next.js",
-          ],
-          summary:
-            "Good alignment of skills with some minor omissions in both documents.",
-          comments:
-            "Skills are generally well-aligned. The LinkedIn profile lists a few more specific tools (Prometheus, Grafana, MongoDB) while the resume lists Expressjs. The resume also includes 'Your Skill' twice, which should be removed.",
-          extra_notes:
-            "Express.js and Expressjs are considered the same. React.js and React are considered the same.",
-          missing_in_resume: [
-            "MERN Stack",
-            "MongoDB",
-            "Docker Products",
-            "Prometheus.io",
-            "Grafana",
-          ],
-          missing_in_linkedin: ["Expressjs"],
-        },
-        education: {
-          score: 9.5,
-          matches: [
-            "Government School of Excellence, Maheshwar - High school (10+2), Physics Chemistry and Mathematics",
-          ],
-          summary: "Excellent alignment in education details.",
-          comments:
-            "The education section is perfectly aligned. The resume does not include the certifications listed on LinkedIn, which is a minor omission.",
-          missing_in_resume: [],
-          missing_in_linkedin: [],
-        },
-        experience: {
-          score: 9,
-          matches: [
-            "Freelance Backend & DevOps Engineer at CareerTech Innovation Project",
-            "Back End Developer at Epikdoc AI",
-            "Full Stack Developer (transitioning to DevOps)",
-            "Full Stack Developer at Hysus",
-            "Full Stack Developer at Srijcon",
-          ],
-          summary:
-            "Excellent consistency in work experience details across both documents.",
-          comments:
-            "All work experiences are present in both documents with consistent details. The descriptions of responsibilities are also highly aligned.",
-          contradictions: [],
-          missing_in_resume: [],
-          missing_in_linkedin: [],
-          responsibility_alignment: "High",
-        },
-        "about/summary": {
-          score: 7.5,
-          summary:
-            "Good alignment in messaging, but the resume summary is slightly less detailed.",
-          comments:
-            "Both the LinkedIn 'About' section and the Resume 'Summary' convey the same core message about transitioning from Full Stack to DevOps.",
-          alignment: "High",
-          tone_comparison:
-            "LinkedIn tone: Narrative, slightly forward-looking; Resume tone: Concise, achievement-oriented.",
-          missing_elements: [],
-        },
-        keywords_tone: {
-          score: 7,
-          summary:
-            "Good keyword overlap, but the resume has a stronger focus on achievements.",
-          comments:
-            "There is a strong overlap in core technical keywords. The resume emphasizes quantifiable achievements, while the LinkedIn profile highlights specific technologies and future interests.",
-          resume_only: [
-            "User Engagement",
-            "Deployment Efficiency",
-            "System Performance Improvement",
-            "Team Leadership",
-          ],
-          tone_summary:
-            "LinkedIn tone: Informative, aspirational; Resume tone: Achievement-focused, concise.",
-          linkedin_only: [
-            "Real-time",
-            "Authentication",
-            "Monitoring",
-            "Observability",
-            "AI-driven",
-            "LangChain",
-            "Gemini",
-            "RAG",
-            "Qdrant",
-            "Semantic Queries",
-            "Vector Search",
-          ],
-          common_keywords: [
-            "Full Stack",
-            "DevOps",
-            "AWS",
-            "GCP",
-            "Scalable",
-            "Backend",
-            "Frontend",
-            "Cloud",
-            "Docker",
-            "Kubernetes",
-            "CI/CD",
-            "MySQL",
-            "PostgreSQL",
-            "API",
-            "Deployment",
-            "Performance",
-            "Healthcare",
-          ],
-        },
-      },
-      overall_alignment_score: 8.2,
-      recommendations: [
-        "Add certifications to the resume for completeness.",
-        "Consider adding a 'Current Focus' or 'Interests' section to the resume to align with the LinkedIn profile.",
-        "Remove the placeholder 'Your Skill' entries from the resume's skills section.",
-        "Consider adding quantifiable achievements to the LinkedIn profile to match the resume's achievement-oriented tone.",
-        "Update the LinkedIn profile to include the AI and vector search keywords from the CareerTech Innovation Project experience.",
-      ],
+    const fetchComparisonData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const id = searchParams.get("id");
+        const resultParam = searchParams.get("result");
+        const storageKey = searchParams.get("storageKey");
+
+        if (storageKey) {
+          try {
+            const storedData = getLocalStorageItem(storageKey);
+            if (storedData) {
+              setComparisonData(JSON.parse(storedData));
+            } else {
+              setError(
+                "Comparison data not found in storage. It may have expired."
+              );
+            }
+          } catch (parseError) {
+            console.error("Error parsing stored comparison data:", parseError);
+            setError("Invalid comparison data format in storage");
+          }
+        } else if (resultParam) {
+          try {
+            const decoded = JSON.parse(decodeURIComponent(resultParam));
+            if (
+              decoded &&
+              typeof decoded === "object" &&
+              decoded.overall_alignment_score !== undefined
+            ) {
+              setComparisonData(decoded);
+              const newStorageKey = `comparison_${Date.now()}`;
+              setLocalStorageItem(newStorageKey, JSON.stringify(decoded));
+            } else {
+              throw new Error("Invalid comparison data structure");
+            }
+          } catch (parseError) {
+            console.error("Error parsing comparison data:", parseError);
+            const keys = getLocalStorageKeys();
+            if (keys.length > 0) {
+              const lastKey = keys.sort().reverse()[0];
+              try {
+                const storedData = getLocalStorageItem(lastKey);
+                if (storedData) {
+                  const parsed = JSON.parse(storedData);
+                  if (parsed && parsed.overall_alignment_score !== undefined) {
+                    setComparisonData(parsed);
+                  } else {
+                    setError("Invalid comparison data format in URL");
+                  }
+                } else {
+                  setError("Invalid comparison data format in URL");
+                }
+              } catch {
+                setError("Invalid comparison data format in URL");
+              }
+            } else {
+              setError("Invalid comparison data format in URL");
+            }
+          }
+        } else if (id) {
+          try {
+            const token = await getToken();
+            const response = await api.get(`/api/comparison/${id}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (
+              response.data &&
+              response.data.overall_alignment_score !== undefined
+            ) {
+              setComparisonData(response.data);
+              const storageKey = `comparison_${id}`;
+              setLocalStorageItem(storageKey, JSON.stringify(response.data));
+            } else {
+              setError("Invalid comparison data format from API");
+            }
+          } catch (apiError) {
+            console.error("Error fetching comparison from API:", apiError);
+            const storedData = getLocalStorageItem(`comparison_${id}`);
+            if (storedData) {
+              try {
+                const parsed = JSON.parse(storedData);
+                if (parsed && parsed.overall_alignment_score !== undefined) {
+                  setComparisonData(parsed);
+                } else {
+                  setError("Invalid comparison data format");
+                }
+              } catch {
+                setError("Failed to parse stored comparison data");
+              }
+            } else {
+              const errorMessage =
+                apiError?.response?.data?.error ||
+                apiError?.message ||
+                "Comparison report not found";
+              setError(errorMessage);
+            }
+          }
+        } else {
+          const keys = getLocalStorageKeys();
+          if (keys.length > 0) {
+            const lastKey = keys.sort().reverse()[0];
+            try {
+              const storedData = getLocalStorageItem(lastKey);
+              if (storedData) {
+                const parsed = JSON.parse(storedData);
+                if (parsed && parsed.overall_alignment_score !== undefined) {
+                  setComparisonData(parsed);
+                } else {
+                  setError(
+                    "No comparison data found. Please provide 'id', 'result', or 'storageKey' parameter."
+                  );
+                }
+              } else {
+                setError(
+                  "No comparison data found. Please provide 'id', 'result', or 'storageKey' parameter."
+                );
+              }
+            } catch {
+              setError(
+                "No comparison data found. Please provide 'id', 'result', or 'storageKey' parameter."
+              );
+            }
+          } else {
+            setError(
+              "No comparison data found. Please provide 'id', 'result', or 'storageKey' parameter."
+            );
+          }
+        }
+      } catch (err) {
+        console.error("Error loading comparison report:", err);
+        setError(err.message || "Failed to load comparison report");
+      } finally {
+        setLoading(false);
+      }
     };
 
-  
+    fetchComparisonData();
+  }, [searchParams, getToken]);
 
-    setComparisonData(mockData);
-    setLoading(false);
-  }, []);
+  const handleDownloadPdf = async () => {
+    const id = searchParams.get("id");
+    if (!id) {
+      alert("PDF download is available only for saved comparison reports.");
+      return;
+    }
 
+    try {
+      setIsGeneratingPdf(true);
+      const token = await getToken();
 
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+      const response = await fetch(
+        `${baseUrl}/api/comparison/generate-pdf/${id}`,
+        {
+          method: "GET",
+          headers: token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : {},
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message ||
+            errorData.error ||
+            `Failed to generate PDF: ${response.statusText}`
+        );
+      }
+
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/pdf")) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const contentDisposition = response.headers.get("content-disposition");
+        let filename = `comparison-report-${id}.pdf`;
+        if (contentDisposition) {
+          const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+          if (filenameMatch && filenameMatch[1]) {
+            filename = filenameMatch[1];
+          }
+        }
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || errorData.error || "Invalid response from server"
+        );
+      }
+    } catch (error) {
+      console.error("Error generating comparison PDF:", error);
+      alert(error.message || "Failed to generate PDF. Please try again.");
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
 
   // Helper functions
   const getScoreColor = (score) => {
@@ -247,12 +310,6 @@ const ComparisonReportPage = () => {
     if (score >= 8) return "green";
     if (score >= 6) return "yellow";
     return "red";
-  };
-
-  const getStatusIcon = (score) => {
-    if (score >= 8) return <CheckCircle2 className="h-4 w-4 text-green-600" />;
-    if (score >= 6) return <AlertCircle className="h-4 w-4 text-yellow-600" />;
-    return <XCircle className="h-4 w-4 text-red-600" />;
   };
 
   const getStatusText = (score) => {
@@ -269,43 +326,30 @@ const ComparisonReportPage = () => {
     return "bg-red-500";
   };
 
-  // Generate one-line summary
+  // Generate one-line summary from actual data
   const generateOneLineSummary = () => {
     if (!comparisonData?.sections) return "Analyzing alignment...";
-
     const { sections } = comparisonData;
-    const parts = [];
+    let result = [];
 
     // Experience
-    if (sections.experience?.score >= 8) {
-      parts.push("Strong experience match");
-    } else if (sections.experience?.score < 6) {
-      parts.push("Experience gaps detected");
-    }
-
+    if (sections.experience?.score >= 8) result.push("Strong experience match");
+    else if (sections.experience?.score < 6)
+      result.push("Experience gaps detected");
     // Skills
-    if (sections.skills?.score >= 8) {
-      parts.push("skills aligned");
-    } else if (sections.skills?.score < 6) {
-      parts.push("skills need attention");
-    }
-
+    if (sections.skills?.score >= 8) result.push("Skills well aligned");
+    else if (sections.skills?.score < 6) result.push("Skills need attention");
     // About/Summary
-    const aboutScore =
-      sections["about/summary"]?.score || sections?.about_summary?.score;
-    if (aboutScore && aboutScore < 6) {
-      parts.push("improve About & keywords");
-    }
+    const aboutScore = sections["about/summary"]?.score;
+    if (aboutScore && aboutScore < 6) result.push("Improve about & keywords");
 
-    return parts.length > 0
-      ? parts.join(". ") + "."
-      : "Overall alignment analysis complete.";
+    if (result.length > 0) return result.join(". ") + ".";
+    return "Overall alignment analysis complete.";
   };
 
-  // Prepare section data for table
+  // PREPARE DATA: Memoize for table rendering, using the API format and verified access
   const sectionData = useMemo(() => {
     if (!comparisonData?.sections) return [];
-
     const { sections } = comparisonData;
 
     return [
@@ -327,14 +371,8 @@ const ComparisonReportPage = () => {
         id: "about",
         name: "About / Summary",
         icon: MessageSquare,
-        score:
-          sections["about/summary"]?.score ||
-          sections?.about_summary?.score ||
-          0,
-        quickInsight: generateQuickInsight(
-          "about",
-          sections["about/summary"] || sections?.about_summary
-        ),
+        score: sections["about/summary"]?.score ?? 0,
+        quickInsight: generateQuickInsight("about", sections["about/summary"]),
       },
       {
         id: "education",
@@ -351,13 +389,13 @@ const ComparisonReportPage = () => {
         quickInsight: generateQuickInsight("keywords", sections.keywords_tone),
       },
     ];
+    // eslint-disable-next-line
   }, [comparisonData]);
 
   function generateQuickInsight(sectionType, sectionData) {
     if (!sectionData) return "No data available";
-
     switch (sectionType) {
-      case "skills":
+      case "skills": {
         const missingLinkedIn = sectionData.missing_in_linkedin?.length || 0;
         const missingResume = sectionData.missing_in_resume?.length || 0;
         if (missingLinkedIn > 0 && missingResume > 0) {
@@ -367,49 +405,42 @@ const ComparisonReportPage = () => {
         } else if (missingResume > 0) {
           return `${missingResume} missing in Resume`;
         }
-        return "Skills well aligned";
-
-      case "experience":
-        const contradictions = sectionData.contradictions?.length || 0;
+        return "Good skills overlap";
+      }
+      case "experience": {
         const missingLinkedInExp = sectionData.missing_in_linkedin?.length || 0;
         const missingResumeExp = sectionData.missing_in_resume?.length || 0;
-        if (contradictions > 0) {
-          return `${contradictions} title/date mismatch${
-            contradictions > 1 ? "es" : ""
-          }`;
-        } else if (missingLinkedInExp > 0 || missingResumeExp > 0) {
-          return `${missingLinkedInExp + missingResumeExp} missing entries`;
-        }
-        return "Experience aligned";
-
-      case "about":
+        if (missingLinkedInExp > 0 && missingResumeExp > 0)
+          return `${missingLinkedInExp} missing in LinkedIn, ${missingResumeExp} missing in Resume`;
+        else if (missingLinkedInExp > 0)
+          return `Prior roles missing in LinkedIn`;
+        else if (missingResumeExp > 0)
+          return `Some experience details missing in Resume`;
+        return "Work history broadly aligned";
+      }
+      case "about": {
         const alignment = sectionData.alignment || "Unknown";
-        if (alignment === "Low") {
-          return "Add measurable impact";
-        } else if (alignment === "Medium") {
-          return "Tone alignment needs work";
-        }
-        return "Summary well aligned";
-
-      case "education":
-        const missingLinkedInEdu = sectionData.missing_in_linkedin?.length || 0;
-        const missingResumeEdu = sectionData.missing_in_resume?.length || 0;
-        if (missingLinkedInEdu > 0 || missingResumeEdu > 0) {
-          return `${missingLinkedInEdu + missingResumeEdu} missing ${
-            missingLinkedInEdu + missingResumeEdu > 1 ? "items" : "item"
-          }`;
+        if (alignment === "High" || alignment === "Good")
+          return "Good about/summary alignment";
+        if (alignment === "Medium") return "Minor tone differences";
+        if (alignment === "Low") return "About sections need improvement";
+        return "Summary analyzed";
+      }
+      case "education": {
+        const missingLinkedIn = sectionData.missing_in_linkedin?.length || 0;
+        const missingResume = sectionData.missing_in_resume?.length || 0;
+        if (missingLinkedIn > 0 || missingResume > 0) {
+          const count = missingLinkedIn + missingResume;
+          return `${count} missing item${count > 1 ? "s" : ""}`;
         }
         return "Education aligned";
-
-      case "keywords":
+      }
+      case "keywords": {
         const commonKeywords = sectionData.common_keywords?.length || 0;
-        if (commonKeywords === 0) {
-          return "Branding mismatch";
-        } else if (commonKeywords < 5) {
-          return "Limited keyword overlap";
-        }
+        if (commonKeywords === 0) return "No keyword overlap";
+        if (commonKeywords < 5) return "Some branding differences";
         return `${commonKeywords} common keywords`;
-
+      }
       default:
         return "Review needed";
     }
@@ -447,7 +478,7 @@ const ComparisonReportPage = () => {
 
   const { overall_alignment_score, sections, recommendations } =
     comparisonData || {};
-  const overallPercentage = (overall_alignment_score || 0) * 10; 
+  const overallPercentage = overall_alignment_score || 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -458,274 +489,222 @@ const ComparisonReportPage = () => {
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">
               Comparison Report
             </h1>
-            <Button
-              onClick={() => router.push("/compare")}
-              variant="default"
-              className="hidden md:flex"
-            >
-              New Comparison
-            </Button>
+            <div className="hidden md:flex items-center gap-3">
+              <Button
+                onClick={handleDownloadPdf}
+                variant="outline"
+                disabled={isGeneratingPdf}
+              >
+                {isGeneratingPdf ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <FileText className="h-4 w-4 mr-2" />
+                    Download PDF
+                  </>
+                )}
+              </Button>
+              <Button onClick={() => router.push("/compare")}>
+                New Comparison
+              </Button>
+            </div>
           </div>
           <p className="text-sm text-muted-foreground">
             Detailed comparison between your LinkedIn profile and Resume
           </p>
-        </div>
-        {/* Overall Score + Section Summary Combined Layout */}
-<div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8 ">
-  {/* Left Panel — Overall Score */}
-  <div className="lg:col-span-2">
-  <Card className="rounded-2xl shadow-sm">
-  <CardContent className="p-4 md:p-8 !pt-4">
-    <div className="flex flex-col items-center text-center space-y-8">
-      
-      {/* Heading */}
-      <h2 className="text-3xl font-bold text-foreground">
-        Overall Score
-      </h2>
-
-      {/* Circular Chart */}
-      <CircularProgress
-        size={170}
-        strokeWidth={10}
-        value={overallPercentage}
-        className={
-          (overall_alignment_score || 0) >= 8
-            ? "text-green-600"
-            : (overall_alignment_score || 0) >= 6
-            ? "text-yellow-600"
-            : "text-red-600"
-        }
-        indicatorClassName={
-          (overall_alignment_score || 0) >= 8
-            ? "text-green-600"
-            : (overall_alignment_score || 0) >= 6
-            ? "text-yellow-600"
-            : "text-red-600"
-        }
-      >
-        <div className="text-center">
-          <div className="text-4xl font-bold">
-            {(overall_alignment_score || 0).toFixed(1)}
+          <div className="mt-4 flex md:hidden gap-3">
+            <Button
+              onClick={handleDownloadPdf}
+              variant="outline"
+              className="flex-1"
+              disabled={isGeneratingPdf}
+            >
+              {isGeneratingPdf ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <FileText className="h-4 w-4 mr-2" />
+                  PDF
+                </>
+              )}
+            </Button>
+            <Button onClick={() => router.push("/compare")} className="flex-1">
+              New
+            </Button>
           </div>
-          <div className="text-sm text-muted-foreground">/ 10</div>
         </div>
-      </CircularProgress>
-
-      {/* Badge */}
-      <Badge
-        variant={"secondary"}
-        className="text-base px-6 py-2 rounded-full flex items-center gap-2"
-      >
-        {overall_alignment_score >= 8 ? ( 
-          <>
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-600 animate-pulse" />
-            Excellent Alignment
-          </>
-        ) : overall_alignment_score >= 6 ? (
-          <>
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-yellow-600 animate-pulse" />
-            Fair Alignment
-          </>
-        ) : (
-          <>
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-600 animate-pulse" />
-            Needs Improvement
-          </>
-        )}
-      </Badge>
-
-      {/* Summary Paragraph */}
-      <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
-        {generateOneLineSummary()}
-      </p>
-    </div>
-  </CardContent>
-</Card>
-  </div>
-  {/* Right Panel — Section-Wise Summary Table */}
-  <div className="lg:col-span-3">
-<Card className="mb-8 rounded-2xl shadow-sm">
-  <CardHeader>
-    <CardTitle className="flex items-center gap-2">
-      <BarChart3 className="h-5 w-5" />
-      Section-Wise Alignment Summary
-    </CardTitle>
-    <CardDescription>
-      Overview of section-level alignment between LinkedIn and Resume
-    </CardDescription>
-  </CardHeader>
-
-  <CardContent>
-    <Table>
-      <TableHeader>
-        <TableRow className="bg-muted/50">
-          <TableHead className="w-[200px]">Section</TableHead>
-          <TableHead className="w-[100px]">Score</TableHead>
-          <TableHead className="w-[120px]">Status</TableHead>
-          <TableHead>Quick Insight</TableHead>
-        </TableRow>
-      </TableHeader>
-
-      <TableBody>
-        {sectionData.map((section) => {
-          const Icon = section.icon;
-          return (
-            <TableRow key={section.id} className="hover:bg-accent/40 transition"
-            onClick={() => {
-              const el=document.getElementById(`accordion-${section.id}`);
-              if (el) {
-  const yOffset = -100; 
-  const y =
-    el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-  window.scrollTo({ top: y, behavior: "smooth" });
-  setExpandedSection(section.id);
-   el.classList.add("bg-secondary", "transition-all", "duration-10");
-
-    
-    setTimeout(() => {
-      el.classList.remove("bg-secondary");
-    }, 1500);
-}
-              
-            }}>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">{section.name}</span>
-                </div>
-              </TableCell>
-
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <span className={`font-bold ${getScoreColor(section.score)}`}>
-                    {section.score.toFixed(1)}
-                  </span>
-                  <span className="text-muted-foreground text-sm">/10</span>
-                </div>
-              </TableCell>
-
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  <Badge variant={getScoreBadgeVariant(section.score)}>
-                    {getStatusText(section.score)}
+        {/* Score + Section Summary */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8 ">
+          {/* Left Panel — Overall Score */}
+          <div className="lg:col-span-2">
+            <Card className="rounded-2xl shadow-sm">
+              <CardContent className="px-4 pt-4 pb-4 md:px-8 md:pt-4 md:pb-8">
+                <div className="flex flex-col items-center text-center space-y-8">
+                  <h2 className="text-3xl font-bold text-foreground">
+                    Overall Alignment
+                  </h2>
+                  <CircularProgress
+                    size={170}
+                    strokeWidth={10}
+                    value={overallPercentage}
+                    className={
+                      (overall_alignment_score || 0) >= 8
+                        ? "text-green-600"
+                        : (overall_alignment_score || 0) >= 6
+                        ? "text-yellow-600"
+                        : "text-red-600"
+                    }
+                    indicatorClassName={
+                      (overall_alignment_score || 0) >= 8
+                        ? "text-green-600"
+                        : (overall_alignment_score || 0) >= 6
+                        ? "text-yellow-600"
+                        : "text-red-600"
+                    }
+                  >
+                    <div className="text-center">
+                      <div className="text-4xl font-bold">
+                        {overall_alignment_score || 0}%
+                      </div>
+                    </div>
+                  </CircularProgress>
+                  <Badge
+                    variant={"secondary"}
+                    className="text-base px-6 py-2 rounded-full flex items-center gap-2"
+                  >
+                    {overall_alignment_score >= 8 ? (
+                      <>
+                        <span className="inline-block h-2.5 w-2.5 rounded-full bg-green-600 animate-pulse" />
+                        Excellent Alignment
+                      </>
+                    ) : overall_alignment_score >= 6 ? (
+                      <>
+                        <span className="inline-block h-2.5 w-2.5 rounded-full bg-yellow-600 animate-pulse" />
+                        Fair Alignment
+                      </>
+                    ) : (
+                      <>
+                        <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-600 animate-pulse" />
+                        Needs Improvement
+                      </>
+                    )}
                   </Badge>
+                  <p className="text-lg text-muted-foreground leading-relaxed max-w-md">
+                    {generateOneLineSummary()}
+                  </p>
                 </div>
-              </TableCell>
-
-              <TableCell>
-                <span className="text-sm text-muted-foreground">
-                  {section.quickInsight}
-                </span>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
-  </CardContent>
-</Card>
-</div>
-</div>
-
-        {/* Section-Wise Summary Table 
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Section-Wise Alignment Summary
-            </CardTitle>
-            <CardDescription>
-              Click on any row to view detailed analysis
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[200px]">Section</TableHead>
-                  <TableHead className="w-[100px]">Score</TableHead>
-                  <TableHead className="w-[120px]">Status</TableHead>
-                  <TableHead>Quick Insight</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sectionData.map((section) => {
-                  const Icon = section.icon;
-                  const percentage = section.score * 10;
-
-                  return (
-                    <React.Fragment key={section.id}>
-                      <TableRow
-                        className="cursor-pointer hover:bg-accent/50"
-                        onClick={() =>
-                          setExpandedSection(
-                            expandedSection === section.id ? null : section.id
-                          )
-                        }
-                      >
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Icon className="h-4 w-4 text-muted-foreground" />
-                            <span className="font-medium">{section.name}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`font-bold ${getScoreColor(
-                                section.score
-                              )}`}
-                            >
-                              {section.score.toFixed(1)}
-                            </span>
-                            <span className="text-muted-foreground text-sm">
-                              /10
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(section.score)}
-                            <Badge
-                              variant={getScoreBadgeVariant(section.score)}
-                            >
-                              {getStatusText(section.score)}
-                            </Badge>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm text-muted-foreground">
-                            {section.quickInsight}
-                          </span>
-                        </TableCell>
-                      </TableRow>
-                      {expandedSection === section.id && (
-                        <TableRow>
-                          <TableCell colSpan={4} className="p-0">
-                            <div className="p-6 bg-muted/30 border-t">
-                              {renderSectionDetails(
-                                section.id,
-                                comparisonData?.sections
-                              )}
+              </CardContent>
+            </Card>
+          </div>
+          {/* Right Panel — Section-Wise Summary Table */}
+          <div className="lg:col-span-3">
+            <Card className="mb-8 rounded-2xl shadow-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5" />
+                  Section-Wise Alignment Summary
+                </CardTitle>
+                <CardDescription>
+                  Overview of section-level alignment between LinkedIn and
+                  Resume
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50">
+                      <TableHead className="w-[200px]">Section</TableHead>
+                      <TableHead className="w-[100px]">Score</TableHead>
+                      <TableHead className="w-[120px]">Status</TableHead>
+                      <TableHead>Quick Insight</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sectionData.map((section) => {
+                      const Icon = section.icon;
+                      return (
+                        <TableRow
+                          key={section.id}
+                          className="hover:bg-accent/40 transition"
+                          onClick={() => {
+                            const el = document.getElementById(
+                              `accordion-${section.id}`
+                            );
+                            if (el) {
+                              const yOffset = -100;
+                              const y =
+                                el.getBoundingClientRect().top +
+                                window.pageYOffset +
+                                yOffset;
+                              window.scrollTo({ top: y, behavior: "smooth" });
+                              setExpandedSection(section.id);
+                              el.classList.add(
+                                "bg-secondary",
+                                "transition-all",
+                                "duration-10"
+                              );
+                              setTimeout(() => {
+                                el.classList.remove("bg-secondary");
+                              }, 1500);
+                            }
+                          }}
+                        >
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Icon className="h-4 w-4 text-muted-foreground" />
+                              <span className="font-medium">
+                                {section.name}
+                              </span>
                             </div>
                           </TableCell>
+                          <TableCell>
+                            <div className="flex items-center">
+                              <span
+                                className={`font-bold ${getScoreColor(
+                                  section.score
+                                )}`}
+                              >
+                                {section.score}%
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Badge
+                                variant={getScoreBadgeVariant(section.score)}
+                              >
+                                {getStatusText(section.score)}
+                              </Badge>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm text-muted-foreground">
+                              {section.quickInsight}
+                            </span>
+                          </TableCell>
                         </TableRow>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-  
-
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
         {/* Detailed Accordion Panels */}
-        <Accordion type="single" collapsible
-         value={expandedSection}
-         onValueChange={setExpandedSection}
-        className="w-full space-y-6 mb-8">
+        <Accordion
+          type="single"
+          collapsible
+          value={expandedSection}
+          onValueChange={setExpandedSection}
+          className="w-full space-y-6 mb-8"
+        >
           {sectionData.map((section) => {
             const Icon = section.icon;
             return (
@@ -734,15 +713,13 @@ const ComparisonReportPage = () => {
                 value={section.id}
                 id={`accordion-${section.id}`}
                 className="border rounded-lg px-4 bg-card"
-                
               >
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center gap-3 flex-1">
                     <Icon className="h-5 w-5 text-muted-foreground" />
                     <div className="flex-1 text-left">
                       <div className="font-semibold">
-                        {section.name} Alignment Details (
-                        {section.score.toFixed(1)}/10)
+                        {section.name} Alignment Details ({section.score}%)
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {section.quickInsight}
@@ -752,14 +729,13 @@ const ComparisonReportPage = () => {
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="pt-4 pb-2">
-                    {renderSectionDetails(section.id, comparisonData?.sections)}
+                    {renderSectionDetails(section.id, comparisonData.sections)}
                   </div>
                 </AccordionContent>
               </AccordionItem>
             );
           })}
         </Accordion>
-
         {/* Recommendations */}
         {recommendations && recommendations.length > 0 && (
           <Card className="mb-8 bg-accent/50 border border-accent/70">
@@ -788,19 +764,17 @@ const ComparisonReportPage = () => {
     </div>
   );
 
-  // Render detailed section content
+  // REGION: Section Renderers
+
   function renderSectionDetails(sectionId, sections) {
     if (!sections) return null;
-
     switch (sectionId) {
       case "skills":
         return renderSkillsDetails(sections.skills);
       case "experience":
         return renderExperienceDetails(sections.experience);
       case "about":
-        return renderAboutDetails(
-          sections["about/summary"] || sections?.about_summary
-        );
+        return renderAboutDetails(sections["about/summary"]);
       case "education":
         return renderEducationDetails(sections.education);
       case "keywords":
@@ -872,7 +846,6 @@ const ComparisonReportPage = () => {
           </div>
         )}
 
-        {/* Mismatches - Same skill, different representation */}
         {skills.mismatches && skills.mismatches.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -909,7 +882,6 @@ const ComparisonReportPage = () => {
           </div>
         )}
 
-        {/* Alignments - Properly matched skills */}
         {skills.alignments && skills.alignments.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -962,7 +934,6 @@ const ComparisonReportPage = () => {
             </p>
           </div>
         )}
-
         {experience.matches && experience.matches.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -976,7 +947,6 @@ const ComparisonReportPage = () => {
             </ul>
           </div>
         )}
-
         {experience.contradictions && experience.contradictions.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1007,7 +977,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
         {experience.missing_in_linkedin &&
           experience.missing_in_linkedin.length > 0 && (
             <div>
@@ -1023,7 +992,6 @@ const ComparisonReportPage = () => {
               </ul>
             </div>
           )}
-
         {experience.missing_in_resume &&
           experience.missing_in_resume.length > 0 && (
             <div>
@@ -1039,8 +1007,6 @@ const ComparisonReportPage = () => {
               </ul>
             </div>
           )}
-
-        {/* Mismatches - Same experience, different representation */}
         {experience.mismatches && experience.mismatches.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1076,8 +1042,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
-        {/* Alignments - Properly matched experience */}
         {experience.alignments && experience.alignments.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1103,7 +1067,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
         {experience.responsibility_alignment && (
           <div>
             <h4 className="font-semibold mb-2">Responsibility Alignment</h4>
@@ -1120,7 +1083,6 @@ const ComparisonReportPage = () => {
             </Badge>
           </div>
         )}
-
         {experience.comments && (
           <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
             <h4 className="font-semibold mb-2 flex items-center gap-2">
@@ -1139,7 +1101,6 @@ const ComparisonReportPage = () => {
   function renderAboutDetails(about) {
     if (!about)
       return <p className="text-muted-foreground">No data available</p>;
-
     return (
       <div className="space-y-6">
         {about.summary && (
@@ -1148,7 +1109,6 @@ const ComparisonReportPage = () => {
             <p className="text-sm text-muted-foreground">{about.summary}</p>
           </div>
         )}
-
         {about.alignment && (
           <div>
             <h4 className="font-semibold mb-3">Alignment Level</h4>
@@ -1166,7 +1126,6 @@ const ComparisonReportPage = () => {
             </Badge>
           </div>
         )}
-
         {about.tone_comparison && (
           <div>
             <h4 className="font-semibold mb-3">Tone Analysis</h4>
@@ -1174,7 +1133,6 @@ const ComparisonReportPage = () => {
               <p className="text-sm text-muted-foreground">
                 {about.tone_comparison}
               </p>
-              {/* Tone bar visualization */}
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground w-20">
                   Narrative
@@ -1192,7 +1150,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
         {about.missing_elements && about.missing_elements.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1206,8 +1163,6 @@ const ComparisonReportPage = () => {
             </ul>
           </div>
         )}
-
-        {/* Mismatches - Same element, different representation */}
         {about.mismatches && about.mismatches.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1243,8 +1198,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
-        {/* Alignments - Properly matched elements */}
         {about.alignments && about.alignments.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1269,7 +1222,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
         {about.comments && (
           <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
             <h4 className="font-semibold mb-2 flex items-center gap-2">
@@ -1286,7 +1238,6 @@ const ComparisonReportPage = () => {
   function renderEducationDetails(education) {
     if (!education)
       return <p className="text-muted-foreground">No data available</p>;
-
     return (
       <div className="space-y-6">
         {education.summary && (
@@ -1295,7 +1246,6 @@ const ComparisonReportPage = () => {
             <p className="text-sm text-muted-foreground">{education.summary}</p>
           </div>
         )}
-
         {education.matches && education.matches.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1309,7 +1259,6 @@ const ComparisonReportPage = () => {
             </ul>
           </div>
         )}
-
         {education.missing_in_linkedin &&
           education.missing_in_linkedin.length > 0 && (
             <div>
@@ -1324,7 +1273,6 @@ const ComparisonReportPage = () => {
               </ul>
             </div>
           )}
-
         {education.missing_in_resume &&
           education.missing_in_resume.length > 0 && (
             <div>
@@ -1339,8 +1287,6 @@ const ComparisonReportPage = () => {
               </ul>
             </div>
           )}
-
-        {/* Mismatches - Same education, different representation */}
         {education.mismatches && education.mismatches.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1376,8 +1322,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
-        {/* Alignments - Properly matched education */}
         {education.alignments && education.alignments.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1403,7 +1347,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
         {education.comments && (
           <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
             <h4 className="font-semibold mb-2 flex items-center gap-2">
@@ -1431,7 +1374,6 @@ const ComparisonReportPage = () => {
             <p className="text-sm text-muted-foreground">{keywords.summary}</p>
           </div>
         )}
-
         {keywords.common_keywords && keywords.common_keywords.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1447,7 +1389,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
         {keywords.resume_only && keywords.resume_only.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1463,7 +1404,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
         {keywords.linkedin_only && keywords.linkedin_only.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1479,8 +1419,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
-        {/* Mismatches - Same keyword, different representation */}
         {keywords.mismatches && keywords.mismatches.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1516,8 +1454,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
-        {/* Alignments - Properly matched keywords */}
         {keywords.alignments && keywords.alignments.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1543,7 +1479,6 @@ const ComparisonReportPage = () => {
             </div>
           </div>
         )}
-
         {keywords.tone_summary && (
           <div>
             <h4 className="font-semibold mb-2">Tone Summary</h4>
@@ -1552,7 +1487,6 @@ const ComparisonReportPage = () => {
             </p>
           </div>
         )}
-
         {keywords.comments && (
           <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
             <h4 className="font-semibold mb-2 flex items-center gap-2">

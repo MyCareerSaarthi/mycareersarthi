@@ -210,7 +210,9 @@ const ReportsPage = () => {
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     try {
-      return new Date(dateString).toLocaleDateString("en-US", {
+      // Convert to user's local timezone (toLocaleDateString automatically uses local timezone)
+      const date = new Date(dateString);
+      return date.toLocaleDateString(undefined, {
         year: "numeric",
         month: "short",
         day: "numeric",

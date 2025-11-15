@@ -10,12 +10,8 @@ import StepContainer from "@/components/ui/step-container";
 import { api } from "@/components/api/api";
 import { handlePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { io } from "socket.io-client";
-import ProcessLoader from "@/components/process-loader";
+import SimpleLoader from "@/components/simple-loader";
 import { useRouter } from "next/navigation";
-
-// Connect to main server WebSocket
-const socket = io(process.env.NEXT_PUBLIC_API_URL);
 
 export default function ComparePage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -112,75 +108,6 @@ export default function ComparePage() {
       getPricing();
     }
   }, [isLoaded, isSignedIn]);
-
-  // Socket connection - must be before early return
-  useEffect(() => {
-    if (user?.id) {
-      // Register with main server
-      socket.emit("register", user.id);
-
-      // Handle updates from server
-      socket.on("updateProcess", (data) => {
-        setProcessData({
-          title: data.title || "Processing",
-          subtitle: data.subtitle || "Comparing your LinkedIn and Resume",
-          currentStep: data.currentStep || 1,
-          totalSteps: data.totalSteps || 12,
-          percentage: data.percentage || 0,
-        });
-      });
-
-      socket.on("comparisonComplete", (data) => {
-        setIsComparing(false);
-        // Navigate to results page
-        if (data.result) {
-          // Store comparison data in localStorage
-          const storageKey = `comparison_${Date.now()}`;
-          if (typeof window !== "undefined") {
-            try {
-              localStorage.setItem(storageKey, JSON.stringify(data.result));
-            } catch (e) {
-              console.error("Error storing in localStorage:", e);
-            }
-          }
-
-          // Try to use result param if not too long, otherwise use storageKey
-          try {
-            const resultParam = encodeURIComponent(JSON.stringify(data.result));
-            if (resultParam.length < 1500) {
-              router.push(`/compare/report?result=${resultParam}`);
-            } else {
-              router.push(`/compare/report?storageKey=${storageKey}`);
-            }
-          } catch (err) {
-            // Fallback to storageKey if encoding fails
-            router.push(`/compare/report?storageKey=${storageKey}`);
-          }
-        } else if (data.comparisonId) {
-          // If we only have ID, fetch from API
-          router.push(`/compare/report?id=${data.comparisonId}`);
-        } else {
-          router.push("/compare");
-        }
-      });
-
-      socket.on("comparisonError", (error) => {
-        console.error("Comparison error:", error);
-        setIsComparing(false);
-        const errorMessage =
-          error?.message || "Comparison failed. Please try again.";
-        setErrors({ general: errorMessage });
-        // Reset to payment step so user can see the error and try again
-        setCurrentStep(2);
-      });
-    }
-
-    return () => {
-      socket.off("updateProcess");
-      socket.off("comparisonComplete");
-      socket.off("comparisonError");
-    };
-  }, [user, router]);
 
   // Show loading state while checking auth - AFTER all hooks
   if (!isLoaded || !isSignedIn) {
@@ -326,7 +253,18 @@ export default function ComparePage() {
         percentage: 0,
       });
 
-      await handlePayment("comparison", token, user, formData, setIsSubmitting);
+      await handlePayment(
+        "comparison",
+        token,
+        user,
+        formData,
+        setIsSubmitting,
+        (errorMsg) => {
+          setIsComparing(false);
+          setErrors({ general: errorMsg });
+          setCurrentStep(2);
+        }
+      );
     } catch (error) {
       console.error("Form submission failed:", error);
       setIsComparing(false);
@@ -434,22 +372,10 @@ export default function ComparePage() {
 
   // Socket useEffect moved above - removed duplicate
 
-  // Show process demo screen during comparison
+  // Show simple loading screen during comparison
   if (isComparing) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="min-h-[70vh] flex items-center justify-center px-6 py-16">
-          <div className="w-full max-w-3xl">
-            <ProcessLoader
-              stepTitle={processData.title}
-              stepSubtitle={processData.subtitle}
-              currentStep={processData.currentStep}
-              totalSteps={processData.totalSteps}
-              percent={processData.percentage}
-            />
-          </div>
-        </div>
-      </div>
+      <SimpleLoader message="Comparing your LinkedIn profile and resume... This may take a while." />
     );
   }
 
@@ -856,7 +782,7 @@ export default function ComparePage() {
       {/* Header */}
       <div className="container mx-auto px-4 py-6">
         <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">
             LinkedIn ↔ Resume Comparison
           </h1>
           <p className="text-muted-foreground text-sm">

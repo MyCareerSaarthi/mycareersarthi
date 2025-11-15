@@ -106,7 +106,7 @@ Employment Type: Full-time`,
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className={`min-h-[200px] resize-none ${
+        className={`min-h-[200px] max-h-[400px] resize-none overflow-y-auto ${
           error ? "border-destructive" : ""
         }`}
       />

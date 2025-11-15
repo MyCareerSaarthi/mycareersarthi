@@ -12,12 +12,8 @@ import StepContainer from "@/components/ui/step-container";
 import { api } from "@/components/api/api";
 import { handlePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { io } from "socket.io-client";
-import ProcessLoader from "@/components/process-loader";
+import SimpleLoader from "@/components/simple-loader";
 import { useRouter } from "next/navigation";
-
-// Connect to main server WebSocket
-const socket = io(process.env.NEXT_PUBLIC_API_URL);
 
 const LinkedinAnalyze = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -123,51 +119,6 @@ const LinkedinAnalyze = () => {
       getPricing();
     }
   }, [isLoaded, isSignedIn]);
-
-  // Socket connection - must be before early return
-  useEffect(() => {
-    if (user?.id) {
-      // Register with main server
-      socket.emit("register", user.id);
-
-      // Handle updates from server
-      socket.on("updateProcess", (data) => {
-        setProcessData({
-          title: data.title || "Processing",
-          subtitle: data.subtitle || "Analyzing your LinkedIn profile",
-          currentStep: data.currentStep || 1,
-          totalSteps: data.totalSteps || 12,
-          percentage: data.percentage || 0,
-        });
-      });
-
-      socket.on("analysisComplete", (data) => {
-        setIsAnalyzing(false);
-        // Navigate to results page
-        if (data.reportId) {
-          router.push(`/linkedin/report/${data.reportId}`);
-        } else {
-          router.push("/linkedin/reports");
-        }
-      });
-
-      socket.on("analysisError", (error) => {
-        console.error("Analysis error:", error);
-        setIsAnalyzing(false);
-        const errorMessage =
-          error?.message || "Analysis failed. Please try again.";
-        setErrors({ general: errorMessage });
-        // Reset to payment step so user can see the error and try again
-        setCurrentStep(3);
-      });
-    }
-
-    return () => {
-      socket.off("updateProcess");
-      socket.off("analysisComplete");
-      socket.off("analysisError");
-    };
-  }, [user, router]);
 
   // Show loading state while checking auth - AFTER all hooks
   if (!isLoaded || !isSignedIn) {
@@ -401,7 +352,18 @@ const LinkedinAnalyze = () => {
         percentage: 0,
       });
 
-      await handlePayment("linkedin", token, user, formData, setIsSubmitting);
+      await handlePayment(
+        "linkedin",
+        token,
+        user,
+        formData,
+        setIsSubmitting,
+        (errorMsg) => {
+          setIsAnalyzing(false);
+          setErrors({ general: errorMsg });
+          setCurrentStep(3);
+        }
+      );
     } catch (error) {
       console.error("Form submission failed:", error);
       setIsAnalyzing(false);
@@ -467,19 +429,7 @@ const LinkedinAnalyze = () => {
   // Show process demo screen during analysis
   if (isAnalyzing) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="min-h-[70vh] flex items-center justify-center px-6 py-16">
-          <div className="w-full max-w-3xl">
-            <ProcessLoader
-              stepTitle={processData.title}
-              stepSubtitle={processData.subtitle}
-              currentStep={processData.currentStep}
-              totalSteps={processData.totalSteps}
-              percent={processData.percentage}
-            />
-          </div>
-        </div>
-      </div>
+      <SimpleLoader message="Analyzing your LinkedIn profile... This may take a while." />
     );
   }
 
@@ -907,7 +857,7 @@ const LinkedinAnalyze = () => {
       {/* Header */}
       <div className="container mx-auto px-4 py-6">
         <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">
             LinkedIn Profile Analysis
           </h1>
           <p className="text-muted-foreground text-sm">

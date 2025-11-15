@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { api } from "@/components/api/api";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { io } from "socket.io-client";
-const socket = io(process.env.NEXT_PUBLIC_API_URL);
 const Payment = () => {
   const { getToken } = useAuth();
   const user = useUser();
@@ -87,12 +85,8 @@ const Payment = () => {
   };
 
   useEffect(() => {
-    socket.emit("register", userId);
-
-    // Listen for messages from server
-    socket.on("updateProcess", (data) => {
-    });
-  }, [socket]);
+    // No socket connection needed
+  }, []);
   return (
     <div className="flex justify-center items-center h-screen">
       <LoadingButton

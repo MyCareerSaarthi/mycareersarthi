@@ -233,11 +233,58 @@ const RoleSelector = ({
     : searchTerm;
 
   const hasResults = filteredRoles.length > 0 || jobDescriptions.length > 0;
+
+  // Get role IDs and names that are already represented in job descriptions
+  const jobDescriptionRoleIds = new Set(
+    jobDescriptions
+      .map((jd) => jd.role_id || jd.role?.id)
+      .filter((id) => id != null)
+  );
+  const jobDescriptionRoleNames = new Set(
+    jobDescriptions
+      .map((jd) => (jd.role?.name || jd.role_name || "").toLowerCase().trim())
+      .filter((name) => name)
+  );
+
+  // Filter out roles that are already represented in job descriptions
+  const rolesWithoutJobDescriptions = filteredRoles.filter(
+    (role) =>
+      !jobDescriptionRoleIds.has(role.id) &&
+      !jobDescriptionRoleNames.has(role.name.toLowerCase().trim())
+  );
+
+  // Check if there's an exact match for the search term (case-insensitive)
+  // Check both roles and job descriptions
+  // Only check if we have search results and a search term
+  const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+  const hasExactMatchInRoles =
+    normalizedSearchTerm &&
+    filteredRoles.some(
+      (role) => role.name.toLowerCase().trim() === normalizedSearchTerm
+    );
+
+  const hasExactMatchInJobDescriptions =
+    normalizedSearchTerm &&
+    jobDescriptions.some((jd) => {
+      const roleName = (jd.role?.name || jd.role_name || "")
+        .toLowerCase()
+        .trim();
+      return roleName === normalizedSearchTerm;
+    });
+
+  const hasExactMatch = hasExactMatchInRoles || hasExactMatchInJobDescriptions;
+
+  // Don't show generate button if:
+  // 1. Still loading
+  // 2. A role or job description is already selected
+  // 3. There's an exact match for the search term
   const showGenerateButton =
     !isLoading &&
     !isSearchingJobDescriptions &&
-    searchTerm.trim() &&
-    !hasResults;
+    !selectedRole &&
+    !selectedJobDescription &&
+    normalizedSearchTerm &&
+    !hasExactMatch;
 
   return (
     <div className={cn("relative", className)}>
@@ -311,111 +358,114 @@ const RoleSelector = ({
                 <div className="p-3 text-center text-sm text-muted-foreground">
                   Searching...
                 </div>
-              ) : jobDescriptions.length > 0 ? (
-                <>
-                  <div className="p-2 text-xs font-semibold text-muted-foreground border-b border-border">
-                    Job Descriptions ({jobDescriptions.length})
-                  </div>
-                  {jobDescriptions.map((jd) => (
-                    <button
-                      key={jd.id}
-                      type="button"
-                      onClick={() => handleJobDescriptionSelect(jd)}
-                      className={cn(
-                        "w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center justify-between",
-                        selectedJobDescription?.id === jd.id ? "bg-muted" : ""
-                      )}
-                    >
-                      <div className="flex flex-col">
-                        <span className="font-medium">
-                          {jd.role?.name || jd.role_name || searchTerm}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {jd.experience_level || experienceLevel} •{" "}
-                          {jd.company_name || "Company"}
-                        </span>
-                      </div>
-                      {selectedJobDescription?.id === jd.id && (
-                        <Check className="h-4 w-4 text-primary" />
-                      )}
-                    </button>
-                  ))}
-                </>
-              ) : filteredRoles.length > 0 ? (
-                <>
-                  <div className="p-2 text-xs font-semibold text-muted-foreground border-b border-border">
-                    Roles ({filteredRoles.length})
-                  </div>
-                  {filteredRoles.map((role) => (
-                    <button
-                      key={role.id}
-                      type="button"
-                      onClick={() => handleRoleSelect(role)}
-                      className={cn(
-                        "w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center justify-between",
-                        selectedRole?.id === role.id ? "bg-muted" : ""
-                      )}
-                    >
-                      <div className="flex flex-col">
-                        <span>{role.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {role.experience_level || experienceLevel}
-                        </span>
-                      </div>
-                      {selectedRole?.id === role.id && (
-                        <Check className="h-4 w-4 text-primary" />
-                      )}
-                    </button>
-                  ))}
-                </>
-              ) : showGenerateButton ? (
-                <div className="p-3">
-                  <div className="text-sm text-muted-foreground mb-2">
-                    No job description found for "{searchTerm}" at{" "}
-                    {experienceLevel} level
-                  </div>
-                  {onGenerateJobDescription ? (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (onGenerateJobDescription && searchTerm.trim()) {
-                          onGenerateJobDescription(
-                            searchTerm.trim(),
-                            experienceLevel
-                          );
-                          setIsOpen(false);
-                        }
-                      }}
-                      disabled={!searchTerm.trim()}
-                      className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors text-primary font-medium border border-primary/20 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      ✨ Generate Job Description for "{searchTerm}" (
-                      {experienceLevel})
-                    </button>
-                  ) : null}
-                </div>
               ) : (
-                <div className="p-3 text-center text-sm text-muted-foreground">
-                  No results found
-                </div>
+                <>
+                  {jobDescriptions.length > 0 && (
+                    <>
+                      <div className="p-2 text-xs font-semibold text-muted-foreground border-b border-border">
+                        Job Descriptions ({jobDescriptions.length})
+                      </div>
+                      {jobDescriptions.map((jd) => (
+                        <button
+                          key={jd.id}
+                          type="button"
+                          onClick={() => handleJobDescriptionSelect(jd)}
+                          className={cn(
+                            "w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center justify-between",
+                            selectedJobDescription?.id === jd.id
+                              ? "bg-muted"
+                              : ""
+                          )}
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium">
+                              {jd.role?.name || jd.role_name || searchTerm}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {jd.experience_level || experienceLevel} •{" "}
+                              {jd.company_name || "Company"}
+                            </span>
+                          </div>
+                          {selectedJobDescription?.id === jd.id && (
+                            <Check className="h-4 w-4 text-primary" />
+                          )}
+                        </button>
+                      ))}
+                    </>
+                  )}
+                  {rolesWithoutJobDescriptions.length > 0 && (
+                    <>
+                      <div className="p-2 text-xs font-semibold text-muted-foreground border-b border-border">
+                        Roles ({rolesWithoutJobDescriptions.length})
+                      </div>
+                      {rolesWithoutJobDescriptions.map((role) => (
+                        <button
+                          key={role.id}
+                          type="button"
+                          onClick={() => handleRoleSelect(role)}
+                          className={cn(
+                            "w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center justify-between",
+                            selectedRole?.id === role.id ? "bg-muted" : ""
+                          )}
+                        >
+                          <div className="flex flex-col">
+                            <span>{role.name}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {role.experience_level || experienceLevel}
+                            </span>
+                          </div>
+                          {selectedRole?.id === role.id && (
+                            <Check className="h-4 w-4 text-primary" />
+                          )}
+                        </button>
+                      ))}
+                    </>
+                  )}
+                  {showGenerateButton && (
+                    <>
+                      {(rolesWithoutJobDescriptions.length > 0 ||
+                        jobDescriptions.length > 0) && (
+                        <div className="border-t border-border mt-1"></div>
+                      )}
+                      <div className="p-3">
+                        <div className="text-sm text-muted-foreground mb-2">
+                          {rolesWithoutJobDescriptions.length > 0 ||
+                          jobDescriptions.length > 0
+                            ? `No exact match for "${searchTerm}"`
+                            : `No job description found for "${searchTerm}" at ${experienceLevel} level`}
+                        </div>
+                        {onGenerateJobDescription ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (
+                                onGenerateJobDescription &&
+                                searchTerm.trim()
+                              ) {
+                                onGenerateJobDescription(
+                                  searchTerm.trim(),
+                                  experienceLevel
+                                );
+                                setIsOpen(false);
+                              }
+                            }}
+                            disabled={!searchTerm.trim()}
+                            className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors text-primary font-medium border border-primary/20 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            ✨ Generate Job Description for "{searchTerm}" (
+                            {experienceLevel})
+                          </button>
+                        ) : null}
+                      </div>
+                    </>
+                  )}
+                  {!hasResults && !showGenerateButton && (
+                    <div className="p-3 text-center text-sm text-muted-foreground">
+                      No results found
+                    </div>
+                  )}
+                </>
               )}
-              <button
-                type="button"
-                onClick={() => {
-                  if (onGenerateJobDescription && searchTerm.trim()) {
-                    onGenerateJobDescription(
-                      searchTerm.trim(),
-                      experienceLevel
-                    );
-                    setIsOpen(false);
-                  }
-                }}
-                disabled={!searchTerm.trim()}
-                className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors text-primary font-medium border border-primary/20 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                ✨ Generate Job Description for "{searchTerm}" (
-                {experienceLevel})
-              </button>
             </div>
           )}
         </div>

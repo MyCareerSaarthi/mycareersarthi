@@ -44,7 +44,7 @@ const LinkedinAnalyze = () => {
   });
   const [isLoadingPricing, setIsLoadingPricing] = useState(true);
 
-  const [isAnalyzing, setIsAnalyzing] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processData, setProcessData] = useState({
     title: "Starting Analysis",
     subtitle: "Initializing LinkedIn profile analysis",

@@ -275,12 +275,20 @@ const ActivityItem = ({ activity }) => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    if (!dateString) return "N/A";
+    try {
+      // Convert to user's local timezone (toLocaleDateString automatically uses local timezone)
+      const date = new Date(dateString);
+      return date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
+    } catch (error) {
+      return "Invalid Date";
+    }
   };
 
   const getReportUrl = (subType, Id) => {

@@ -59,7 +59,10 @@ const LinkedinAnalyze = () => {
 
   // Step definitions
   const steps = [
-    { title: "Profile", description: "Add LinkedIn URL or PDF" },
+    {
+      title: "Profile",
+      description: "Add LinkedIn URL or upload LinkedIn profile PDF",
+    },
     {
       title: "Job Requirements",
       description: "Select role or add description",
@@ -200,7 +203,7 @@ const LinkedinAnalyze = () => {
       // Profile step validation
       if (!linkedinUrl && !pdfFile) {
         newErrors.profile =
-          "Please provide either a LinkedIn URL or upload a PDF";
+          "Please provide either a LinkedIn URL or upload a LinkedIn profile PDF file";
       }
 
       if (
@@ -393,27 +396,42 @@ const LinkedinAnalyze = () => {
     setIsDragging(false);
 
     const files = e.dataTransfer.files;
-    if (files.length > 0 && files[0].type === "application/pdf") {
-      setPdfFile(files[0]);
-      setErrors((prev) => ({ ...prev, profile: null }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        profile: "Please upload a valid PDF file",
-      }));
+    if (files.length > 0) {
+      const file = files[0];
+      const fileName = file.name.toLowerCase();
+      // LinkedIn profile exports are always PDF files
+      const isValidFile =
+        file.type === "application/pdf" || fileName.endsWith(".pdf");
+
+      if (isValidFile) {
+        setPdfFile(file);
+        setErrors((prev) => ({ ...prev, profile: null }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          profile: "Please upload a valid LinkedIn profile PDF file",
+        }));
+      }
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === "application/pdf") {
-      setPdfFile(file);
-      setErrors((prev) => ({ ...prev, profile: null }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        profile: "Please upload a valid PDF file",
-      }));
+    if (file) {
+      const fileName = file.name.toLowerCase();
+      // LinkedIn profile exports are always PDF files
+      const isValidFile =
+        file.type === "application/pdf" || fileName.endsWith(".pdf");
+
+      if (isValidFile) {
+        setPdfFile(file);
+        setErrors((prev) => ({ ...prev, profile: null }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          profile: "Please upload a valid LinkedIn profile PDF file",
+        }));
+      }
     }
   };
 
@@ -496,7 +514,7 @@ const LinkedinAnalyze = () => {
                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                   />
                 </svg>
-                Upload PDF
+                Upload LinkedIn Profile PDF
               </Label>
               <div
                 className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
@@ -570,7 +588,7 @@ const LinkedinAnalyze = () => {
                         Click to upload or drag and drop
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        PDF files only (max 10MB)
+                        LinkedIn profile PDF only (max 10MB)
                       </p>
                     </div>
                   </div>

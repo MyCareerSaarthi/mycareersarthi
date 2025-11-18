@@ -81,9 +81,26 @@ const handlePayment = async (
       pollTimer = setInterval(async () => {
         if (!modalOpen) return;
         try {
-          const statusResp = await api.get(
-            `/api/rag/status/${analysisRequestId}`
-          );
+          // Use fetch with full URL to bypass Next.js API route interception
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          const statusUrl = `${baseUrl}/api/rag/status/${analysisRequestId}`;
+          
+          const response = await fetch(statusUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const statusResp = {
+            data: await response.json(),
+          };
+          
           if (
             statusResp?.data?.status === "completed" &&
             statusResp?.data?.result_report_id
@@ -101,6 +118,7 @@ const handlePayment = async (
           }
         } catch (err) {
           // ignore transient errors
+          console.warn("Pre-payment polling error (ignored):", err);
         }
       }, 1000); // Reduced from 3000ms to 1000ms for faster detection
     }
@@ -222,29 +240,137 @@ const handleVerifyPayment = async (
       const MAX_POLL_ATTEMPTS = 300; // 10 minutes max (300 * 2 seconds)
 
       // Process is still running, start continuous polling (webhook-like behavior)
-      const poll = async () => {
+      const poll = async (retryCount = 0) => {
         pollCount++;
+        const MAX_RETRIES = 3;
+        
         console.log(
-          `Polling attempt ${pollCount} for analysisRequestId: ${analysisRequestId}`
+          `Polling attempt ${pollCount} for analysisRequestId: ${analysisRequestId}${retryCount > 0 ? ` (retry ${retryCount})` : ''}`
         );
 
         try {
-          const statusResp = await api.get(
-            `/api/rag/status/${analysisRequestId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+          // Construct full URL to avoid Next.js API route conflicts
+          // Next.js intercepts /api/* routes, so we need to use the full backend URL
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          // Ensure baseUrl doesn't have trailing slash
+          const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+          // Ensure analysisRequestId is valid UUID format
+          if (!analysisRequestId || typeof analysisRequestId !== 'string' || analysisRequestId.trim() === '') {
+            throw new Error("Invalid analysis request ID");
+          }
+          const cleanAnalysisId = analysisRequestId.trim();
+          const statusUrl = `${cleanBaseUrl}/api/rag/status/${cleanAnalysisId}`;
+          
+          console.log(`[Poll] Calling status endpoint: ${statusUrl}`);
+          
+          // Use fetch directly with full URL to bypass Next.js API route interception
+          const response = await fetch(statusUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            // Add cache control to prevent caching issues
+            cache: 'no-cache',
+            // Add redirect handling
+            redirect: 'follow',
+          });
+          
+          // Check if response was redirected
+          if (response.redirected) {
+            console.warn(`[Poll] Response was redirected from ${statusUrl} to ${response.url}`);
+          }
+          
+          // Check final URL to ensure we got the right endpoint
+          const finalUrl = response.url || statusUrl;
+          if (!finalUrl.includes('/api/rag/status/')) {
+            console.error(`[Poll] Response URL mismatch! Expected status endpoint, got: ${finalUrl}`);
+            if (retryCount < MAX_RETRIES) {
+              console.log(`[Poll] Retrying in 2 seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+              setTimeout(() => poll(retryCount + 1), 2000);
+              return;
             }
-          );
+            throw new Error(`Wrong endpoint reached: ${finalUrl}`);
+          }
+          
+          if (!response.ok) {
+            // Handle 404, 401, 403, etc. differently
+            if (response.status === 404) {
+              throw new Error(`Analysis request not found: ${cleanAnalysisId}`);
+            } else if (response.status === 401 || response.status === 403) {
+              throw new Error("Authentication failed. Please refresh the page.");
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const responseData = await response.json();
+          
+          const statusResp = {
+            data: responseData,
+            config: { url: finalUrl },
+          };
 
           console.log("Status response:", {
             status: statusResp?.data?.status,
             result_report_id: statusResp?.data?.result_report_id,
+            warning: statusResp?.data?.warning,
+            timeElapsedMinutes: statusResp?.data?.timeElapsedMinutes,
+            fullResponse: statusResp?.data,
+            responseUrl: statusResp?.config?.url,
+            requestUrl: statusUrl,
           });
 
+          // Validate response structure
+          if (!statusResp?.data) {
+            console.error("Invalid status response - no data:", statusResp);
+            if (retryCount < MAX_RETRIES) {
+              console.log(`[Poll] Retrying in 2 seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+              setTimeout(() => poll(retryCount + 1), 2000);
+              return;
+            }
+            throw new Error("Invalid response from server");
+          }
+
+          // Check if we got the root route response (wrong endpoint)
+          if (statusResp?.data?.msg === "MyCareerSarthi API Server" || 
+              statusResp?.data?.status === "Server running successfully" ||
+              (statusResp?.data?.version && statusResp?.data?.worker)) {
+            console.error(`[Poll] Got root route response instead of status endpoint!`);
+            console.error(`[Poll] Request URL: ${statusUrl}`);
+            console.error(`[Poll] Response URL: ${statusResp?.config?.url || 'unknown'}`);
+            console.error(`[Poll] Full response:`, statusResp?.data);
+            
+            // Retry if we haven't exceeded max retries
+            if (retryCount < MAX_RETRIES) {
+              console.log(`[Poll] Retrying in 2 seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+              setTimeout(() => poll(retryCount + 1), 2000);
+              return;
+            }
+            
+            // This means the API call went to the wrong endpoint after retries
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              `API endpoint error: Unable to reach status endpoint after ${MAX_RETRIES} retries. Please refresh the page or contact support with your analysis request ID: ${analysisRequestId}`
+            );
+            return;
+          }
+
+          // Check for invalid status values
+          const validStatuses = ["pending", "running", "completed", "failed"];
+          const responseStatus = statusResp?.data?.status;
+          
+          if (!validStatuses.includes(responseStatus)) {
+            console.error(`Invalid status received: '${responseStatus}'. Full response:`, statusResp?.data);
+            // If we get an invalid status, treat it as an error
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              `Unexpected response from server. Please contact support with your analysis request ID: ${analysisRequestId}`
+            );
+            return;
+          }
+
           if (
-            statusResp?.data?.status === "completed" &&
+            responseStatus === "completed" &&
             statusResp?.data?.result_report_id
           ) {
             // Process completed!
@@ -260,17 +386,38 @@ const handleVerifyPayment = async (
               }`;
             }, remainingTime);
             return;
-          } else if (statusResp?.data?.status === "failed") {
+          } else if (responseStatus === "failed") {
             // Process failed
             console.error("Analysis failed:", statusResp?.data);
             onLoadingChange?.(false);
             onErrorChange?.(
-              statusResp?.data?.error || "Analysis failed. Please try again."
+              statusResp?.data?.error || statusResp?.data?.message || "Analysis failed. Please try again."
             );
             return;
-          } else {
-            // Still processing (running, pending, or any other status)
-            // Continue polling indefinitely - poll every 2 seconds
+          } else if (responseStatus === "running" || responseStatus === "pending") {
+            // Still processing (running or pending)
+            // Check if we've been polling for too long (more than 15 minutes)
+            const totalElapsed = Date.now() - loadingStartTime;
+            const FIFTEEN_MINUTES = 15 * 60 * 1000;
+            
+            if (totalElapsed > FIFTEEN_MINUTES) {
+              console.error("Polling timeout - analysis taking too long");
+              onLoadingChange?.(false);
+              onErrorChange?.(
+                "Analysis is taking longer than expected. The process may have encountered an issue. Please contact support with your analysis request ID: " +
+                  analysisRequestId
+              );
+              return;
+            }
+
+            // Show warning if backend indicates it's taking too long
+            if (statusResp?.data?.warning && statusResp?.data?.timeElapsedMinutes > 15) {
+              console.warn(
+                `Analysis has been running for ${statusResp.data.timeElapsedMinutes} minutes`
+              );
+            }
+
+            // Continue polling - poll every 2 seconds
             if (pollCount >= MAX_POLL_ATTEMPTS) {
               console.error("Max poll attempts reached");
               onLoadingChange?.(false);
@@ -279,27 +426,49 @@ const handleVerifyPayment = async (
               );
               return;
             }
-            setTimeout(() => poll(), 2000);
-          }
-        } catch (err) {
-          // On error, continue polling (might be transient network issue)
-          // Don't give up - keep trying until we get a definitive status
-          console.warn("Error polling status, retrying...", err);
-          if (pollCount >= MAX_POLL_ATTEMPTS) {
-            console.error("Max poll attempts reached after errors");
+            setTimeout(() => poll(0), 2000);
+          } else {
+            // Unknown status - should not happen after validation, but handle it
+            console.error(`Unexpected status after validation: ${responseStatus}`);
             onLoadingChange?.(false);
             onErrorChange?.(
-              "Unable to check analysis status. Please refresh the page or contact support."
+              `Unexpected analysis status: ${responseStatus}. Please contact support with your analysis request ID: ${analysisRequestId}`
             );
             return;
           }
-          setTimeout(() => poll(), 2000);
+        } catch (err) {
+          // On error, check if we should retry
+          console.warn(`Error polling status (retry ${retryCount}/${MAX_RETRIES}):`, err);
+          
+          // If we haven't exceeded retry limit, retry with incremented count
+          if (retryCount < MAX_RETRIES) {
+            console.log(`[Poll] Retrying after error in 2 seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+            setTimeout(() => poll(retryCount + 1), 2000);
+            return;
+          }
+          
+          // After retries exhausted, check if we've been polling for too long
+          const totalElapsed = Date.now() - loadingStartTime;
+          const FIFTEEN_MINUTES = 15 * 60 * 1000;
+          
+          if (totalElapsed > FIFTEEN_MINUTES || pollCount >= MAX_POLL_ATTEMPTS) {
+            console.error("Max poll attempts reached after errors or timeout");
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              "Unable to check analysis status. Please refresh the page or contact support with your analysis request ID: " +
+                analysisRequestId
+            );
+            return;
+          }
+          
+          // Reset retry count for next poll cycle (network might be back)
+          setTimeout(() => poll(0), 2000);
         }
       };
 
       // Start polling immediately (no delay)
       console.log("Starting polling for analysisRequestId:", analysisRequestId);
-      poll();
+      poll(0);
       return; // Don't turn off loading - keep it visible while polling
     } else if (isStillProcessing && !analysisRequestId) {
       // Process is still running but we don't have analysisRequestId
@@ -348,29 +517,132 @@ const handleVerifyPayment = async (
       const MAX_POLL_ATTEMPTS = 300; // 10 minutes max (300 * 2 seconds)
 
       // Poll continuously until completion (webhook-like behavior)
-      const poll = async () => {
+      const poll = async (retryCount = 0) => {
         pollCount++;
+        const MAX_RETRIES = 3;
+        
         console.log(
-          `Fallback polling attempt ${pollCount} for analysisRequestId: ${analysisRequestId}`
+          `Fallback polling attempt ${pollCount} for analysisRequestId: ${analysisRequestId}${retryCount > 0 ? ` (retry ${retryCount})` : ''}`
         );
 
         try {
-          const statusResp = await api.get(
-            `/api/rag/status/${analysisRequestId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+          // Construct full URL to avoid Next.js API route conflicts
+          // Next.js intercepts /api/* routes, so we need to use the full backend URL
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          // Ensure baseUrl doesn't have trailing slash
+          const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+          // Ensure analysisRequestId is valid
+          if (!analysisRequestId || typeof analysisRequestId !== 'string' || analysisRequestId.trim() === '') {
+            throw new Error("Invalid analysis request ID");
+          }
+          const cleanAnalysisId = analysisRequestId.trim();
+          const statusUrl = `${cleanBaseUrl}/api/rag/status/${cleanAnalysisId}`;
+          
+          console.log(`[Fallback Poll] Calling status endpoint: ${statusUrl}`);
+          
+          // Use fetch directly with full URL to bypass Next.js API route interception
+          const response = await fetch(statusUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            // Add cache control to prevent caching issues
+            cache: 'no-cache',
+            // Add redirect handling
+            redirect: 'follow',
+          });
+          
+          // Check if response was redirected
+          if (response.redirected) {
+            console.warn(`[Fallback Poll] Response was redirected from ${statusUrl} to ${response.url}`);
+          }
+          
+          // Check final URL to ensure we got the right endpoint
+          const finalUrl = response.url || statusUrl;
+          if (!finalUrl.includes('/api/rag/status/')) {
+            console.error(`[Fallback Poll] Response URL mismatch! Expected status endpoint, got: ${finalUrl}`);
+            if (retryCount < MAX_RETRIES) {
+              console.log(`[Fallback Poll] Retrying in 2 seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+              setTimeout(() => poll(retryCount + 1), 2000);
+              return;
             }
-          );
+            throw new Error(`Wrong endpoint reached: ${finalUrl}`);
+          }
+          
+          if (!response.ok) {
+            // Handle 404, 401, 403, etc. differently
+            if (response.status === 404) {
+              throw new Error(`Analysis request not found: ${cleanAnalysisId}`);
+            } else if (response.status === 401 || response.status === 403) {
+              throw new Error("Authentication failed. Please refresh the page.");
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const responseData = await response.json();
+          
+          const statusResp = {
+            data: responseData,
+            config: { url: finalUrl },
+          };
 
           console.log("Fallback status response:", {
             status: statusResp?.data?.status,
             result_report_id: statusResp?.data?.result_report_id,
+            warning: statusResp?.data?.warning,
+            timeElapsedMinutes: statusResp?.data?.timeElapsedMinutes,
+            fullResponse: statusResp?.data,
+            responseUrl: statusResp?.config?.url,
+            requestUrl: statusUrl,
           });
 
+          // Validate response structure
+          if (!statusResp?.data) {
+            console.error("Invalid fallback status response - no data:", statusResp);
+            throw new Error("Invalid response from server");
+          }
+
+          // Check if we got the root route response (wrong endpoint)
+          if (statusResp?.data?.msg === "MyCareerSarthi API Server" || 
+              statusResp?.data?.status === "Server running successfully" ||
+              (statusResp?.data?.version && statusResp?.data?.worker)) {
+            console.error(`[Fallback Poll] Got root route response instead of status endpoint!`);
+            console.error(`[Fallback Poll] Request URL: ${statusUrl}`);
+            console.error(`[Fallback Poll] Response URL: ${statusResp?.config?.url || 'unknown'}`);
+            console.error(`[Fallback Poll] Full response:`, statusResp?.data);
+            
+            // Retry if we haven't exceeded max retries
+            if (retryCount < MAX_RETRIES) {
+              console.log(`[Fallback Poll] Retrying in 2 seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+              setTimeout(() => poll(retryCount + 1), 2000);
+              return;
+            }
+            
+            // This means the API call went to the wrong endpoint after retries
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              `API endpoint error: Unable to reach status endpoint after ${MAX_RETRIES} retries. Please refresh the page or contact support with your analysis request ID: ${analysisRequestId}`
+            );
+            return;
+          }
+
+          // Check for invalid status values
+          const validStatuses = ["pending", "running", "completed", "failed"];
+          const responseStatus = statusResp?.data?.status;
+          
+          if (!validStatuses.includes(responseStatus)) {
+            console.error(`Invalid status received in fallback: '${responseStatus}'. Full response:`, statusResp?.data);
+            // If we get an invalid status, treat it as an error
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              `Unexpected response from server. Please contact support with your analysis request ID: ${analysisRequestId}`
+            );
+            return;
+          }
+
           if (
-            statusResp?.data?.status === "completed" &&
+            responseStatus === "completed" &&
             statusResp?.data?.result_report_id
           ) {
             // Process completed!
@@ -388,7 +660,7 @@ const handleVerifyPayment = async (
               }`;
             }, remainingTime);
             return;
-          } else if (statusResp?.data?.status === "failed") {
+          } else if (responseStatus === "failed") {
             // Process failed
             console.error(
               "Analysis failed via fallback polling:",
@@ -396,12 +668,33 @@ const handleVerifyPayment = async (
             );
             onLoadingChange?.(false);
             onErrorChange?.(
-              statusResp?.data?.error || "Analysis failed. Please try again."
+              statusResp?.data?.error || statusResp?.data?.message || "Analysis failed. Please try again."
             );
             return;
-          } else {
-            // Still processing (running, pending, or any other status)
-            // Continue polling indefinitely - poll every 2 seconds
+          } else if (responseStatus === "running" || responseStatus === "pending") {
+            // Still processing (running or pending)
+            // Check if we've been polling for too long (more than 15 minutes)
+            const totalElapsed = Date.now() - loadingStartTime;
+            const FIFTEEN_MINUTES = 15 * 60 * 1000;
+            
+            if (totalElapsed > FIFTEEN_MINUTES) {
+              console.error("Fallback polling timeout - analysis taking too long");
+              onLoadingChange?.(false);
+              onErrorChange?.(
+                "Analysis is taking longer than expected. The process may have encountered an issue. Please contact support with your analysis request ID: " +
+                  analysisRequestId
+              );
+              return;
+            }
+
+            // Show warning if backend indicates it's taking too long
+            if (statusResp?.data?.warning && statusResp?.data?.timeElapsedMinutes > 15) {
+              console.warn(
+                `Analysis has been running for ${statusResp.data.timeElapsedMinutes} minutes`
+              );
+            }
+
+            // Continue polling - poll every 2 seconds
             if (pollCount >= MAX_POLL_ATTEMPTS) {
               console.error("Max poll attempts reached in fallback");
               onLoadingChange?.(false);
@@ -410,26 +703,48 @@ const handleVerifyPayment = async (
               );
               return;
             }
-            setTimeout(() => poll(), 2000);
-          }
-        } catch (err) {
-          // On error, continue polling (might be transient network issue)
-          // Don't give up - keep trying until we get a definitive status
-          console.warn("Error in fallback polling, retrying...", err);
-          if (pollCount >= MAX_POLL_ATTEMPTS) {
-            console.error("Max poll attempts reached after errors in fallback");
+            setTimeout(() => poll(0), 2000);
+          } else {
+            // Unknown status - should not happen after validation, but handle it
+            console.error(`Unexpected status after validation in fallback: ${responseStatus}`);
             onLoadingChange?.(false);
             onErrorChange?.(
-              "Unable to check analysis status. Please refresh the page or contact support."
+              `Unexpected analysis status: ${responseStatus}. Please contact support with your analysis request ID: ${analysisRequestId}`
             );
             return;
           }
-          setTimeout(() => poll(), 2000);
+        } catch (err) {
+          // On error, check if we should retry
+          console.warn(`Error in fallback polling (retry ${retryCount}/${MAX_RETRIES}):`, err);
+          
+          // If we haven't exceeded retry limit, retry with incremented count
+          if (retryCount < MAX_RETRIES) {
+            console.log(`[Fallback Poll] Retrying after error in 2 seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+            setTimeout(() => poll(retryCount + 1), 2000);
+            return;
+          }
+          
+          // After retries exhausted, check if we've been polling for too long
+          const totalElapsed = Date.now() - loadingStartTime;
+          const FIFTEEN_MINUTES = 15 * 60 * 1000;
+          
+          if (totalElapsed > FIFTEEN_MINUTES || pollCount >= MAX_POLL_ATTEMPTS) {
+            console.error("Max poll attempts reached after errors in fallback or timeout");
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              "Unable to check analysis status. Please refresh the page or contact support with your analysis request ID: " +
+                analysisRequestId
+            );
+            return;
+          }
+          
+          // Reset retry count for next poll cycle (network might be back)
+          setTimeout(() => poll(0), 2000);
         }
       };
 
       // Start polling immediately (no delay)
-      poll();
+      poll(0);
       return; // Don't turn off loading - keep it visible while polling
     }
 

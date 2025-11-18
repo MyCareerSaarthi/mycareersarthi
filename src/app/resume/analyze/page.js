@@ -59,7 +59,7 @@ const ResumeAnalyze = () => {
 
   // Step definitions
   const steps = [
-    { title: "Resume Upload", description: "Upload your resume PDF" },
+    { title: "Resume Upload", description: "Upload your resume (PDF, DOCX, or TXT)" },
     {
       title: "Job Requirements",
       description: "Select role or add description",
@@ -379,27 +379,50 @@ const ResumeAnalyze = () => {
     setIsDragging(false);
 
     const files = e.dataTransfer.files;
-    if (files.length > 0 && files[0].type === "application/pdf") {
-      setPdfFile(files[0]);
-      setErrors((prev) => ({ ...prev, resume: null }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        resume: "Please upload a valid PDF file",
-      }));
+    if (files.length > 0) {
+      const file = files[0];
+      const fileName = file.name.toLowerCase();
+      const isValidFile = 
+        file.type === "application/pdf" ||
+        fileName.endsWith(".pdf") ||
+        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        fileName.endsWith(".docx") ||
+        file.type === "text/plain" ||
+        fileName.endsWith(".txt");
+      
+      if (isValidFile) {
+        setPdfFile(file);
+        setErrors((prev) => ({ ...prev, resume: null }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          resume: "Please upload a valid PDF, DOCX, or TXT file",
+        }));
+      }
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.type === "application/pdf") {
-      setPdfFile(file);
-      setErrors((prev) => ({ ...prev, resume: null }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        resume: "Please upload a valid PDF file",
-      }));
+    if (file) {
+      const fileName = file.name.toLowerCase();
+      const isValidFile = 
+        file.type === "application/pdf" ||
+        fileName.endsWith(".pdf") ||
+        file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        fileName.endsWith(".docx") ||
+        file.type === "text/plain" ||
+        fileName.endsWith(".txt");
+      
+      if (isValidFile) {
+        setPdfFile(file);
+        setErrors((prev) => ({ ...prev, resume: null }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          resume: "Please upload a valid PDF, DOCX, or TXT file",
+        }));
+      }
     }
   };
 
@@ -460,7 +483,7 @@ const ResumeAnalyze = () => {
                   type="file"
                   ref={fileInputRef}
                   className="hidden"
-                  accept=".pdf"
+                  accept=".pdf,.docx,.txt"
                   onChange={handleFileChange}
                 />
                 {pdfFile ? (
@@ -515,7 +538,7 @@ const ResumeAnalyze = () => {
                         Click to upload or drag and drop
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        PDF files only (max 10MB)
+                        PDF, DOCX, or TXT files (max 10MB)
                       </p>
                     </div>
                   </div>

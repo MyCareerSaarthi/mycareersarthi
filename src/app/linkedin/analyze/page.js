@@ -6,7 +6,6 @@ import { LoadingButton } from "@/components/ui/loading-button";
 import { Label } from "@/components/ui/label";
 import RoleSelector from "@/components/ui/role-selector";
 import JobDescriptionInput from "@/components/ui/job-description-input";
-import JobDescriptionGenerator from "@/components/ui/job-description-generator";
 import StepNavigation from "@/components/ui/step-navigation";
 import StepContainer from "@/components/ui/step-container";
 import { api } from "@/components/api/api";
@@ -21,12 +20,6 @@ const LinkedinAnalyze = () => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
   const [inputMode, setInputMode] = useState("role"); // "role" or "jobDescription"
-  const [showJobDescriptionGenerator, setShowJobDescriptionGenerator] =
-    useState(false);
-  const [generatedJobDescription, setGeneratedJobDescription] = useState(null);
-  const [roleNameForGeneration, setRoleNameForGeneration] = useState("");
-  const [experienceLevelForGeneration, setExperienceLevelForGeneration] =
-    useState("Mid-level");
   const [isDragging, setIsDragging] = useState(false);
   const [pdfFile, setPdfFile] = useState(null);
   const [errors, setErrors] = useState({});
@@ -112,9 +105,9 @@ const LinkedinAnalyze = () => {
   // Check authentication - must be before early return
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.push("/login?redirect=/linkedin/analyze");
+      window.location.href = "/login?redirect=/linkedin/analyze";
     }
-  }, [isLoaded, isSignedIn, router]);
+  }, [isLoaded, isSignedIn]);
 
   // Get pricing - must be before early return
   useEffect(() => {
@@ -218,17 +211,12 @@ const LinkedinAnalyze = () => {
 
     if (step === 2) {
       // Job requirements step validation
-      if (inputMode === "role" && !selectedRole && !generatedJobDescription) {
-        newErrors.role = "Please select a role or generate a job description";
+      if (inputMode === "role" && !selectedRole) {
+        newErrors.role = "Please select a role";
       }
 
-      if (
-        inputMode === "jobDescription" &&
-        !jobDescription.trim() &&
-        !generatedJobDescription
-      ) {
-        newErrors.jobDescription =
-          "Please enter a job description or generate one";
+      if (inputMode === "jobDescription" && !jobDescription.trim()) {
+        newErrors.jobDescription = "Please enter a job description";
       }
     }
 
@@ -265,16 +253,9 @@ const LinkedinAnalyze = () => {
         formData.append("file", pdfFile);
       }
       if (inputMode === "role" && selectedRole) {
-        if (selectedRole.type === "jobDescription") {
-          // User selected an existing job description
-          formData.append("jobDescriptionId", selectedRole.jobDescriptionId);
-          formData.append("roleId", selectedRole.roleId);
-          formData.append("roleName", selectedRole.roleName);
-          if (selectedRole.experienceLevel) {
-            formData.append("experienceLevel", selectedRole.experienceLevel);
-          }
-        } else if (selectedRole.type === "existing") {
-          // User selected an existing role (no job description yet)
+        // Job descriptions are independent - only handle role selection
+        if (selectedRole.type === "existing") {
+          // User selected an existing role - analysis will be against role + experience level
           formData.append("roleId", selectedRole.roleId);
           formData.append("roleName", selectedRole.roleName);
           if (selectedRole.experienceLevel) {
@@ -282,62 +263,12 @@ const LinkedinAnalyze = () => {
           }
         } else if (selectedRole.type === "custom") {
           formData.append("roleName", selectedRole.roleName);
+          // Default experience level if not provided
+          formData.append("experienceLevel", "Mid-level");
         }
       }
-      // Handle job description - prioritize generated over manual input
-      if (generatedJobDescription) {
-        // Convert the job description object to a formatted string
-        const jdText =
-          `Job Title: ${
-            generatedJobDescription.jobDescription.title || ""
-          }\n\n` +
-          `Company: ${
-            generatedJobDescription.jobDescription.company_name || ""
-          }\n` +
-          `Location: ${
-            generatedJobDescription.jobDescription.location || ""
-          }\n` +
-          `Experience Level: ${
-            generatedJobDescription.jobDescription.experience_level || ""
-          }\n\n` +
-          `Description:\n${
-            generatedJobDescription.jobDescription.description || ""
-          }\n\n` +
-          `Requirements:\n${
-            generatedJobDescription.jobDescription.requirements || ""
-          }\n\n` +
-          `Must Have Skills: ${
-            Array.isArray(
-              generatedJobDescription.jobDescription.must_have_skills
-            )
-              ? generatedJobDescription.jobDescription.must_have_skills.join(
-                  ", "
-                )
-              : generatedJobDescription.jobDescription.must_have_skills || ""
-          }\n` +
-          `Nice to Have Skills: ${
-            Array.isArray(
-              generatedJobDescription.jobDescription.nice_to_have_skills
-            )
-              ? generatedJobDescription.jobDescription.nice_to_have_skills.join(
-                  ", "
-                )
-              : generatedJobDescription.jobDescription.nice_to_have_skills || ""
-          }\n` +
-          `Good to Have Skills: ${
-            Array.isArray(
-              generatedJobDescription.jobDescription.good_to_have_skills
-            )
-              ? generatedJobDescription.jobDescription.good_to_have_skills.join(
-                  ", "
-                )
-              : generatedJobDescription.jobDescription.good_to_have_skills || ""
-          }`;
-        formData.append("jobDescription", jdText);
-        if (generatedJobDescription.roleName) {
-          formData.append("roleName", generatedJobDescription.roleName);
-        }
-      } else if (inputMode === "jobDescription" && jobDescription) {
+      // Handle job description - manual input only
+      if (inputMode === "jobDescription" && jobDescription) {
         formData.append("jobDescription", jobDescription);
       }
       if (appliedCoupon) {
@@ -649,75 +580,20 @@ const LinkedinAnalyze = () => {
                 </button>
               </div>
 
-              {showJobDescriptionGenerator ? (
-                <JobDescriptionGenerator
-                  roleName={roleNameForGeneration}
-                  experienceLevel={experienceLevelForGeneration}
-                  onJobDescriptionGenerated={(data) => {
-                    setGeneratedJobDescription(data);
-                    setShowJobDescriptionGenerator(false);
-                    setInputMode("jobDescription");
-                    // Set the job description text for display
-                    const jdText =
-                      `Job Title: ${data.jobDescription.title || ""}\n\n` +
-                      `Company: ${data.jobDescription.company_name || ""}\n` +
-                      `Location: ${data.jobDescription.location || ""}\n` +
-                      `Experience Level: ${
-                        data.jobDescription.experience_level || ""
-                      }\n\n` +
-                      `Description:\n${
-                        data.jobDescription.description || ""
-                      }\n\n` +
-                      `Requirements:\n${
-                        data.jobDescription.requirements || ""
-                      }\n\n` +
-                      `Must Have Skills: ${
-                        Array.isArray(data.jobDescription.must_have_skills)
-                          ? data.jobDescription.must_have_skills.join(", ")
-                          : data.jobDescription.must_have_skills || ""
-                      }\n` +
-                      `Nice to Have Skills: ${
-                        Array.isArray(data.jobDescription.nice_to_have_skills)
-                          ? data.jobDescription.nice_to_have_skills.join(", ")
-                          : data.jobDescription.nice_to_have_skills || ""
-                      }\n` +
-                      `Good to Have Skills: ${
-                        Array.isArray(data.jobDescription.good_to_have_skills)
-                          ? data.jobDescription.good_to_have_skills.join(", ")
-                          : data.jobDescription.good_to_have_skills || ""
-                      }`;
-                    setJobDescription(jdText);
-                  }}
-                  onCancel={() => {
-                    setShowJobDescriptionGenerator(false);
-                    setRoleNameForGeneration("");
-                  }}
+              {inputMode === "role" ? (
+                <RoleSelector
+                  value={selectedRole}
+                  onChange={setSelectedRole}
+                  error={errors.role}
+                  placeholder="Search and select your target role..."
                 />
               ) : (
-                <>
-                  {inputMode === "role" ? (
-                    <RoleSelector
-                      value={selectedRole}
-                      onChange={setSelectedRole}
-                      error={errors.role}
-                      placeholder="Search and select your target role..."
-                      onGenerateJobDescription={(roleName, experienceLevel) => {
-                        setRoleNameForGeneration(roleName);
-                        setExperienceLevelForGeneration(
-                          experienceLevel || "Mid-level"
-                        );
-                        setShowJobDescriptionGenerator(true);
-                      }}
-                    />
-                  ) : (
-                    <JobDescriptionInput
-                      value={jobDescription}
-                      onChange={setJobDescription}
-                      error={errors.jobDescription}
-                      placeholder="Enter the job description for the role you're targeting..."
-                    />
-                  )}
-                </>
+                <JobDescriptionInput
+                  value={jobDescription}
+                  onChange={setJobDescription}
+                  error={errors.jobDescription}
+                  placeholder="Enter the job description for the role you're targeting..."
+                />
               )}
             </div>
           </div>
@@ -914,12 +790,8 @@ const LinkedinAnalyze = () => {
             currentStep === 1
               ? !linkedinUrl && !pdfFile
               : currentStep === 2
-              ? (inputMode === "role" &&
-                  !selectedRole &&
-                  !generatedJobDescription) ||
-                (inputMode === "jobDescription" &&
-                  !jobDescription.trim() &&
-                  !generatedJobDescription)
+              ? (inputMode === "role" && !selectedRole) ||
+                (inputMode === "jobDescription" && !jobDescription.trim())
               : false
           }
           isPreviousDisabled={currentStep === 1}

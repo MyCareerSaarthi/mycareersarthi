@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/navbar-04/logo";
 import { NavMenu } from "@/components/navbar-04/nav-menu";
 import { NavigationSheet } from "@/components/navbar-04/navigation-sheet";
-import Link from "next/link";
+import { HardLink } from "@/components/ui/hard-link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { UserDropdown } from "@/components/user/user-dropdown";
 import { ModeToggle } from "../theme-toggle";
@@ -19,9 +19,9 @@ export const Navbar = () => {
         <div className="flex items-center gap-3">
           <ModeToggle />
           <SignedOut>
-            <Link href={"/login"}>
+            <HardLink href={"/login"}>
               <Button className="rounded-full">Get Started</Button>
-            </Link>
+            </HardLink>
           </SignedOut>
           <SignedIn>
             <UserDropdown />

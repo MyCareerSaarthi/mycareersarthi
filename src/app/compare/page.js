@@ -98,9 +98,9 @@ export default function ComparePage() {
   // Check authentication - must be before early return
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.push("/login?redirect=/compare");
+      window.location.href = "/login?redirect=/compare";
     }
-  }, [isLoaded, isSignedIn, router]);
+  }, [isLoaded, isSignedIn]);
 
   // Get pricing - must be before early return
   useEffect(() => {

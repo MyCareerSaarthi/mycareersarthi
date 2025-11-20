@@ -233,7 +233,7 @@ const ReportsPage = () => {
     } else {
       reportUrl = `/reports`;
     }
-    router.push(reportUrl);
+    window.location.href = reportUrl;
   };
 
   // Use overall_score instead of score with null safety

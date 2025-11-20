@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { HardLink } from "@/components/ui/hard-link";
 import { motion } from "framer-motion";
 import {
   Linkedin,
@@ -84,8 +84,9 @@ const HeroSection = () => {
                   <Button
                     variant="outline"
                     className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                    onClick={() => window.location.href = "/linkedin/analyze"}
                   >
-                    <Link href="/linkedin/analyze">Get Started</Link>
+                    Get Started
                   </Button>
                 </div>
               </CardContent>
@@ -107,8 +108,9 @@ const HeroSection = () => {
                   <Button
                     variant="outline"
                     className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                    onClick={() => window.location.href = "/resume/analyze"}
                   >
-                    <Link href="/resume/analyze">Get Started</Link>
+                    Get Started
                   </Button>
                 </div>
               </CardContent>

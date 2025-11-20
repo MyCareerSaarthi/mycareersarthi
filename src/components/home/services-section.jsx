@@ -11,7 +11,7 @@ import {
 import { motion } from "framer-motion";
 import { Linkedin, FileText, Users, CheckCircle } from "lucide-react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import Link from "next/link";
+import { HardLink } from "@/components/ui/hard-link";
 
 const services = [
   {
@@ -110,20 +110,20 @@ const ServicesSection = () => {
                     </ul>
                     <SignedOut>
                       <Button
-                        asChild
                         variant="outline"
                         className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                        onClick={() => window.location.href = "/signup"}
                       >
-                        <Link href="/signup">Get Started</Link>
+                        Get Started
                       </Button>
                     </SignedOut>
                     <SignedIn>
                       <Button
-                        asChild
                         variant="outline"
                         className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                        onClick={() => window.location.href = "/dashboard"}
                       >
-                        <Link href="/dashboard">Use Service</Link>
+                        Use Service
                       </Button>
                     </SignedIn>
                   </CardContent>

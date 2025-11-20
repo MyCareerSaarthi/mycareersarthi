@@ -5,6 +5,7 @@ import {
   TwitchIcon,
   TwitterIcon,
 } from "lucide-react";
+import { HardLink } from "@/components/ui/hard-link";
 import Link from "next/link";
 
 const footerLinks = [
@@ -65,12 +66,21 @@ export const Footer = () => {
           <ul className="mt-6 flex items-center gap-4 flex-wrap">
             {footerLinks.map(({ title, href }) => (
               <li key={title}>
-                <Link
-                  href={href}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  {title}
-                </Link>
+                {href === "#" ? (
+                  <Link
+                    href={href}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    {title}
+                  </Link>
+                ) : (
+                  <HardLink
+                    href={href}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    {title}
+                  </HardLink>
+                )}
               </li>
             ))}
           </ul>
@@ -80,13 +90,12 @@ export const Footer = () => {
           {/* Copyright */}
           <span className="text-gray-400">
             &copy; {new Date().getFullYear()}{" "}
-            <Link
+            <HardLink
               href="/"
-              target="_blank"
               className="text-white hover:text-gray-300 transition-colors"
             >
               MyCareerSarthi
-            </Link>
+            </HardLink>
             . All rights reserved.
           </span>
 

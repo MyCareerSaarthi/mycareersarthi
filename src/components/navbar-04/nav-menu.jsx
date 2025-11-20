@@ -6,7 +6,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import Link from "next/link";
+import { HardLink } from "@/components/ui/hard-link";
 import { useAuth } from "@clerk/nextjs";
 import { ProductDropdown } from "./product-dropdown";
 
@@ -20,12 +20,12 @@ export const NavMenu = (props) => {
       <NavigationMenuList className="gap-3 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start data-[orientation=vertical]:justify-start">
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="/">Home</Link>
+            <HardLink href="/">Home</HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="/pricing">Pricing</Link>
+            <HardLink href="/pricing">Pricing</HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
@@ -33,13 +33,13 @@ export const NavMenu = (props) => {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="/about-us">About</Link>
+            <HardLink href="/about-us">About</HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <Link href="/contact-us">Contact Us</Link>
+            <HardLink href="/contact-us">Contact Us</HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

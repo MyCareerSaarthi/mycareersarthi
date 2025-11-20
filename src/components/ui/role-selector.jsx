@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/components/api/api";
-import { Check, ChevronDown, Search, X } from "lucide-react";
+import { Check, ChevronDown, Search, X, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -29,19 +29,15 @@ const RoleSelector = ({
   error,
   placeholder = "Search and select a role...",
   className = "",
-  onGenerateJobDescription,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [experienceLevel, setExperienceLevel] = useState("Mid-level");
   const [roles, setRoles] = useState([]);
   const [filteredRoles, setFilteredRoles] = useState([]);
-  const [jobDescriptions, setJobDescriptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSearchingJobDescriptions, setIsSearchingJobDescriptions] =
-    useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
-  const [selectedJobDescription, setSelectedJobDescription] = useState(null);
 
   const dropdownRef = useRef(null);
   const inputRef = useRef(null);
@@ -60,58 +56,13 @@ const RoleSelector = ({
     };
   }, []);
 
-  // Search for job descriptions when role name and experience level are available
-  const searchJobDescriptions = async (roleName, expLevel) => {
-    if (!roleName.trim() || !expLevel) {
-      setJobDescriptions([]);
-      return;
-    }
-
-    try {
-      setIsSearchingJobDescriptions(true);
-      const response = await api.get(
-        `/api/rag-data/search-job-descriptions?roleName=${encodeURIComponent(
-          roleName
-        )}&experienceLevel=${encodeURIComponent(expLevel)}`
-      );
-      const jds = response.data?.job_descriptions || [];
-      setJobDescriptions(jds);
-    } catch (error) {
-      console.error("Failed to search job descriptions:", error);
-      setJobDescriptions([]);
-    } finally {
-      setIsSearchingJobDescriptions(false);
-    }
-  };
-
-  // Fetch job descriptions by role ID
-  const fetchJobDescriptionsByRoleId = async (roleId) => {
-    if (!roleId) {
-      setJobDescriptions([]);
-      return;
-    }
-
-    try {
-      setIsSearchingJobDescriptions(true);
-      const response = await api.get(
-        `/api/rag-data/job-descriptions/role/${roleId}`
-      );
-      const jds = response.data?.job_descriptions || [];
-      setJobDescriptions(jds);
-    } catch (error) {
-      console.error("Failed to fetch job descriptions by role ID:", error);
-      setJobDescriptions([]);
-    } finally {
-      setIsSearchingJobDescriptions(false);
-    }
-  };
+  // Job descriptions removed - only roles are shown
 
   // Search for roles
   const searchRoles = async (term) => {
     if (!term.trim()) {
       setRoles([]);
       setFilteredRoles([]);
-      setJobDescriptions([]);
       return;
     }
 
@@ -126,9 +77,6 @@ const RoleSelector = ({
       const rolesData = response.data?.roles || [];
       setRoles(rolesData);
       setFilteredRoles(rolesData);
-
-      // Also search for job descriptions with this role name and experience level
-      await searchJobDescriptions(term, experienceLevel);
     } catch (error) {
       console.error("Failed to search roles:", error);
     } finally {
@@ -136,25 +84,14 @@ const RoleSelector = ({
     }
   };
 
-  // When experience level changes, search for job descriptions again
-  useEffect(() => {
-    if (searchTerm.trim() && experienceLevel) {
-      searchJobDescriptions(searchTerm, experienceLevel);
-    }
-  }, [experienceLevel]);
-
   const handleSearchChange = (e) => {
     const term = e.target.value;
 
     // If user starts typing and there's a selected role, clear the selection
     // so they can search for a new role
-    if (
-      term !== selectedRole?.name &&
-      term !== selectedJobDescription?.role?.name
-    ) {
-      if (selectedRole || selectedJobDescription) {
+    if (term !== selectedRole?.name) {
+      if (selectedRole) {
         setSelectedRole(null);
-        setSelectedJobDescription(null);
       }
     }
 
@@ -167,7 +104,6 @@ const RoleSelector = ({
       } else {
         setRoles([]);
         setFilteredRoles([]);
-        setJobDescriptions([]);
       }
     }, 300);
 
@@ -176,12 +112,8 @@ const RoleSelector = ({
 
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
-    setSelectedJobDescription(null);
     setSearchTerm(role.name);
     setIsOpen(false);
-
-    // Fetch job descriptions for this role
-    fetchJobDescriptionsByRoleId(role.id);
 
     // Call onChange with role object containing id, name, and experience level
     onChange({
@@ -192,99 +124,70 @@ const RoleSelector = ({
     });
   };
 
-  const handleJobDescriptionSelect = (jd) => {
-    setSelectedJobDescription(jd);
-    setSelectedRole(null);
-    // Set search term to the actual role name from the job description
-    const roleName = jd.role?.name || jd.role_name || searchTerm;
-    setSearchTerm(roleName);
-    setIsOpen(false);
-
-    // Call onChange with job description
-    onChange({
-      type: "jobDescription",
-      jobDescriptionId: jd.id,
-      roleId: jd.role_id,
-      roleName: roleName,
-      experienceLevel: jd.experience_level || experienceLevel,
-      jobDescription: jd,
-    });
-  };
-
   const handleClear = () => {
     setSelectedRole(null);
-    setSelectedJobDescription(null);
     setSearchTerm("");
-    setJobDescriptions([]);
     onChange(null);
   };
 
+  // Helper function to capitalize first letter of each word
+  const capitalizeWords = (str) => {
+    return str
+      .trim()
+      .split(/\s+/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
+  const handleCreateRole = async () => {
+    if (!searchTerm.trim() || hasExactMatch) {
+      return;
+    }
+
+    try {
+      setIsCreating(true);
+      const capitalizedRoleName = capitalizeWords(searchTerm);
+      const response = await api.post("/api/rag-data/roles", {
+        roleName: capitalizedRoleName,
+        experienceLevel: experienceLevel,
+      });
+
+      const newRole = response.data?.role;
+      if (newRole) {
+        setSearchTerm(capitalizedRoleName);
+        handleRoleSelect({
+          id: newRole.id,
+          name: newRole.name,
+          experience_level: newRole.experience_level || experienceLevel,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to create role:", error);
+      // You might want to show an error message to the user here
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   // Display the actual role name from database when selected, otherwise show search term
-  const displayValue = selectedJobDescription
-    ? `${
-        selectedJobDescription.role?.name ||
-        selectedJobDescription.role_name ||
-        searchTerm
-      } (${selectedJobDescription.experience_level || experienceLevel})`
-    : selectedRole
+  const displayValue = selectedRole
     ? `${selectedRole.name} (${
         selectedRole.experience_level || experienceLevel
       })`
     : searchTerm;
 
-  const hasResults = filteredRoles.length > 0 || jobDescriptions.length > 0;
-
-  // Get role IDs and names that are already represented in job descriptions
-  const jobDescriptionRoleIds = new Set(
-    jobDescriptions
-      .map((jd) => jd.role_id || jd.role?.id)
-      .filter((id) => id != null)
-  );
-  const jobDescriptionRoleNames = new Set(
-    jobDescriptions
-      .map((jd) => (jd.role?.name || jd.role_name || "").toLowerCase().trim())
-      .filter((name) => name)
-  );
-
-  // Filter out roles that are already represented in job descriptions
-  const rolesWithoutJobDescriptions = filteredRoles.filter(
-    (role) =>
-      !jobDescriptionRoleIds.has(role.id) &&
-      !jobDescriptionRoleNames.has(role.name.toLowerCase().trim())
-  );
+  const hasResults = filteredRoles.length > 0;
 
   // Check if there's an exact match for the search term (case-insensitive)
-  // Check both roles and job descriptions
-  // Only check if we have search results and a search term
   const normalizedSearchTerm = searchTerm.toLowerCase().trim();
-  const hasExactMatchInRoles =
+  const hasExactMatch =
     normalizedSearchTerm &&
     filteredRoles.some(
       (role) => role.name.toLowerCase().trim() === normalizedSearchTerm
     );
 
-  const hasExactMatchInJobDescriptions =
-    normalizedSearchTerm &&
-    jobDescriptions.some((jd) => {
-      const roleName = (jd.role?.name || jd.role_name || "")
-        .toLowerCase()
-        .trim();
-      return roleName === normalizedSearchTerm;
-    });
-
-  const hasExactMatch = hasExactMatchInRoles || hasExactMatchInJobDescriptions;
-
-  // Don't show generate button if:
-  // 1. Still loading
-  // 2. A role or job description is already selected
-  // 3. There's an exact match for the search term
-  const showGenerateButton =
-    !isLoading &&
-    !isSearchingJobDescriptions &&
-    !selectedRole &&
-    !selectedJobDescription &&
-    normalizedSearchTerm &&
-    !hasExactMatch;
+  // JD generation removed - analysis now works with role + experience level only
+  const showGenerateButton = false;
 
   return (
     <div className={cn("relative", className)}>
@@ -354,51 +257,18 @@ const RoleSelector = ({
                 <div className="p-3 text-center text-sm text-muted-foreground">
                   Type to search for roles...
                 </div>
-              ) : isLoading || isSearchingJobDescriptions ? (
+              ) : isLoading ? (
                 <div className="p-3 text-center text-sm text-muted-foreground">
                   Searching...
                 </div>
               ) : (
                 <>
-                  {jobDescriptions.length > 0 && (
+                  {filteredRoles.length > 0 && (
                     <>
                       <div className="p-2 text-xs font-semibold text-muted-foreground border-b border-border">
-                        Job Descriptions ({jobDescriptions.length})
+                        Roles ({filteredRoles.length})
                       </div>
-                      {jobDescriptions.map((jd) => (
-                        <button
-                          key={jd.id}
-                          type="button"
-                          onClick={() => handleJobDescriptionSelect(jd)}
-                          className={cn(
-                            "w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors flex items-center justify-between",
-                            selectedJobDescription?.id === jd.id
-                              ? "bg-muted"
-                              : ""
-                          )}
-                        >
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {jd.role?.name || jd.role_name || searchTerm}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {jd.experience_level || experienceLevel} •{" "}
-                              {jd.company_name || "Company"}
-                            </span>
-                          </div>
-                          {selectedJobDescription?.id === jd.id && (
-                            <Check className="h-4 w-4 text-primary" />
-                          )}
-                        </button>
-                      ))}
-                    </>
-                  )}
-                  {rolesWithoutJobDescriptions.length > 0 && (
-                    <>
-                      <div className="p-2 text-xs font-semibold text-muted-foreground border-b border-border">
-                        Roles ({rolesWithoutJobDescriptions.length})
-                      </div>
-                      {rolesWithoutJobDescriptions.map((role) => (
+                      {filteredRoles.map((role) => (
                         <button
                           key={role.id}
                           type="button"
@@ -421,45 +291,36 @@ const RoleSelector = ({
                       ))}
                     </>
                   )}
-                  {showGenerateButton && (
-                    <>
-                      {(rolesWithoutJobDescriptions.length > 0 ||
-                        jobDescriptions.length > 0) && (
-                        <div className="border-t border-border mt-1"></div>
-                      )}
-                      <div className="p-3">
-                        <div className="text-sm text-muted-foreground mb-2">
-                          {rolesWithoutJobDescriptions.length > 0 ||
-                          jobDescriptions.length > 0
-                            ? `No exact match for "${searchTerm}"`
-                            : `No job description found for "${searchTerm}" at ${experienceLevel} level`}
-                        </div>
-                        {onGenerateJobDescription ? (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (
-                                onGenerateJobDescription &&
-                                searchTerm.trim()
-                              ) {
-                                onGenerateJobDescription(
-                                  searchTerm.trim(),
-                                  experienceLevel
-                                );
-                                setIsOpen(false);
-                              }
-                            }}
-                            disabled={!searchTerm.trim()}
-                            className="w-full px-3 py-2 text-left text-sm hover:bg-muted transition-colors text-primary font-medium border border-primary/20 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            ✨ Generate Job Description for "{searchTerm}" (
-                            {experienceLevel})
-                          </button>
-                        ) : null}
-                      </div>
-                    </>
+                  {/* Show "Add Role" button if no exact match and search term exists */}
+                  {!hasExactMatch && searchTerm.trim() && !isLoading && (
+                    <div className="border-t border-border">
+                      <button
+                        type="button"
+                        onClick={handleCreateRole}
+                        disabled={isCreating}
+                        className={cn(
+                          "w-full px-3 py-2.5 text-left text-sm hover:bg-muted transition-colors flex items-center gap-2 text-primary",
+                          isCreating && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        {isCreating ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            <span>Creating role...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="h-4 w-4" />
+                            <span>
+                              Create "{searchTerm.trim()}" role (
+                              {experienceLevel})
+                            </span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   )}
-                  {!hasResults && !showGenerateButton && (
+                  {!hasResults && !hasExactMatch && !searchTerm.trim() && (
                     <div className="p-3 text-center text-sm text-muted-foreground">
                       No results found
                     </div>

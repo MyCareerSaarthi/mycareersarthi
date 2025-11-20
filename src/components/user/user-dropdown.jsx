@@ -2,7 +2,7 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useClerk } from "@clerk/nextjs";
-import Link from "next/link";
+import { HardLink } from "@/components/ui/hard-link";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,15 +62,15 @@ export function UserDropdown() {
         forceMount
       >
         <DropdownMenuItem asChild>
-          <Link href="/dashboard" className="cursor-pointer">
+          <HardLink href="/dashboard" className="cursor-pointer">
             <span className="flex items-center gap-2">
               <LayoutDashboard />
               Dashboard
             </span>
-          </Link>
+          </HardLink>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/profile" className="cursor-pointer">
+          <HardLink href="/profile" className="cursor-pointer">
             <span className="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +88,7 @@ export function UserDropdown() {
               </svg>
               Settings
             </span>
-          </Link>
+          </HardLink>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleSignOut}

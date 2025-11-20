@@ -403,7 +403,7 @@ const Dashboard = () => {
       recommendation.action?.type === "navigate" &&
       recommendation.action?.url
     ) {
-      router.push(recommendation.action.url);
+      window.location.href = recommendation.action.url;
     }
   };
 

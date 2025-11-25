@@ -6,7 +6,8 @@ const handlePayment = async (
   user,
   formData,
   onLoadingChange,
-  onErrorChange
+  onErrorChange,
+  getToken = null // Optional function to get fresh token
 ) => {
   try {
     onLoadingChange?.(true);
@@ -42,14 +43,17 @@ const handlePayment = async (
       currency: "INR",
       name: "MyCareerSarthi",
       order_id: orderId,
-      handler: function (razorpayResponse) {
+      handler: async function (razorpayResponse) {
+        // Get fresh token if getToken function is provided
+        const currentToken = getToken ? await getToken() : token;
         handleVerifyPayment(
           razorpayResponse,
-          token,
+          currentToken,
           serviceType,
           onLoadingChange,
           onErrorChange,
-          analysisRequestId
+          analysisRequestId,
+          getToken
         );
       },
       prefill: {
@@ -81,6 +85,13 @@ const handlePayment = async (
       pollTimer = setInterval(async () => {
         if (!modalOpen) return;
         try {
+          // Get fresh token before each polling request to avoid 401 errors
+          const currentToken = getToken ? await getToken() : token;
+          if (!currentToken) {
+            console.warn("No token available for polling");
+            return;
+          }
+
           // Use fetch with full URL to bypass Next.js API route interception
           const baseUrl =
             process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -89,12 +100,20 @@ const handlePayment = async (
           const response = await fetch(statusUrl, {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${currentToken}`,
               "Content-Type": "application/json",
             },
           });
 
           if (!response.ok) {
+            // Handle 401 specifically - token might have expired, try to get fresh token
+            if (response.status === 401 && getToken) {
+              console.warn(
+                "401 error in pre-payment polling, token may have expired"
+              );
+              // Will retry with fresh token on next poll cycle
+              return;
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
           }
 
@@ -144,7 +163,8 @@ const handleVerifyPayment = async (
   serviceType,
   onLoadingChange,
   onErrorChange,
-  analysisRequestId = null
+  analysisRequestId = null,
+  getToken = null // Optional function to get fresh token
 ) => {
   // Keep loading screen ON throughout the entire process
   onLoadingChange?.(true);
@@ -252,6 +272,12 @@ const handleVerifyPayment = async (
         );
 
         try {
+          // Get fresh token before each polling request to avoid 401 errors
+          const currentToken = getToken ? await getToken() : token;
+          if (!currentToken) {
+            throw new Error("No authentication token available");
+          }
+
           // Construct full URL to avoid Next.js API route conflicts
           // Next.js intercepts /api/* routes, so we need to use the full backend URL
           const baseUrl =
@@ -275,7 +301,7 @@ const handleVerifyPayment = async (
           const response = await fetch(statusUrl, {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${currentToken}`,
               "Content-Type": "application/json",
             },
             // Add cache control to prevent caching issues
@@ -584,6 +610,12 @@ const handleVerifyPayment = async (
         );
 
         try {
+          // Get fresh token before each polling request to avoid 401 errors
+          const currentToken = getToken ? await getToken() : token;
+          if (!currentToken) {
+            throw new Error("No authentication token available");
+          }
+
           // Construct full URL to avoid Next.js API route conflicts
           // Next.js intercepts /api/* routes, so we need to use the full backend URL
           const baseUrl =
@@ -607,7 +639,7 @@ const handleVerifyPayment = async (
           const response = await fetch(statusUrl, {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${currentToken}`,
               "Content-Type": "application/json",
             },
             // Add cache control to prevent caching issues

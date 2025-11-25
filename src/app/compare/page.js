@@ -263,7 +263,8 @@ export default function ComparePage() {
           setIsComparing(false);
           setErrors({ general: errorMsg });
           setCurrentStep(2);
-        }
+        },
+        getToken
       );
     } catch (error) {
       console.error("Form submission failed:", error);

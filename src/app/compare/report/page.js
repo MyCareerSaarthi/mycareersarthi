@@ -468,7 +468,10 @@ const ComparisonReportPage = () => {
           <p className="text-muted-foreground mb-6">
             {error || "No comparison data available"}
           </p>
-          <Button onClick={() => window.location.href = "/compare"} variant="outline">
+          <Button
+            onClick={() => (window.location.href = "/compare")}
+            variant="outline"
+          >
             Start New Comparison
           </Button>
         </div>
@@ -507,7 +510,7 @@ const ComparisonReportPage = () => {
                   </>
                 )}
               </Button>
-              <Button onClick={() => window.location.href = "/compare"}>
+              <Button onClick={() => (window.location.href = "/compare")}>
                 New Comparison
               </Button>
             </div>
@@ -534,7 +537,10 @@ const ComparisonReportPage = () => {
                 </>
               )}
             </Button>
-            <Button onClick={() => window.location.href = "/compare"} className="flex-1">
+            <Button
+              onClick={() => (window.location.href = "/compare")}
+              className="flex-1"
+            >
               New
             </Button>
           </div>
@@ -699,8 +705,7 @@ const ComparisonReportPage = () => {
         </div>
         {/* Detailed Accordion Panels */}
         <Accordion
-          type="single"
-          collapsible
+          type="multiple"
           value={expandedSection}
           onValueChange={setExpandedSection}
           className="w-full space-y-6 mb-8"

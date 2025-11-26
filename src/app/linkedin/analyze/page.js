@@ -296,7 +296,8 @@ const LinkedinAnalyze = () => {
           setIsAnalyzing(false);
           setErrors({ general: errorMsg });
           setCurrentStep(3);
-        }
+        },
+        getToken
       );
     } catch (error) {
       console.error("Form submission failed:", error);

@@ -38,8 +38,11 @@ const ProfilePicture = ({ data }) => {
     const headlineSection = data?.section_scores?.find(
       (section) => section.name?.toLowerCase() === "headline"
     );
-    const hasMissingPicWeakness = headlineSection?.weaknesses?.some((w) =>
-      w.toLowerCase().includes("missing profile picture")
+    const hasMissingPicWeakness = headlineSection?.weaknesses?.some(
+      (w) =>
+        w &&
+        typeof w === "string" &&
+        w.toLowerCase().includes("missing profile picture")
     );
 
     if (hasMissingPicWeakness) {

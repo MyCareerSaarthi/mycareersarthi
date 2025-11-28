@@ -62,8 +62,8 @@ export default function RootLayout({ children }) {
             />
             <Suspense>
               <Navbar className="mt-0" />
-            <main className="pt-24 mt-0">{children}</main>
-            <Footer />
+              <main className="pt-24 mt-0">{children}</main>
+              <Footer />
             </Suspense>
           </ThemeProvider>
         </body>

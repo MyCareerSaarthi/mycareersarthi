@@ -9,7 +9,7 @@ import { ModeToggle } from "../theme-toggle";
 
 export const Navbar = () => {
   return (
-    <nav className="fixed top-0 inset-x-0 bg-background/30 backdrop-blur-xs h-16 border max-w-(--breakpoint-xl) mx-auto rounded-none z-50 shadow-lg">
+    <nav className="fixed top-0 inset-x-0 bg-background/60 backdrop-blur-xs h-16  max-w-(--breakpoint-xl) mx-auto rounded-md z-50 shadow-lg">
       <div className="h-full flex items-center justify-between mx-auto px-4">
         <Logo />
 

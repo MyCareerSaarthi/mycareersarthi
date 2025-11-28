@@ -261,9 +261,11 @@ const handleVerifyPayment = async (
       const MAX_POLL_ATTEMPTS = 300; // 10 minutes max (300 * 2 seconds)
 
       // Process is still running, start continuous polling (webhook-like behavior)
+      let consecutiveErrors = 0;
+      const MAX_CONSECUTIVE_ERRORS = 10; // Allow more consecutive errors before giving up
       const poll = async (retryCount = 0) => {
         pollCount++;
-        const MAX_RETRIES = 3;
+        const MAX_RETRIES = 5; // Increased from 3 to 5
 
         console.log(
           `Polling attempt ${pollCount} for analysisRequestId: ${analysisRequestId}${
@@ -337,16 +339,32 @@ const handleVerifyPayment = async (
           }
 
           if (!response.ok) {
-            // Handle 404, 401, 403, etc. differently
+            // Handle different HTTP status codes
             if (response.status === 404) {
+              // 404 is a permanent error - don't retry
+              consecutiveErrors = MAX_CONSECUTIVE_ERRORS + 1;
               throw new Error(`Analysis request not found: ${cleanAnalysisId}`);
             } else if (response.status === 401 || response.status === 403) {
-              throw new Error(
-                "Authentication failed. Please refresh the page."
-              );
+              // Auth errors might be transient (token expired) - retry a few times
+              if (retryCount < 2) {
+                throw new Error("Authentication failed. Retrying...");
+              } else {
+                consecutiveErrors = MAX_CONSECUTIVE_ERRORS + 1;
+                throw new Error(
+                  "Authentication failed. Please refresh the page."
+                );
+              }
+            } else if (response.status >= 500) {
+              // Server errors are likely transient - retry
+              throw new Error(`Server error (${response.status}). Retrying...`);
+            } else {
+              // Other client errors (400, etc.) - might be transient
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
-            throw new Error(`HTTP error! status: ${response.status}`);
           }
+
+          // Reset consecutive errors on successful response
+          consecutiveErrors = 0;
 
           const responseData = await response.json();
 
@@ -509,20 +527,56 @@ const handleVerifyPayment = async (
             return;
           }
         } catch (err) {
+          consecutiveErrors++;
+
+          // Classify error type
+          const isNetworkError =
+            err.message?.includes("Failed to fetch") ||
+            err.message?.includes("NetworkError") ||
+            err.message?.includes("network") ||
+            err.name === "TypeError" ||
+            err.name === "NetworkError";
+
+          const isPermanentError =
+            err.message?.includes("not found") ||
+            err.message?.includes("Authentication failed. Please refresh") ||
+            err.message?.includes("Invalid analysis request ID") ||
+            consecutiveErrors > MAX_CONSECUTIVE_ERRORS;
+
           // On error, check if we should retry
           console.warn(
-            `Error polling status (retry ${retryCount}/${MAX_RETRIES}):`,
+            `Error polling status (retry ${retryCount}/${MAX_RETRIES}, consecutive errors: ${consecutiveErrors}):`,
             err
           );
 
-          // If we haven't exceeded retry limit, retry with incremented count
+          // If it's a permanent error, give up immediately
+          if (isPermanentError) {
+            console.error(
+              "Permanent error detected, stopping polling:",
+              err.message
+            );
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              err.message?.includes("not found")
+                ? `Analysis request not found. Please contact support with your analysis request ID: ${analysisRequestId}`
+                : err.message?.includes("Authentication failed")
+                ? "Authentication failed. Please refresh the page and try again."
+                : `Unable to check analysis status. Please refresh the page or contact support with your analysis request ID: ${analysisRequestId}`
+            );
+            return;
+          }
+
+          // Calculate exponential backoff delay (2s, 4s, 8s, 16s, max 30s)
+          const backoffDelay = Math.min(2000 * Math.pow(2, retryCount), 30000);
+
+          // If we haven't exceeded retry limit, retry with exponential backoff
           if (retryCount < MAX_RETRIES) {
             console.log(
-              `[Poll] Retrying after error in 2 seconds... (attempt ${
-                retryCount + 1
-              }/${MAX_RETRIES})`
+              `[Poll] Retrying after error in ${
+                backoffDelay / 1000
+              } seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`
             );
-            setTimeout(() => poll(retryCount + 1), 2000);
+            setTimeout(() => poll(retryCount + 1), backoffDelay);
             return;
           }
 
@@ -537,14 +591,37 @@ const handleVerifyPayment = async (
             console.error("Max poll attempts reached after errors or timeout");
             onLoadingChange?.(false);
             onErrorChange?.(
-              "Unable to check analysis status. Please refresh the page or contact support with your analysis request ID: " +
+              "Analysis is taking longer than expected. Please refresh the page or contact support with your analysis request ID: " +
                 analysisRequestId
             );
             return;
           }
 
+          // For network errors, use exponential backoff before retrying
+          // For other errors, use standard delay
+          const nextDelay = isNetworkError
+            ? Math.min(backoffDelay, 10000)
+            : 2000;
+
           // Reset retry count for next poll cycle (network might be back)
-          setTimeout(() => poll(0), 2000);
+          // But only if we haven't had too many consecutive errors
+          if (consecutiveErrors < MAX_CONSECUTIVE_ERRORS) {
+            console.log(
+              `[Poll] Resetting retry count and continuing polling in ${
+                nextDelay / 1000
+              } seconds (consecutive errors: ${consecutiveErrors})`
+            );
+            setTimeout(() => poll(0), nextDelay);
+          } else {
+            console.error(
+              `Too many consecutive errors (${consecutiveErrors}), stopping polling`
+            );
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              "Unable to check analysis status after multiple attempts. Please refresh the page or contact support with your analysis request ID: " +
+                analysisRequestId
+            );
+          }
         }
       };
 
@@ -599,9 +676,11 @@ const handleVerifyPayment = async (
       const MAX_POLL_ATTEMPTS = 300; // 10 minutes max (300 * 2 seconds)
 
       // Poll continuously until completion (webhook-like behavior)
+      let consecutiveErrors = 0;
+      const MAX_CONSECUTIVE_ERRORS = 10; // Allow more consecutive errors before giving up
       const poll = async (retryCount = 0) => {
         pollCount++;
-        const MAX_RETRIES = 3;
+        const MAX_RETRIES = 5; // Increased from 3 to 5
 
         console.log(
           `Fallback polling attempt ${pollCount} for analysisRequestId: ${analysisRequestId}${
@@ -678,16 +757,32 @@ const handleVerifyPayment = async (
           }
 
           if (!response.ok) {
-            // Handle 404, 401, 403, etc. differently
+            // Handle different HTTP status codes
             if (response.status === 404) {
+              // 404 is a permanent error - don't retry
+              consecutiveErrors = MAX_CONSECUTIVE_ERRORS + 1;
               throw new Error(`Analysis request not found: ${cleanAnalysisId}`);
             } else if (response.status === 401 || response.status === 403) {
-              throw new Error(
-                "Authentication failed. Please refresh the page."
-              );
+              // Auth errors might be transient (token expired) - retry a few times
+              if (retryCount < 2) {
+                throw new Error("Authentication failed. Retrying...");
+              } else {
+                consecutiveErrors = MAX_CONSECUTIVE_ERRORS + 1;
+                throw new Error(
+                  "Authentication failed. Please refresh the page."
+                );
+              }
+            } else if (response.status >= 500) {
+              // Server errors are likely transient - retry
+              throw new Error(`Server error (${response.status}). Retrying...`);
+            } else {
+              // Other client errors (400, etc.) - might be transient
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
-            throw new Error(`HTTP error! status: ${response.status}`);
           }
+
+          // Reset consecutive errors on successful response
+          consecutiveErrors = 0;
 
           const responseData = await response.json();
 
@@ -853,20 +948,56 @@ const handleVerifyPayment = async (
             return;
           }
         } catch (err) {
+          consecutiveErrors++;
+
+          // Classify error type
+          const isNetworkError =
+            err.message?.includes("Failed to fetch") ||
+            err.message?.includes("NetworkError") ||
+            err.message?.includes("network") ||
+            err.name === "TypeError" ||
+            err.name === "NetworkError";
+
+          const isPermanentError =
+            err.message?.includes("not found") ||
+            err.message?.includes("Authentication failed. Please refresh") ||
+            err.message?.includes("Invalid analysis request ID") ||
+            consecutiveErrors > MAX_CONSECUTIVE_ERRORS;
+
           // On error, check if we should retry
           console.warn(
-            `Error in fallback polling (retry ${retryCount}/${MAX_RETRIES}):`,
+            `Error in fallback polling (retry ${retryCount}/${MAX_RETRIES}, consecutive errors: ${consecutiveErrors}):`,
             err
           );
 
-          // If we haven't exceeded retry limit, retry with incremented count
+          // If it's a permanent error, give up immediately
+          if (isPermanentError) {
+            console.error(
+              "Permanent error detected in fallback polling, stopping:",
+              err.message
+            );
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              err.message?.includes("not found")
+                ? `Analysis request not found. Please contact support with your analysis request ID: ${analysisRequestId}`
+                : err.message?.includes("Authentication failed")
+                ? "Authentication failed. Please refresh the page and try again."
+                : `Unable to check analysis status. Please refresh the page or contact support with your analysis request ID: ${analysisRequestId}`
+            );
+            return;
+          }
+
+          // Calculate exponential backoff delay (2s, 4s, 8s, 16s, max 30s)
+          const backoffDelay = Math.min(2000 * Math.pow(2, retryCount), 30000);
+
+          // If we haven't exceeded retry limit, retry with exponential backoff
           if (retryCount < MAX_RETRIES) {
             console.log(
-              `[Fallback Poll] Retrying after error in 2 seconds... (attempt ${
-                retryCount + 1
-              }/${MAX_RETRIES})`
+              `[Fallback Poll] Retrying after error in ${
+                backoffDelay / 1000
+              } seconds... (attempt ${retryCount + 1}/${MAX_RETRIES})`
             );
-            setTimeout(() => poll(retryCount + 1), 2000);
+            setTimeout(() => poll(retryCount + 1), backoffDelay);
             return;
           }
 
@@ -883,14 +1014,37 @@ const handleVerifyPayment = async (
             );
             onLoadingChange?.(false);
             onErrorChange?.(
-              "Unable to check analysis status. Please refresh the page or contact support with your analysis request ID: " +
+              "Analysis is taking longer than expected. Please refresh the page or contact support with your analysis request ID: " +
                 analysisRequestId
             );
             return;
           }
 
+          // For network errors, use exponential backoff before retrying
+          // For other errors, use standard delay
+          const nextDelay = isNetworkError
+            ? Math.min(backoffDelay, 10000)
+            : 2000;
+
           // Reset retry count for next poll cycle (network might be back)
-          setTimeout(() => poll(0), 2000);
+          // But only if we haven't had too many consecutive errors
+          if (consecutiveErrors < MAX_CONSECUTIVE_ERRORS) {
+            console.log(
+              `[Fallback Poll] Resetting retry count and continuing polling in ${
+                nextDelay / 1000
+              } seconds (consecutive errors: ${consecutiveErrors})`
+            );
+            setTimeout(() => poll(0), nextDelay);
+          } else {
+            console.error(
+              `Too many consecutive errors in fallback polling (${consecutiveErrors}), stopping`
+            );
+            onLoadingChange?.(false);
+            onErrorChange?.(
+              "Unable to check analysis status after multiple attempts. Please refresh the page or contact support with your analysis request ID: " +
+                analysisRequestId
+            );
+          }
         }
       };
 

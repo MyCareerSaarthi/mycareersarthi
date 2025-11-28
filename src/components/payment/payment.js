@@ -312,7 +312,7 @@ const handleVerifyPayment = async (
 
           // Check final URL to ensure we got the right endpoint (before reading body)
           const finalUrl = response.url || statusUrl;
-          if (!finalUrl.includes("/api/rag/status/")) {
+          if (!finalUrl || !finalUrl.includes("/api/rag/status/")) {
             console.error(
               `[Poll] Response URL mismatch! Expected status endpoint, got: ${finalUrl}`
             );
@@ -650,7 +650,7 @@ const handleVerifyPayment = async (
 
           // Check final URL to ensure we got the right endpoint (before reading body)
           const finalUrl = response.url || statusUrl;
-          if (!finalUrl.includes("/api/rag/status/")) {
+          if (!finalUrl || !finalUrl.includes("/api/rag/status/")) {
             console.error(
               `[Fallback Poll] Response URL mismatch! Expected status endpoint, got: ${finalUrl}`
             );

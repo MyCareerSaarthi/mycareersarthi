@@ -40,8 +40,10 @@ const Banner = ({ data }) => {
     );
     const hasMissingBannerWeakness = headlineSection?.weaknesses?.some(
       (w) =>
-        w.toLowerCase().includes("missing banner") ||
-        w.toLowerCase().includes("missing background")
+        w && typeof w === 'string' && (
+          w.toLowerCase().includes("missing banner") ||
+          w.toLowerCase().includes("missing background")
+        )
     );
 
     if (hasMissingBannerWeakness) {

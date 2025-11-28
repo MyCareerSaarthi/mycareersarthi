@@ -56,7 +56,7 @@ export default function SimpleLoader({ message = "Loading...", className }) {
   const [show, setShow] = React.useState(true);
 
   // Select correct message set
-  const isComparison = message.toLowerCase().includes("compar");
+  const isComparison = message && typeof message === 'string' && message.toLowerCase().includes("compar");
   const messages = isComparison ? COMPARISON_MESSAGES : ANALYSIS_MESSAGES;
 
   React.useEffect(() => {

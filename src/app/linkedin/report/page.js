@@ -148,7 +148,7 @@ const LinkedinReport = () => {
 
       // Check if response is PDF (content-type should be application/pdf)
       const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/pdf")) {
+      if (contentType && typeof contentType === "string" && contentType.includes("application/pdf")) {
         // Get the blob from the streaming response
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);

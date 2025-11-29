@@ -705,13 +705,16 @@ const ComparisonReportPage = () => {
         </div>
         {/* Detailed Accordion Panels */}
         <Accordion
-          type="multiple"
+          type="single"
           value={expandedSection}
           onValueChange={setExpandedSection}
           className="w-full space-y-6 mb-8"
         >
-          {sectionData.map((section) => {
+          {sectionData
+            .filter((section) => section && section.id && section.icon && typeof section.id === "string")
+            .map((section) => {
             const Icon = section.icon;
+            if (!Icon) return null;
             return (
               <AccordionItem
                 key={section.id}

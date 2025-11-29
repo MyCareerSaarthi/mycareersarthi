@@ -46,14 +46,6 @@ const testimonials = [
     testimonial:
       "The LinkedIn optimization was game-changing. I started receiving messages from top recruiters and landed my dream job at a Fortune 500 company within 6 weeks.",
   },
-  {
-    id: 6,
-    name: "David Kim",
-    designation: "Engineering Director",
-    company: "ScaleTech",
-    testimonial:
-      "The comprehensive approach to career materials optimization is unmatched. Every detail was considered, from ATS compatibility to industry-specific keywords. Exceptional service.",
-  },
 ];
 
 const TestimonialsSection = () => {

@@ -265,7 +265,7 @@ const ComparisonReportPage = () => {
       }
 
       const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/pdf")) {
+      if (contentType && typeof contentType === "string" && contentType.includes("application/pdf")) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
 

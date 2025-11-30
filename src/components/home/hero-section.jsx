@@ -17,8 +17,10 @@ import {
   Users,
   ArrowRight,
   CheckCircle,
+  ArrowLeftRight,
 } from "lucide-react";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import ComparePage from "@/app/compare/page";
 
 const HeroSection = () => {
   return (
@@ -26,46 +28,40 @@ const HeroSection = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           {/* Header Section */}
-          <div className="text-center mb-12">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-2"
-            >
-              <Badge
-                variant="secondary"
-                className="px-4 py-2 text-sm font-medium"
-              >
-                ✨ AI-Powered Career Growth Platform
-              </Badge>
-            </motion.div>
+          <div className="text-center mb-6">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    className="mb-3"
+  >
+    <Badge variant="secondary" className="px-4 py-1 text-sm font-medium">
+      ✨ AI-Powered Career Growth Platform
+    </Badge>
+  </motion.div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-5xl md:text-3xl lg:text-5xl font-bold text-foreground"
-            >
-              Transform Your Career with
-              <span className="block mt-2 text-primary">Expert Guidance</span>
-            </motion.h1>
+  <motion.h1
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.1 }}
+    className="font-bold text-3xl  leading-tight text-foreground"
+  >
+    Transform Your Career with
+    <span className="block mt-2 text-primary text-3xl">
+      Expert Guidance
+    </span>
+  </motion.h1>
+</div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            ></motion.div>
-          </div>
 
           {/* Service Cards - Now visible without scrolling */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6"
           >
+            {/* LinkedIn Profile Review Card */}
             <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
               <CardHeader className="pb-4">
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -92,6 +88,7 @@ const HeroSection = () => {
               </CardContent>
             </Card>
 
+            {/* Resume Review Card */}
             <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
               <CardHeader className="pb-4">
                 <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -116,15 +113,15 @@ const HeroSection = () => {
               </CardContent>
             </Card>
 
-            {/* Personal Branding Card - Commented out
+            {/*resume linkedin allignment*/}
             <Card className="group hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
-              <CardHeader className="pb-4">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Users className="h-6 w-6 text-primary" />
+              <CardHeader className="">
+                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-2  group-hover:bg-primary/20 transition-colors">
+                  <ArrowLeftRight className="h-6 w-6 text-primary" />
                 </div>
-                <CardTitle className="text-xl">Personal Branding Evaluation</CardTitle>
+                <CardTitle className="text-xl">Linkedin & Resume Allignment</CardTitle>
                 <CardDescription className="text-base">
-                  Build a strong personal brand for experienced professionals
+                  Discover how well your linkedin profile and resume align to present a cohesive personal brand.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -132,13 +129,15 @@ const HeroSection = () => {
                 <div className="flex justify-center">
     <Button 
                         variant="outline"
-                        className="w-full hover:bg-primary hover:text-primary-foreground transition-colors">
-                          <Link href="/linkedin/analyze">Get Started</Link>
-                        </Button>
+                        className="w-full hover:bg-primary hover:text-primary-foreground transition-colors"
+                        onClick={() => window.location.href = "/linkedin/analyze"}
+                      >
+                        Get Started
+                      </Button>
   </div>
               </CardContent>
             </Card>
-            */}
+            
           </motion.div>
         </div>
       </div>

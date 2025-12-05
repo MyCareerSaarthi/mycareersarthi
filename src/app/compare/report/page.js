@@ -242,8 +242,7 @@ const ComparisonReportPage = () => {
     else if (sections.skills?.score < 6) result.push("Skills need attention");
 
     const aboutScore = sections["about/summary"]?.score;
-    if (aboutScore && aboutScore < 6)
-      result.push("Improve about & keywords");
+    if (aboutScore && aboutScore < 6) result.push("Improve about & keywords");
 
     return result.length > 0
       ? result.join(". ") + "."
@@ -403,174 +402,174 @@ const ComparisonReportPage = () => {
 
         {/* Layout */}
         {/* ====================================================== */}
-{/* NEW STACKED LAYOUT — NO GRID, VERTICAL FLOW */}
-{/* ====================================================== */}
+        {/* NEW STACKED LAYOUT — NO GRID, VERTICAL FLOW */}
+        {/* ====================================================== */}
 
-<div className="space-y-8 mb-8">
+        <div className="space-y-8 mb-8">
+          {/* ================= OVERALL SCORE BOX ================= */}
+          <Card className="rounded-2xl shadow-sm w-full">
+            <CardContent className="px-6 py-8">
+              <div className="flex items-center justify-between">
+                {/* LEFT SIDE: TEXT */}
+                <div className="flex-1 pr-6">
+                  <h2 className="text-3xl font-bold mb-3">Overall Alignment</h2>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    {generateOneLineSummary()}
+                  </p>
+                </div>
 
-  {/* ================= OVERALL SCORE BOX ================= */}
-  <Card className="rounded-2xl shadow-sm w-full">
-    <CardContent className="px-6 py-8">
-      <div className="flex items-center justify-between">
-        
-        {/* LEFT SIDE: TEXT */}
-        <div className="flex-1 pr-6">
-          <h2 className="text-3xl font-bold mb-3">Overall Alignment</h2>
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            {generateOneLineSummary()}
-          </p>
-        </div>
-
-        {/* RIGHT SIDE: SCORE CIRCLE */}
-        <div className="flex-shrink-0">
-          <CircularProgress
-            size={170}
-            strokeWidth={10}
-            value={overallPercentage}
-            className={
-              overallPercentage >= 8
-                ? "text-green-600"
-                : overallPercentage >= 6
-                ? "text-yellow-600"
-                : "text-red-600"
-            }
-            indicatorClassName={
-              overallPercentage >= 8
-                ? "text-green-600"
-                : overallPercentage >= 6
-                ? "text-yellow-600"
-                : "text-red-600"
-            }
-          >
-            <div className="text-center">
-              <div className="text-4xl font-bold">{overallPercentage}%</div>
-            </div>
-          </CircularProgress>
-        </div>
-
-      </div>
-    </CardContent>
-  </Card>
-
-
-  {/* ================= SUMMARY TABLE BOX ================= */}
-  <Card className="rounded-2xl shadow-sm w-full">
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2">
-        <BarChart3 className="h-5 w-5" />
-        Section-Wise Summary
-      </CardTitle>
-      <CardDescription>
-        Overview of how each section aligns
-      </CardDescription>
-    </CardHeader>
-
-    
-     <CardContent>
-
-  <Table className="w-full">
-    {/* ------- HEADER ------- */}
-    <TableHeader>
-      <TableRow className="bg-muted/50 h-14">
-        <TableHead className="text-center text-[13px] font-semibold py-3 w-[200px]">
-          Section
-        </TableHead>
-        <TableHead className="text-center text-[13px] font-semibold py-3">
-          Align %
-        </TableHead>
-        <TableHead className="text-center text-[13px] font-semibold py-3">
-          Misalign %
-        </TableHead>
-        <TableHead className="text-center text-[13px] font-semibold py-3">
-          Missing LinkedIn
-        </TableHead>
-        <TableHead className="text-center text-[13px] font-semibold py-3">
-          Missing Resume
-        </TableHead>
-      </TableRow>
-    </TableHeader>
-
-    {/* ------- BODY ------- */}
-    <TableBody>
-      {sectionData.map((section) => {
-        const Icon = section.icon;
-        const details =
-          comparisonData.sections[
-            section.id === "about" ? "about/summary" : section.id
-          ];
-
-        const missingLinkedIn = details?.missing_in_linkedin?.length || 0;
-        const missingResume = details?.missing_in_resume?.length || 0;
-        const alignment = section.score || 0;
-        const misalignment = 100 - alignment;
-
-        return (
-          <TableRow
-            key={section.id}
-            className="hover:bg-accent/40 transition cursor-pointer h-16 text-[13px]"
-            onClick={() => {
-              const el = document.getElementById(`accordion-${section.id}`);
-              if (el) {
-                const yOffset = -100;
-                const y =
-                  el.getBoundingClientRect().top +
-                  window.pageYOffset +
-                  yOffset;
-
-                window.scrollTo({ top: y, behavior: "smooth" });
-                setExpandedSection(section.id);
-
-                el.classList.add("bg-secondary", "transition-all");
-                setTimeout(
-                  () =>
-                    el.classList.remove("bg-secondary", "transition-all"),
-                  1500
-                );
-              }
-            }}
-          >
-            {/* FIRST COLUMN — FIXED: ICON + TEXT SIDE BY SIDE */}
-            <TableCell className="text-center">
-              <div className="flex items-center justify-center gap-3">
-                <Icon className="h-5 w-5 text-muted-foreground" />
-                <span className="font-medium text-[13px]">
-                  {section.name}
-                </span>
+                {/* RIGHT SIDE: SCORE CIRCLE */}
+                <div className="flex-shrink-0">
+                  <CircularProgress
+                    size={170}
+                    strokeWidth={10}
+                    value={overallPercentage}
+                    className={
+                      overallPercentage >= 8
+                        ? "text-green-600"
+                        : overallPercentage >= 6
+                        ? "text-yellow-600"
+                        : "text-red-600"
+                    }
+                    indicatorClassName={
+                      overallPercentage >= 8
+                        ? "text-green-600"
+                        : overallPercentage >= 6
+                        ? "text-yellow-600"
+                        : "text-red-600"
+                    }
+                  >
+                    <div className="text-center">
+                      <div className="text-4xl font-bold">
+                        {overallPercentage}%
+                      </div>
+                    </div>
+                  </CircularProgress>
+                </div>
               </div>
-            </TableCell>
+            </CardContent>
+          </Card>
 
-            {/* ALIGN % */}
-            <TableCell className="text-center font-bold text-[13px]">
-              <span className={getScoreColor(alignment)}>{alignment}%</span>
-            </TableCell>
+          {/* ================= SUMMARY TABLE BOX ================= */}
+          <Card className="rounded-2xl shadow-sm w-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Section-Wise Summary
+              </CardTitle>
+              <CardDescription>
+                Overview of how each section aligns
+              </CardDescription>
+            </CardHeader>
 
-            {/* MISALIGN % */}
-            <TableCell className="text-center text-[13px] font-semibold text-red-500">
-              {misalignment}%
-            </TableCell>
+            <CardContent>
+              <Table className="w-full">
+                {/* ------- HEADER ------- */}
+                <TableHeader>
+                  <TableRow className="bg-muted/50 h-14">
+                    <TableHead className="text-justify text-[13px] font-semibold py-3 w-[200px]">
+                      Section
+                    </TableHead>
+                    <TableHead className="text-center text-[13px] font-semibold py-3">
+                      Align %
+                    </TableHead>
+                    <TableHead className="text-center text-[13px] font-semibold py-3">
+                      Misalign %
+                    </TableHead>
+                    <TableHead className="text-center text-[13px] font-semibold py-3">
+                      Missing LinkedIn
+                    </TableHead>
+                    <TableHead className="text-center text-[13px] font-semibold py-3">
+                      Missing Resume
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
 
-            {/* MISSING LINKEDIN */}
-            <TableCell className="text-center text-[13px] font-medium">
-              {missingLinkedIn}
-            </TableCell>
+                {/* ------- BODY ------- */}
+                <TableBody>
+                  {sectionData.map((section) => {
+                    const Icon = section.icon;
+                    const details =
+                      comparisonData.sections[
+                        section.id === "about" ? "about/summary" : section.id
+                      ];
 
-            {/* MISSING RESUME */}
-            <TableCell className="text-center text-[13px] font-medium">
-              {missingResume}
-            </TableCell>
-          </TableRow>
-        );
-      })}
-    </TableBody>
-  </Table>
+                    const missingLinkedIn =
+                      details?.missing_in_linkedin?.length || 0;
+                    const missingResume =
+                      details?.missing_in_resume?.length || 0;
+                    const alignment = section.score || 0;
+                    const misalignment = 100 - alignment;
 
+                    return (
+                      <TableRow
+                        key={section.id}
+                        className="hover:bg-accent/40 transition cursor-pointer h-16 text-[13px]"
+                        onClick={() => {
+                          const el = document.getElementById(
+                            `accordion-${section.id}`
+                          );
+                          if (el) {
+                            const yOffset = -100;
+                            const y =
+                              el.getBoundingClientRect().top +
+                              window.pageYOffset +
+                              yOffset;
 
+                            window.scrollTo({ top: y, behavior: "smooth" });
+                            setExpandedSection(section.id);
 
-    </CardContent>
-  </Card>
+                            el.classList.add("bg-secondary", "transition-all");
+                            setTimeout(
+                              () =>
+                                el.classList.remove(
+                                  "bg-secondary",
+                                  "transition-all"
+                                ),
+                              1500
+                            );
+                          }
+                        }}
+                      >
+                        {/* FIRST COLUMN — FIXED: ICON + TEXT SIDE BY SIDE */}
+                        <TableCell className="text-">
+                          <div className="flex items-center gap-3">
+                            <Icon className="h-5 w-5 text-muted-foreground" />
+                            <span className="font-medium text-[13px]">
+                              {section.name}
+                            </span>
+                          </div>
+                        </TableCell>
 
-</div>
+                        {/* ALIGN % */}
+                        <TableCell className="text-center font-bold text-[13px]">
+                          <span className={getScoreColor(alignment)}>
+                            {alignment}%
+                          </span>
+                        </TableCell>
 
+                        {/* MISALIGN % */}
+                        <TableCell className="text-center text-[13px] font-semibold text-red-500">
+                          {misalignment}%
+                        </TableCell>
+
+                        {/* MISSING LINKEDIN */}
+                        <TableCell className="text-center text-[13px] font-medium">
+                          {missingLinkedIn}
+                        </TableCell>
+
+                        {/* MISSING RESUME */}
+                        <TableCell className="text-center text-[13px] font-medium">
+                          {missingResume}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* ACCORDION */}
         <Accordion
@@ -605,10 +604,7 @@ const ComparisonReportPage = () => {
 
                 <AccordionContent>
                   <div className="pt-4 pb-2">
-                    {renderSectionDetails(
-                      section.id,
-                      comparisonData.sections
-                    )}
+                    {renderSectionDetails(section.id, comparisonData.sections)}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -685,8 +681,8 @@ const ComparisonReportPage = () => {
         {skills.matches?.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600" /> Matched Skills (
-              {skills.matches.length})
+              <CheckCircle2 className="h-4 w-4 text-green-600" /> Matched Skills
+              ({skills.matches.length})
             </h4>
             <div className="flex flex-wrap gap-2">
               {skills.matches.map((skill, idx) => (
@@ -717,8 +713,8 @@ const ComparisonReportPage = () => {
         {skills.missing_in_resume?.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 text-yellow-600" /> Missing in Resume (
-              {skills.missing_in_resume.length})
+              <AlertCircle className="h-4 w-4 text-yellow-600" /> Missing in
+              Resume ({skills.missing_in_resume.length})
             </h4>
             <div className="flex flex-wrap gap-2">
               {skills.missing_in_resume.map((skill, idx) => (
@@ -790,8 +786,7 @@ const ComparisonReportPage = () => {
 
   // EXPERIENCE
   function renderExperienceDetails(exp) {
-    if (!exp)
-      return <p className="text-muted-foreground">No data available</p>;
+    if (!exp) return <p className="text-muted-foreground">No data available</p>;
 
     return (
       <div className="space-y-6">
@@ -805,7 +800,8 @@ const ComparisonReportPage = () => {
         {exp.matches?.length > 0 && (
           <div>
             <h4 className="font-semibold mb-3 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-green-600" /> Matched Experiences
+              <CheckCircle2 className="h-4 w-4 text-green-600" /> Matched
+              Experiences
             </h4>
             <ul className="list-disc list-inside space-y-1 text-sm">
               {exp.matches.map((match, idx) => (
@@ -917,9 +913,7 @@ const ComparisonReportPage = () => {
                 <span className="text-xs w-20">Narrative</span>
                 <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                   <div
-                    className={`h-full ${getStatusColor(
-                      about.score || 0
-                    )}`}
+                    className={`h-full ${getStatusColor(about.score || 0)}`}
                     style={{ width: `${(about.score || 0) * 10}%` }}
                   ></div>
                 </div>
@@ -955,8 +949,7 @@ const ComparisonReportPage = () => {
 
   // EDUCATION
   function renderEducationDetails(edu) {
-    if (!edu)
-      return <p className="text-muted-foreground">No data available</p>;
+    if (!edu) return <p className="text-muted-foreground">No data available</p>;
 
     return (
       <div className="space-y-6">

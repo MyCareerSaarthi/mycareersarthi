@@ -118,7 +118,10 @@ const HeroSection = () => {
           className="font-bold text-4xl md:text-4xl leading-tight text-foreground"
         >
           Transform Your Career with
-          <span className="block" style={{ color: "oklch(0.5106 0.2301 276.9656)" }}>
+          <span
+            className="block"
+            style={{ color: "oklch(0.5106 0.2301 276.9656)" }}
+          >
             Expert Guidance
           </span>
         </motion.h1>
@@ -130,8 +133,8 @@ const HeroSection = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mt-4 text-md md:text-md max-w-3xl mx-auto text-muted-foreground"
         >
-          Unlock tailored recommendations, role-fit analysis, and powerful branding
-          using next-gen AI models built for modern professionals. 
+          Unlock tailored recommendations, role-fit analysis, and powerful
+          branding using next-gen AI models built for modern professionals.
         </motion.p>
 
         {/* CTA BUTTONS */}
@@ -160,90 +163,85 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.45 }}
-          className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-16 mx-auto max-w-5xl"
+          className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-12 mx-auto max-w-5xl"
         >
-        {/* CARD 1 */}
-<Card className="w-65 h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
-  <CardHeader className="items-start p-0 m-0">
-    <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
-      <Linkedin className="h-5 w-5 text-primary" />
-    </div>
+          {/* CARD 1 */}
+          <Card className="w-full h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
+            <CardHeader className="items-start p-0 m-0">
+              <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
+                <Linkedin className="h-5 w-5 text-primary" />
+              </div>
 
-    <CardTitle className="text-[18px] ml-4 text-card-foreground">
-      LinkedIn Profile Review
-    </CardTitle>
+              <CardTitle className="text-[18px] ml-4 text-card-foreground">
+                LinkedIn Profile Review
+              </CardTitle>
 
-    <CardDescription className="ml-4 mb-0 text-muted-foreground">
-      Optimize your LinkedIn to attract top recruiters.
-    </CardDescription>
-  </CardHeader>
+              <CardDescription className="ml-4 mb-0 text-muted-foreground">
+                Optimize your LinkedIn to attract top recruiters.
+              </CardDescription>
+            </CardHeader>
 
-  <CardContent className="pl-3">
-    <Button
-      className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
-      onClick={() => (window.location.href = "/linkedin/analyze")}
-    >
-      Get Started
-    </Button>
-  </CardContent>
-</Card>
+            <CardContent className="pl-3">
+              <Button
+                className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
+                onClick={() => (window.location.href = "/linkedin/analyze")}
+              >
+                Get Started
+              </Button>
+            </CardContent>
+          </Card>
 
+          {/* CARD 2 */}
+          <Card className="w-full h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
+            <CardHeader className="items-start p-0 m-0">
+              <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
+                <FileText className="h-5 w-5 text-primary" />
+              </div>
 
+              <CardTitle className="text-[18px] ml-4 text-card-foreground">
+                Resume Review
+              </CardTitle>
 
-{/* CARD 2 */}
-<Card className="w-65 h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
-  <CardHeader className="items-start p-0 m-0">
-    <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
-      <FileText className="h-5 w-5 text-primary" />
-    </div>
+              <CardDescription className="ml-4 mb-0 text-muted-foreground">
+                Create and optimize resumes that pass ATS screening.
+              </CardDescription>
+            </CardHeader>
 
-    <CardTitle className="text-[18px] ml-4 text-card-foreground">
-      Resume Review
-    </CardTitle>
+            <CardContent className="pl-3">
+              <Button
+                className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
+                onClick={() => (window.location.href = "/resume/analyze")}
+              >
+                Get Started
+              </Button>
+            </CardContent>
+          </Card>
 
-    <CardDescription className="ml-4 mb-0 text-muted-foreground">
-      Create and optimize resumes that pass ATS screening.
-    </CardDescription>
-  </CardHeader>
+          {/* CARD 3 */}
+          <Card className="w-full h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
+            <CardHeader className="items-start p-0 m-0">
+              <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
+                <ArrowLeftRight className="h-5 w-5 text-primary" />
+              </div>
 
-  <CardContent className="pl-3">
-    <Button
-      className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
-      onClick={() => (window.location.href = "/resume/analyze")}
-    >
-      Get Started
-    </Button>
-  </CardContent>
-</Card>
+              <CardTitle className="text-[17px] ml-4 text-card-foreground">
+                LinkedIn & Resume Alignment
+              </CardTitle>
 
+              <CardDescription className="ml-4 mb-0 text-muted-foreground">
+                Ensure your LinkedIn & Resume reflect a cohesive personal brand.
+              </CardDescription>
+            </CardHeader>
 
-
-{/* CARD 3 */}
-<Card className="w-65 h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
-  <CardHeader className="items-start p-0 m-0">
-    <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
-      <ArrowLeftRight className="h-5 w-5 text-primary" />
-    </div>
-
-    <CardTitle className="text-[17px] ml-4 text-card-foreground">
-      LinkedIn & Resume Alignment
-    </CardTitle>
-
-    <CardDescription className="ml-4 mb-0 text-muted-foreground">
-      Ensure your LinkedIn & Resume reflect a cohesive personal brand.
-    </CardDescription>
-  </CardHeader>
-
-  <CardContent className="pl-3">
-    <Button
-      className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
-      onClick={() => (window.location.href = "/linkedin/analyze")}
-    >
-      Get Started
-    </Button>
-  </CardContent>
-</Card>
-
+            <CardContent className="pl-3">
+              <Button
+                className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
+                onClick={() => (window.location.href = "/linkedin/analyze")}
+              >
+                Get Started
+              </Button>
+            </CardContent>
+          </Card>
         </motion.div>
       </div>
     </section>

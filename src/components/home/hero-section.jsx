@@ -14,7 +14,6 @@ import { Linkedin, FileText, ArrowLeftRight } from "lucide-react";
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden mt-0 pt-10 pb-32">
-
       {/* ---------------------------------------------------------------- */}
       {/*                       TRUE TASKHARBOR SVG BACKGROUND             */}
       {/* ---------------------------------------------------------------- */}
@@ -97,7 +96,6 @@ const HeroSection = () => {
       {/*                           HERO CONTENT                           */}
       {/* ---------------------------------------------------------------- */}
       <div className="mt-8 relative container mx-auto px-6 max-w-6xl text-center z-10">
-
         {/* BADGE */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

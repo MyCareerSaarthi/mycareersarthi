@@ -101,7 +101,7 @@ const Skill = ({ data }) => {
                   {skills.map((skill, index) => (
                     <span
                       key={index}
-                      className="inline-flex items-center px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-sm font-medium border border-primary/20 transition-all duration-200 hover:scale-105"
+                      className="inline-flex items-center px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-sm font-medium border border-primary/20 transition-all duration-200 hover:-translate-y-0.5"
                     >
                       {skill}
                     </span>

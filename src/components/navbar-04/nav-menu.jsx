@@ -9,37 +9,75 @@ import {
 import { HardLink } from "@/components/ui/hard-link";
 import { useAuth } from "@clerk/nextjs";
 import { ProductDropdown } from "./product-dropdown";
+import { motion } from "framer-motion";
 
 export const NavMenu = (props) => {
   const { isSignedIn } = useAuth();
 
-  const { links } = props;
-
   return (
     <NavigationMenu {...props}>
-      <NavigationMenuList className="gap-3 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start data-[orientation=vertical]:justify-start">
+      <NavigationMenuList className="gap-1 space-x-0 data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-start data-[orientation=vertical]:justify-start data-[orientation=vertical]:gap-2">
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <HardLink href="/">Home</HardLink>
+            <HardLink
+              href="/"
+              className="group relative px-4 py-2 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <span className="relative z-10">Home</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            </HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
+        
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <HardLink href="/pricing">Pricing</HardLink>
+            <HardLink
+              href="/pricing"
+              className="group relative px-4 py-2 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <span className="relative z-10">Pricing</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            </HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
+        
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <HardLink
+              href="/blog"
+              className="group relative px-4 py-2 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <span className="relative z-10">Blog</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            </HardLink>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        
         <NavigationMenuItem>
           <ProductDropdown />
         </NavigationMenuItem>
+        
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <HardLink href="/about-us">About</HardLink>
+            <HardLink
+              href="/about-us"
+              className="group relative px-4 py-2 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <span className="relative z-10">About</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            </HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
-            <HardLink href="/contact-us">Contact Us</HardLink>
+            <HardLink
+              href="/contact-us"
+              className="group relative px-4 py-2 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <span className="relative z-10">Contact</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+            </HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

@@ -1,123 +1,259 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import React from "react";
 import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import TestimonialCarousel from "@/components/TestimonialCarousel";
 import {
-  Briefcase,
-  Users,
+  Sparkles,
+  Target,
   Brain,
   FileText,
+  TrendingUp,
+  Users,
+  Award,
   CheckCircle2,
   ArrowRight,
-  Sparkles,
-  BookOpen,
-  Target,
-  TrendingUp,
+  Rocket,
+  Zap,
+  Briefcase,
   MessageSquare,
-  Loader2,
-  AlertCircle,
-  Star,
+  BarChart3,
 } from "lucide-react";
-import Link from "next/link";
-import { api } from "@/components/api/api";
-import { BookingAPI } from "@/components/api/booking";
 
-const Home = () => {
-  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
-  const [errorMessage, setErrorMessage] = useState("");
+const heroGlanceCards = [
+  {
+    title: "Career Assessment & Roadmap Guidance",
+    copy: "Clarity on strengths, role-fit, and next steps with a tailored path toward your goals.",
+    icon: Target,
+  },
+  {
+    title: "Interview Preparation",
+    copy: "Mock interviews, expert evaluation, and AI feedback so you present your experience with confidence.",
+    icon: MessageSquare,
+  },
+  {
+    title: "Your Profile Scorer",
+    copy: "Built-in AI compares your LinkedIn and resume to target roles, highlighting alignment and gaps.",
+    icon: BarChart3,
+  },
+];
 
-  const handleContactSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus(null);
-    setErrorMessage("");
+const serviceStrip = [
+  {
+    title: "Career Mentoring",
+    description:
+      "We guide you through career assessment, skill evaluation, roadmap creation, and job search strategy so you know exactly which roles to target and how to move toward them.",
+    cta: "Get Started",
+    icon: Briefcase,
+  },
+  {
+    title: "Interview Preparation",
+    description:
+      "Request mock interviews, receive expert evaluation, and get AI + manual feedback so you know how hiring teams interpret your answers.",
+    cta: "Get Started",
+    icon: MessageSquare,
+  },
+  {
+    title: "AI-Powered Profile Scoring",
+    description:
+      "Our purpose-built AI compares your LinkedIn and resume against your target roles, revealing alignment, keywords, and gaps with clear guidance.",
+    cta: "Get Started",
+    icon: Brain,
+  },
+];
 
-    try {
-      const response = await BookingAPI.createBooking({
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        message: formData.message,
-        serviceType: "interview_preparation", // Default to interview preparation for "Book yourself" button
-      });
+const whyChoose = [
+  {
+    title: "AI-Powered Analysis",
+    body: "Understand strengths, role-fit, and career path so you know exactly which opportunities to target and how to approach them.",
+    icon: Brain,
+  },
+  {
+    title: "Expert Guidance",
+    body: "Recommendations grounded in hiring insights and recruiter behavior to align your profile with decision-makers' expectations.",
+    icon: Award,
+  },
+  {
+    title: "Comprehensive Reports",
+    body: "Clear steps to refine LinkedIn, resume, and narrative so your professional identity communicates your value effectively.",
+    icon: FileText,
+  },
+  {
+    title: "Measurable Improvement",
+    body: "Mentoring on visibility, engagement, and strategy so you see progress in recruiter interest and search performance.",
+    icon: TrendingUp,
+  },
+];
 
-      if (response.success) {
-        setSubmitStatus("success");
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          message: "",
-        });
-        setTimeout(() => {
-          setIsContactDialogOpen(false);
-          setSubmitStatus(null);
-        }, 2000);
-      } else {
-        setSubmitStatus("error");
-        setErrorMessage(response.error || "Failed to submit booking");
-      }
-    } catch (error) {
-      setSubmitStatus("error");
-      setErrorMessage(
-        error.error ||
-          error.message ||
-          "Failed to submit booking. Please try again later."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+const professionalServices = [
+  {
+    title: "LinkedIn Profile Review & Optimization",
+    description:
+      "A detailed evaluation with specific recommendations to improve relevance and recruiter engagement.",
+    items: [
+      "Headline and summary enhancement",
+      "Keywords based on target roles",
+      "Experience section restructuring",
+      "Visual and content recommendations",
+    ],
+    cta: "Get Started",
+    icon: Users,
+  },
+  {
+    title: "Resume Creation, Review & Optimization",
+    description:
+      "A resume that reflects achievements and passes ATS screening.",
+    items: [
+      "Resume creation or restructuring",
+      "ATS compatibility check",
+      "Keyword and role-fit alignment",
+      "Formatting and clarity improvements",
+    ],
+    cta: "Get Started",
+    icon: FileText,
+  },
+];
 
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (submitStatus) {
-      setSubmitStatus(null);
-      setErrorMessage("");
-    }
-  };
+const journeySteps = [
+  {
+    step: "01",
+    title: "Sign Up and Set Your Goals",
+    body: "Share your career goals, experience, and target roles so we can guide you with the right direction from the start.",
+    icon: Rocket,
+  },
+  {
+    step: "02",
+    title: "Build Your Profile Inside MCS",
+    body: "Complete your career profile with key details, achievements, and preferences for expert and AI analysis.",
+    icon: Zap,
+  },
+  {
+    step: "03",
+    title: "Receive Insights from Experts and AI",
+    body: "Get detailed assessments of LinkedIn, resume, and positioning, translated into clear, actionable steps.",
+    icon: Brain,
+  },
+  {
+    step: "04",
+    title: "Implement Improvements and Track Progress",
+    body: "Apply recommendations and monitor visibility, profile performance, and recruiter engagement over time.",
+    icon: TrendingUp,
+  },
+];
 
+const pricingPlans = [
+  {
+    name: "Starter",
+    subtitle: "Best for getting started with profile improvement",
+    price: "₹2,499",
+    period: "",
+    highlights:
+      "A structured beginning to strengthen your LinkedIn and resume with essential insights.",
+    features: [
+      "LinkedIn profile optimisation",
+      "Basic resume analysis and ATS scoring",
+      "Access to built-in MCS AI tools",
+      "Community support",
+      "Essential career resources",
+    ],
+    cta: "I'm Ready for Better Roles",
+    badge: "",
+  },
+  {
+    name: "Professional",
+    subtitle: "Designed for active job seekers",
+    price: "₹4,999",
+    period: "/month",
+    highlights:
+      "Advanced optimisation, deeper analysis, and a clear roadmap toward your target roles.",
+    features: [
+      "Comprehensive LinkedIn optimisation",
+      "Full resume optimisation and rewriting for ATS",
+      "Three AI mock interviews each month",
+      "Personalized career roadmap",
+      "Priority email support",
+      "Access to premium resources",
+      "Role-fit guidance",
+    ],
+    cta: "I'm Ready for Better Roles",
+    badge: "Recommended",
+    note: "7-day money-back guarantee",
+  },
+  {
+    name: "Expert",
+    subtitle: "For professionals who want structured mentoring",
+    price: "₹8,999",
+    period: "/month",
+    highlights:
+      "Expert-led mentoring combined with AI insights and one-on-one coaching.",
+    features: [
+      "Everything in Professional",
+      "Two one-on-one coaching sessions each month",
+      "Personalized job recommendations",
+      "Interview preparation strategies",
+      "Unlimited AI mock interviews",
+      "Dedicated career coaches",
+      "Resume writing assistance from scratch",
+    ],
+    cta: "I'm Ready for Better Roles",
+    badge: "",
+    note: "7-day money-back guarantee",
+  },
+];
+
+const faqs = [
+  {
+    q: "Can I switch plans later?",
+    a: "Yes, you can upgrade or downgrade your plan at any time.",
+  },
+  {
+    q: "Do you offer discounts?",
+    a: "We offer special pricing for students and annual subscriptions.",
+  },
+  {
+    q: "What payment methods do you accept?",
+    a: "All major credit cards, UPI, and bank transfers.",
+  },
+  {
+    q: "Is there a free trial?",
+    a: "Yes, our paid plans come with a 7-day free trial.",
+  },
+];
+
+const successStories = [
+  {
+    name: "Product Manager • Fintech",
+    quote:
+      "The AI-backed assessment pinpointed exactly what my resume missed. Interviews picked up within two weeks.",
+  },
+  {
+    name: "Data Analyst • SaaS",
+    quote:
+      "Mock interviews plus tailored feedback made me confident and precise. I landed my top-choice role.",
+  },
+  {
+    name: "Senior Engineer • Healthtech",
+    quote:
+      "Clear positioning, keyword alignment, and a roadmap I could follow. Recruiter responses improved fast.",
+  },
+];
+
+export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
-      <section className="relative overflow-hidden flex items-center pt-6 md:pt-12 pb-20 md:pb-28">
+      <section className="relative overflow-hidden pt-12 pb-16 ">
         {/* Animated gradient background */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-background via-muted/20 to-background" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-br from-background via-muted/20 to-background" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
 
           {/* Animated gradient orbs */}
           <motion.div
-            className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20 rounded-full blur-3xl"
+            className="absolute top-0 left-1/4 w-96 h-96 bg-linear-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20 rounded-full blur-3xl"
             animate={{
               x: [0, 50, 0],
               y: [0, 30, 0],
@@ -130,7 +266,7 @@ const Home = () => {
             }}
           />
           <motion.div
-            className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-emerald-500/20 via-cyan-500/20 to-teal-500/20 rounded-full blur-3xl"
+            className="absolute bottom-0 right-1/4 w-96 h-96 bg-linear-to-br from-emerald-500/20 via-cyan-500/20 to-teal-500/20 rounded-full blur-3xl"
             animate={{
               x: [0, -50, 0],
               y: [0, -30, 0],
@@ -145,605 +281,253 @@ const Home = () => {
           />
 
           {/* Grid pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[4rem_4rem] opacity-30" />
         </div>
 
-        <div className="relative container mx-auto px-4 max-w-7xl z-10 w-full">
-          <div className="text-center space-y-4 md:space-y-6">
-            {/* Badge */}
+        <div className="relative container mx-auto px-4 max-w-7xl z-10">
+          <div className="grid items-center gap-12 lg:grid-cols-[1.1fr,0.9fr]">
             <motion.div
+              className="space-y-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex justify-center"
+              transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-semibold shadow-lg backdrop-blur-sm">
-                <Sparkles className="w-3 h-3 md:w-4 md:h-4" />
-                Comprehensive Career Services
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <Badge
+                  variant="secondary"
+                  className="px-4 py-2 text-sm font-medium"
+                >
+                  <Sparkles className="w-4 h-4 mr-2 inline" />
+                  AI-Powered Career Growth Platform
+                </Badge>
+              </motion.div>
+
+              <motion.h1
+                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                Transform Your Career With Expert Guidance and&nbsp;
+                <span className="text-primary">Built-in AI Insights</span>
+              </motion.h1>
+
+              <motion.p
+                className="text-lg md:text-lg text-muted-foreground max-w-2xl leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                Your journey begins with a career assessment that brings clarity
+                to your direction. We enhance your LinkedIn, resume, and
+                positioning with expert guidance and AI insights to support the
+                opportunities you aim for.
+              </motion.p>
+              <motion.div
+                className="flex flex-wrap items-center gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.9 }}
+              >
+                <Button size="lg" className="rounded-full">
+                  Get Started
+                </Button>
+                <Button size="lg" variant="outline" className="rounded-full">
+                  Learn More
+                </Button>
+              </motion.div>
+              <motion.div
+                className="grid gap-6 md:grid-cols-3"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+              >
+                {heroGlanceCards.map((card, idx) => (
+                  <motion.div
+                    key={card.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.6 + idx * 0.1 }}
+                    whileHover={{ y: -4 }}
+                  >
+                    <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300 h-full">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-1">
+                        <card.icon className="w-6 h-6 text-primary" />
+                      </div>
+                      <h3 className="text-lg font-semibold mb-1">
+                        {card.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {card.copy}
+                      </p>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              className="relative"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <div className="p-8 overflow-hidden relative">
+                <div className="relative z-10 space-y-8">
+                  <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-8">
+                    {/* Illustration - left side, vertically centered */}
+                    <div className="flex justify-center items-center w-full md:min-w-xl">
+                      <div className="relative  w-auto h-auto">
+                        <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl pointer-events-none" />
+                        <img
+                          src="/home/career_progress.svg"
+                          alt="Career guidance illustration"
+                          className="relative w-full h-auto object-contain drop-shadow-lg"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Feature cards grid - right side, stacked */}
+                    <div className="w-full max-w-xl grid gap-5 sm:grid-cols-1">
+                      <Card className="p-5 bg-linear-to-br from-primary/10 via-card to-card border-2 border-primary/20 hover:border-primary/40 transition-all duration-300">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                            <Brain className="w-5 h-5 text-primary" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-primary mb-1.5">
+                              Built-in AI Insights
+                            </p>
+                            <p className="text-xs text-muted-foreground leading-relaxed">
+                              Role-fit scoring, keyword alignment, and gap
+                              analysis tailored to your target roles.
+                            </p>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="p-5 bg-linear-to-br from-foreground via-foreground/90 to-foreground text-background border-2 border-primary/20 hover:border-primary/40 transition-all duration-300">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-lg bg-background/20 flex items-center justify-center shrink-0">
+                            <Users className="w-5 h-5 text-background" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold mb-1.5">
+                              Expert Mentoring
+                            </p>
+                            <p className="text-xs text-background/90 leading-relaxed mb-3">
+                              Human-led guidance that translates AI findings
+                              into clear actions.
+                            </p>
+                            <Badge
+                              variant="secondary"
+                              className="bg-background/20 text-background border-background/30 text-xs"
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 mr-1.5 inline-block" />
+                              Live support available
+                            </Badge>
+                          </div>
+                        </div>
+                      </Card>
+                    </div>
+                  </div>
+
+                  {/* Stats card */}
+                  <Card className="p-5 border-2 border-border bg-muted/30">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4 text-center">
+                      Fast Track Results
+                    </p>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="text-center p-3 rounded-xl bg-card/50 border border-border">
+                        <p className="text-xl font-bold text-primary mb-1">
+                          3x
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Profile views
+                        </p>
+                      </div>
+                      <div className="text-center p-3 rounded-xl bg-card/50 border border-border">
+                        <p className="text-xl font-bold text-primary mb-1">
+                          2.5x
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Interview calls
+                        </p>
+                      </div>
+                      <div className="text-center p-3 rounded-xl bg-card/50 border border-border">
+                        <p className="text-xl font-bold text-primary mb-1">
+                          14d
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Time to clarity
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
               </div>
             </motion.div>
-
-            {/* Main heading */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="space-y-3 md:space-y-4"
-            >
-              <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight tracking-tight">
-                <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
-                  Elevate Your Career Journey
-                </span>
-                <br />
-                <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
-                  with Expert Guidance
-                </span>
-              </h1>
-
-              <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-                From interview preparation to career mentoring and AI-powered
-                profile analysis - we provide comprehensive services to help you
-                succeed.
-              </p>
-            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Interview Preparation Services Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden bg-muted/20">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5" />
-        </div>
-
-        <div className="relative container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-background/80 backdrop-blur-sm text-primary text-sm font-semibold mb-6 shadow-lg">
-              <Briefcase className="w-4 h-4" />
-              Interview Preparation
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Interview Preparation Services/Kit
-            </h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
-              Comprehensive interview preparation package to help you ace your
-              next interview with confidence
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {[
-              {
-                title: "Interview Script Preparation",
-                description:
-                  "Get personalized interview scripts tailored to your role and experience level.",
-                icon: FileText,
-                color: "from-blue-500 to-cyan-500",
-              },
-              {
-                title: "Interview Execution Demo",
-                description:
-                  "Watch sample interview demonstrations to understand best practices and techniques.",
-                icon: MessageSquare,
-                color: "from-violet-500 to-purple-500",
-              },
-              {
-                title: "Mock Interview - Round 1",
-                description:
-                  "First round of expert-led mock interview to assess your current interview skills.",
-                icon: Users,
-                color: "from-emerald-500 to-teal-500",
-              },
-              {
-                title: "Mock Interview - Round 2",
-                description:
-                  "Second round of mock interview to refine your skills and address improvement areas.",
-                icon: Target,
-                color: "from-orange-500 to-red-500",
-              },
-              {
-                title: "Mock Interview Report",
-                description:
-                  "Detailed analysis report with scoring, strengths, and areas for improvement.",
-                icon: TrendingUp,
-                color: "from-pink-500 to-rose-500",
-              },
-              {
-                title: "Feedback Session",
-                description:
-                  "One-on-one feedback session with expert to discuss mock interview results.",
-                icon: MessageSquare,
-                color: "from-indigo-500 to-blue-500",
-              },
-            ].map((item, index) => {
-              const IconComponent = item.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="group relative h-full overflow-hidden border-0 bg-gradient-to-br from-card via-card to-card/80 hover:shadow-2xl transition-all duration-500">
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                    />
-                    <CardHeader className="relative space-y-3 pb-3 pt-6 px-5">
-                      <div
-                        className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg group-hover:-translate-y-1 group-hover:rotate-6 transition-all duration-300`}
-                      >
-                        <IconComponent className="w-6 h-6 md:w-7 md:h-7 text-white" />
-                      </div>
-                      <CardTitle className="text-lg md:text-xl font-bold leading-tight">
-                        {item.title}
-                      </CardTitle>
-                      <CardDescription className="text-sm leading-relaxed text-foreground/70">
-                        {item.description}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center"
-          >
-            <Button
-              size="lg"
-              onClick={() => setIsContactDialogOpen(true)}
-              className="px-8 py-6 text-lg bg-gradient-to-r from-primary via-primary to-primary/80 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
-            >
-              Book yourself
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Career Guidance Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/30 to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
-
-        <div className="relative container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
-              <Target className="w-4 h-4" />
-              Career Guidance
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Career Guidance & Mentoring Services
-            </h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
-              Get personalized career guidance from industry experts to navigate
-              your career path successfully
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                title: "Career Assessment",
-                description:
-                  "Comprehensive assessment of your skills, interests, and career goals to identify the best career path for you.",
-                icon: Brain,
-                color: "from-violet-500 to-purple-600",
-                bgGradient:
-                  "from-violet-50 to-purple-50 dark:from-violet-950/20 dark:to-purple-950/20",
-              },
-              {
-                title: "Technical Assessment",
-                description:
-                  "Role-specific technical skills evaluation to identify strengths and areas for improvement (if applicable).",
-                icon: Target,
-                color: "from-blue-500 to-cyan-600",
-                bgGradient:
-                  "from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20",
-              },
-              {
-                title: "Career Roadmap Formulation",
-                description:
-                  "Create a personalized career roadmap with milestones, skill development plans, and timeline.",
-                icon: TrendingUp,
-                color: "from-emerald-500 to-teal-600",
-                bgGradient:
-                  "from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20",
-              },
-              {
-                title: "Job Search Strategies & Implementation",
-                description:
-                  "Learn effective job search strategies and get support in implementing them to land your dream job.",
-                icon: BookOpen,
-                color: "from-orange-500 to-red-600",
-                bgGradient:
-                  "from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20",
-              },
-            ].map((service, index) => {
-              const IconComponent = service.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card
-                    className={`relative h-full group hover:shadow-2xl transition-all duration-500 border-0 overflow-hidden bg-gradient-to-br ${service.bgGradient}`}
-                  >
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                    />
-                    <CardHeader className="relative pb-4 pt-8 px-8">
-                      <div
-                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center text-white shadow-lg group-hover:-translate-y-1 group-hover:rotate-6 transition-all duration-300 mb-6`}
-                      >
-                        <IconComponent className="h-8 w-8" />
-                      </div>
-                      <CardTitle className="text-2xl md:text-3xl mb-4 leading-tight">
-                        {service.title}
-                      </CardTitle>
-                      <CardDescription className="text-base md:text-lg leading-relaxed text-foreground/70">
-                        {service.description}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/30 to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
-
-        <div className="relative container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6">
-              <Sparkles className="w-4 h-4" />
-              Why Choose Us
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Your Career Success Partner
-            </h2>
-            <p className="text-muted-foreground max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
-              We provide end-to-end career support to help you achieve your
-              professional goals
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                title: "Expert Guidance",
-                description:
-                  "Work with industry experts who understand the job market and can provide personalized advice tailored to your career goals.",
-                icon: Users,
-                color: "from-blue-500 to-cyan-500",
-              },
-              {
-                title: "Proven Results",
-                description:
-                  "Our methods have helped thousands of professionals land their dream jobs and advance their careers successfully.",
-                icon: TrendingUp,
-                color: "from-violet-500 to-purple-500",
-              },
-              {
-                title: "Comprehensive Support",
-                description:
-                  "From interview preparation to career planning, we offer a complete suite of services to support your entire career journey.",
-                icon: Target,
-                color: "from-emerald-500 to-teal-500",
-              },
-            ].map((benefit, index) => {
-              const IconComponent = benefit.icon;
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Card className="group relative h-full overflow-hidden border-0 bg-gradient-to-br from-card via-card to-card/80 hover:shadow-2xl transition-all duration-500">
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${benefit.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                    />
-                    <CardHeader className="relative space-y-3 pb-3 pt-6 px-5">
-                      <div
-                        className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${benefit.color} flex items-center justify-center shadow-lg group-hover:-translate-y-1 group-hover:rotate-6 transition-all duration-300`}
-                      >
-                        <IconComponent className="w-6 h-6 md:w-7 md:h-7 text-white" />
-                      </div>
-                      <CardTitle className="text-lg md:text-xl font-bold leading-tight">
-                        {benefit.title}
-                      </CardTitle>
-                      <CardDescription className="text-sm leading-relaxed text-foreground/70">
-                        {benefit.description}
-                      </CardDescription>
-                    </CardHeader>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* AI Analysis Services CTA */}
-      <section className="relative py-20 md:py-28 overflow-hidden bg-muted/20">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-cyan-500/5" />
-        </div>
-
+      {/* Why Choose Section */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-muted/10 to-background" />
         <div className="relative container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+            className="text-center mb-12"
           >
-            <Card className="relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-card via-card to-card/50 backdrop-blur-xl">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl" />
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-50" />
-
-              <CardContent className="relative p-8 md:p-12 lg:p-16">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  <div className="space-y-6">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-6">
-                      <Brain className="w-4 h-4" />
-                      AI-Powered Analysis
-                    </div>
-                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                      Optimize Your Professional Profile
-                    </h3>
-                    <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-                      Get instant AI-powered analysis of your LinkedIn profile,
-                      resume, and their alignment. Receive detailed scoring and
-                      actionable recommendations to improve your professional
-                      presence.
-                    </p>
-                    <div className="space-y-4 mb-8">
-                      {[
-                        "LinkedIn Profile Review",
-                        "Resume ATS Compatibility Check",
-                        "LinkedIn vs Resume Alignment Analysis",
-                      ].map((feature, index) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, x: -20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          transition={{
-                            duration: 0.4,
-                            delay: 0.2 + index * 0.1,
-                          }}
-                          viewport={{ once: true }}
-                          className="flex items-center gap-3"
-                        >
-                          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                            <CheckCircle2 className="w-4 h-4 text-white" />
-                          </div>
-                          <span className="text-foreground font-medium">
-                            {feature}
-                          </span>
-                        </motion.div>
-                      ))}
-                    </div>
-                    <Button
-                      asChild
-                      size="lg"
-                      className="group relative px-8 py-6 text-lg bg-gradient-to-r from-primary via-primary to-primary/80 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
-                    >
-                      <Link
-                        href="/scoring-services"
-                        className="inline-flex items-center"
-                      >
-                        Explore Analysis Services
-                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                      </Link>
-                    </Button>
-                  </div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    viewport={{ once: true }}
-                    className="relative hidden lg:block"
-                  >
-                    <div className="relative bg-gradient-to-br from-card to-card/80 rounded-3xl p-8 shadow-2xl border border-border/50 backdrop-blur-sm">
-                      <div className="space-y-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                            <Brain className="h-8 w-8 text-white" />
-                          </div>
-                          <div>
-                            <div className="text-sm text-muted-foreground mb-1">
-                              AI-Powered
-                            </div>
-                            <div className="text-2xl font-bold">
-                              Instant Analysis
-                            </div>
-                          </div>
-                        </div>
-                        <div className="h-2 bg-muted rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: "100%" }}
-                            transition={{ duration: 2, delay: 0.5 }}
-                            viewport={{ once: true }}
-                            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-muted/50 rounded-xl p-4">
-                            <div className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
-                              98%
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-1">
-                              Accuracy
-                            </div>
-                          </div>
-                          <div className="bg-muted/50 rounded-xl p-4">
-                            <div className="text-3xl font-bold bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">
-                              5K+
-                            </div>
-                            <div className="text-xs text-muted-foreground mt-1">
-                              Reviews
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-muted/30 via-muted/50 to-background">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-pink-500/10 via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent" />
-        </div>
-
-        <div className="relative container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background border border-primary/20 text-primary text-sm font-semibold mb-6 shadow-lg">
-              ⭐ Testimonials
-            </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Success Stories
+            <Badge
+              variant="secondary"
+              className="px-4 py-2 text-sm font-medium mb-6"
+            >
+              <Award className="w-4 h-4 mr-2 inline" />
+              Why Choose MyCareerSarthi
+            </Badge>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              Clarity, positioning, and guidance that reflect how hiring teams
+              evaluate candidates.
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-lg md:text-xl leading-relaxed">
-              See how professionals have transformed their careers with our
-              comprehensive services
+            <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto mt-6">
+              MyCareerSarthi combines career coaching, mentoring, and profile
+              transformation so you move confidently toward the roles you want.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Rahul Mehta",
-                designation: "Software Engineer",
-                company: "Tech Company",
-                testimonial:
-                  "The mock interview sessions were incredibly helpful! The feedback was detailed and actionable. I landed my dream job at a top tech company within 2 months.",
-                rating: 5,
-                color: "from-blue-500 to-cyan-500",
-              },
-              {
-                name: "Priya Sharma",
-                designation: "Product Manager",
-                company: "Startup",
-                testimonial:
-                  "Career guidance service helped me transition from engineering to product management. The roadmap and strategies were exactly what I needed.",
-                rating: 5,
-                color: "from-violet-500 to-purple-500",
-              },
-              {
-                name: "Amit Kumar",
-                designation: "Data Scientist",
-                company: "Fortune 500",
-                testimonial:
-                  "The interview preparation kit was comprehensive. The scripts and demo sessions prepared me well, and I aced all my interviews. Highly recommended!",
-                rating: 5,
-                color: "from-emerald-500 to-teal-500",
-              },
-            ].map((testimonial, index) => (
+          <div className="grid gap-6 md:grid-cols-2">
+            {whyChoose.map((item, idx) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.5,
-                  delay: index * 0.1,
-                }}
-                viewport={{ once: true }}
+                key={item.title}
+                initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                whileHover={{ y: -4 }}
               >
-                <Card className="group relative h-full overflow-hidden border-0 bg-card hover:shadow-2xl transition-all duration-500">
-                  <div
-                    className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${testimonial.color}`}
-                  />
-                  <CardContent className="p-8 flex flex-col h-full">
-                    <div className="mb-6 relative">
-                      <div
-                        className={`w-12 h-12 rounded-lg bg-gradient-to-br ${testimonial.color} flex items-center justify-center shadow-lg group-hover:-translate-y-1 group-hover:rotate-6 transition-all duration-300`}
-                      >
-                        <MessageSquare className="h-6 w-6 text-white" />
-                      </div>
+                <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <item.icon className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                        />
-                      ))}
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold mb-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-muted-foreground mb-4">{item.body}</p>
+                      <Button variant="ghost" size="sm" className="p-0 h-auto">
+                        Learn more <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
                     </div>
-                    <p className="text-foreground/80 leading-relaxed mb-6 flex-1">
-                      "{testimonial.testimonial}"
-                    </p>
-                    <div className="flex items-center gap-4 pt-6 border-t border-border/50">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white font-bold">
-                        {testimonial.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-bold text-foreground text-base">
-                          {testimonial.name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {testimonial.designation}
-                        </p>
-                        <p className="text-xs text-muted-foreground/70">
-                          {testimonial.company}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
+                  </div>
                 </Card>
               </motion.div>
             ))}
@@ -751,187 +535,449 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-primary/10" />
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-        </div>
-
-        <div className="relative container mx-auto px-4 max-w-7xl">
+      {/* Professional Services Section */}
+      <section className="relative py-16 md:py-24 bg-muted/30 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
+        <div className="relative container mx-auto px-4 max-w-7xl z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center"
+            className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-12"
           >
-            <Card className="relative overflow-hidden border-0 shadow-2xl bg-gradient-to-br from-card via-card to-card/50 backdrop-blur-xl">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl" />
+            <div>
+              <Badge
+                variant="secondary"
+                className="px-4 py-2 text-sm font-medium mb-4"
+              >
+                <Briefcase className="w-4 h-4 mr-2 inline" />
+                Our Professional Services
+              </Badge>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+                Solutions for visibility and interview outcomes.
+              </h2>
+              <p className="text-muted-foreground max-w-2xl">
+                Designed for professionals across experience levels who want to
+                improve their visibility and interview results.
+              </p>
+            </div>
+            <Badge
+              variant="outline"
+              className="px-4 py-2 text-sm font-medium border-primary/20"
+            >
+              Built-in, in-house AI + human expertise
+            </Badge>
+          </motion.div>
 
-              <CardContent className="relative p-8 md:p-12 lg:p-16">
-                <div className="max-w-3xl mx-auto space-y-8">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-6">
-                    <Sparkles className="w-4 h-4" />
-                    Ready to Transform Your Career?
+          <div className="grid gap-6 md:grid-cols-2">
+            {professionalServices.map((service, idx) => (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300 h-full">
+                  <div className="absolute right-6 top-6 h-20 w-20 rounded-full bg-primary/10 blur-2xl" />
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 relative z-10">
+                    <service.icon className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-                    Start Your Journey Today
+                  <h3 className="text-xl font-semibold mb-3 relative z-10">
+                    {service.title}
                   </h3>
-                  <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-                    Whether you need interview preparation, career guidance, or
-                    profile optimization, we're here to help you succeed. Get
-                    started with our comprehensive services today.
+                  <p className="text-muted-foreground mb-4 relative z-10">
+                    {service.description}
                   </p>
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <ul className="space-y-2 mb-5 relative z-10">
+                    {service.items.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                        <span className="text-sm text-muted-foreground">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    variant="outline"
+                    className="rounded-full relative z-10"
+                  >
+                    {service.cta} <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Journey Section */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-background to-muted/10" />
+        <div className="relative container mx-auto px-4 max-w-7xl">
+          <div className="grid gap-12 lg:grid-cols-[1.1fr,0.9fr]">
+            <motion.div
+              className="space-y-6"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <Badge
+                variant="secondary"
+                className="px-4 py-2 text-sm font-medium mb-4"
+              >
+                <Rocket className="w-4 h-4 mr-2 inline" />
+                Your Career Transformation Journey
+              </Badge>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+                A simple, structured process combining expert mentoring and
+                in-house AI.
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Strengthen your positioning, improve visibility, and move closer
+                to the roles you want.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {journeySteps.map((step, idx) => (
+                  <motion.div
+                    key={step.step}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                    whileHover={{ y: -4 }}
+                  >
+                    <Card className="p-6 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <step.icon className="w-5 h-5 text-primary" />
+                        </div>
+                        <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                          {step.step}
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2">
+                        {step.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {step.body}
+                      </p>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="relative my-16"
+              initial={{ opacity: 0, scale: 0.96, y: 30 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.7 }}
+            >
+              <div className="rounded-3xl border-2 border-primary/30 bg-gradient-to-tr from-primary/5 via-card to-background shadow-2xl overflow-hidden flex flex-col md:flex-row items-stretch gap-0 relative">
+                {/* Left: Visual + Motivation */}
+                <div className="md:w-1/2 flex flex-col items-center justify-center relative p-8 bg-gradient-to-tr from-primary/10 via-card to-background">
+                  <div className="absolute left-6 md:left-10 top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
+                  <img
+                    src="/home/progress_overview.svg"
+                    alt="Mentoring for your next step"
+                    className="w-full max-w-xs md:max-w-sm h-auto relative z-10 drop-shadow-xl"
+                  />
+                  <div className="mt-6 mb-3 flex flex-col items-center text-center z-10">
+                    <h3 className="text-xl md:text-2xl font-bold mb-1 text-primary">
+                      Ready for Career Growth?
+                    </h3>
+                    <p className="text-base text-muted-foreground mb-3">
+                      Real results start with real guidance.
+                      <br />
+                      Take your first step with a proven method—align your
+                      strengths, tell your story, and open new doors.
+                    </p>
                     <Button
                       size="lg"
-                      onClick={() => setIsContactDialogOpen(true)}
-                      className="px-8 py-6 text-lg bg-gradient-to-r from-primary via-primary to-primary/80 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+                      className="rounded-full font-semibold px-6 py-2"
+                      tabIndex={-1}
                     >
-                      Get Started
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                    <Button
-                      asChild
-                      size="lg"
-                      variant="outline"
-                      className="px-8 py-6 text-lg border-2 hover:bg-primary/5 transition-colors"
-                    >
-                      <Link href="/scoring-services">Explore Services</Link>
+                      Get Started Today <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                   </div>
                 </div>
-              </CardContent>
+
+                {/* Right: Social Proof & Trust */}
+                <div className="md:w-1/2 p-8 bg-gradient-to-bl from-background via-primary/5 to-muted flex flex-col justify-center relative">
+                  <div className="mb-6">
+                    <Badge
+                      variant="secondary"
+                      className="mb-3 bg-primary/10 text-primary border-primary/20 text-xs px-3 py-1"
+                    >
+                      Trust & Results
+                    </Badge>
+                    <h4 className="text-lg md:text-2xl font-bold mb-2">
+                      Professionals Trust MyCareerSarthi:
+                    </h4>
+                  </div>
+                  <ul className="mb-6 space-y-4">
+                    <li className="flex items-center gap-3">
+                      <span className="inline-block h-4 w-4 bg-primary/70 rounded-full shadow-sm" />
+                      <span className="text-sm md:text-base text-foreground">
+                        1,200+ careers accelerated across tech, ops, and
+                        analytics.
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="inline-block h-4 w-4 bg-emerald-400 rounded-full shadow-sm" />
+                      <span className="text-sm md:text-base text-foreground">
+                        Documented improvements in visibility on LinkedIn and
+                        resume callback rates.
+                      </span>
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <span className="inline-block h-4 w-4 bg-sky-400 rounded-full shadow-sm" />
+                      <span className="text-sm md:text-base text-foreground">
+                        74% report securing more interviews within 8 weeks.
+                      </span>
+                    </li>
+                  </ul>
+                  {/* Testimonial Carousel */}
+                  <TestimonialCarousel
+                    testimonials={[
+                      {
+                        quote:
+                          "I never realized how much clarity and positioning could matter—landed two interviews within a month!",
+                        name: "Anjali D.",
+                      },
+                      {
+                        quote:
+                          "MyCareerSarthi gave me direct, actionable advice that made my resume stand out and improved my LinkedIn profile.",
+                        name: "Vikram S.",
+                      },
+                      {
+                        quote:
+                          "The AI insights were unique and the mentoring was supportive all along. Highly recommend for anyone switching careers.",
+                        name: "Neha P.",
+                      },
+                    ]}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Success Stories Section */}
+      <section className="relative py-16 md:py-24 bg-muted/30 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
+        <div className="relative container mx-auto px-4 max-w-7xl z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-12"
+          >
+            <div>
+              <Badge
+                variant="secondary"
+                className="px-4 py-2 text-sm font-medium mb-4"
+              >
+                <Users className="w-4 h-4 mr-2 inline" />
+                Success stories
+              </Badge>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
+                Real impact across industries.
+              </h2>
+            </div>
+            <Button className="rounded-full">Get Started</Button>
+          </motion.div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {successStories.map((story, idx) => (
+              <motion.div
+                key={story.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300 h-full">
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                    "{story.quote}"
+                  </p>
+                  <p className="text-sm font-semibold">{story.name}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="relative py-16 md:py-24 bg-muted/30 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
+        <div className="relative container mx-auto px-4 max-w-7xl z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <Badge
+              variant="secondary"
+              className="px-4 py-2 text-sm font-medium mb-6"
+            >
+              <Target className="w-4 h-4 mr-2 inline" />
+              Choose a plan that fits
+            </Badge>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              If your current profile isn't opening doors, choose the support
+              that will.
+            </h2>
+            <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-4" />
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              All plans include access to our built-in, in-house AI for analysis
+              and insights.
+            </p>
+          </motion.div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {pricingPlans.map((plan, idx) => (
+              <motion.div
+                key={plan.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: idx * 0.1 }}
+                whileHover={{ y: -8 }}
+              >
+                <Card className="relative flex h-full flex-col gap-4 p-8 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300">
+                  {plan.badge && (
+                    <Badge className="absolute right-4 top-4">
+                      {plan.badge}
+                    </Badge>
+                  )}
+                  <div>
+                    <p className="text-sm font-semibold text-muted-foreground mb-1">
+                      {plan.subtitle}
+                    </p>
+                    <h3 className="text-2xl font-bold">{plan.name}</h3>
+                  </div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold">{plan.price}</span>
+                    <span className="text-muted-foreground">{plan.period}</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {plan.highlights}
+                  </p>
+                  <ul className="space-y-2 flex-1">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                        <span className="text-sm text-muted-foreground">
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button className="w-full rounded-full">
+                    {plan.name === "Starter"
+                      ? "Get Started"
+                      : "Start Free Trial"}
+                  </Button>
+                  {plan.note && (
+                    <p className="text-center text-xs font-semibold text-muted-foreground">
+                      {plan.note}
+                    </p>
+                  )}
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-12"
+          >
+            <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl text-center">
+              <Badge
+                variant="secondary"
+                className="px-4 py-2 text-sm font-medium mb-4"
+              >
+                <Rocket className="w-4 h-4 mr-2 inline" />
+                Ready to Transform Your Career
+              </Badge>
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                Start refining your LinkedIn and resume with a process built to
+                get you closer to the roles you want.
+              </h3>
+              <div className="flex flex-wrap justify-center gap-3 mt-6">
+                <Button size="lg" className="rounded-full">
+                  Get Started Today
+                </Button>
+                <Button size="lg" variant="outline" className="rounded-full">
+                  I'm Ready for Better Roles
+                </Button>
+              </div>
             </Card>
           </motion.div>
         </div>
       </section>
 
-      {/* Contact Form Dialog */}
-      <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">
-              Book Interview Preparation Services
-            </DialogTitle>
-            <DialogDescription>
-              Fill out the form below and we'll get back to you soon to discuss
-              your interview preparation needs.
-            </DialogDescription>
-          </DialogHeader>
+      {/* FAQ Section */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-muted/10 to-background" />
+        <div className="relative container mx-auto px-4 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <Badge
+              variant="secondary"
+              className="px-4 py-2 text-sm font-medium mb-6"
+            >
+              <MessageSquare className="w-4 h-4 mr-2 inline" />
+              Frequently Asked Questions
+            </Badge>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              Answers to common questions
+            </h2>
+            <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-4" />
+            <p className="text-lg text-muted-foreground">
+              Everything you need to know about plans, payments, and support.
+            </p>
+          </motion.div>
 
-          <form onSubmit={handleContactSubmit} className="space-y-6 mt-4">
-            {/* Success Message */}
-            {submitStatus === "success" && (
-              <div className="p-4 rounded-md bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                    Thank you for contacting us! We'll get back to you soon.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Error Message */}
-            {submitStatus === "error" && (
-              <div className="p-4 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                    {errorMessage || "Failed to submit form. Please try again."}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  name="firstName"
-                  placeholder="Enter your first name..."
-                  value={formData.firstName}
-                  onChange={handleFormChange}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  name="lastName"
-                  placeholder="Enter your last name..."
-                  value={formData.lastName}
-                  onChange={handleFormChange}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email address..."
-                value={formData.email}
-                onChange={handleFormChange}
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="message">Tell us about your needs</Label>
-              <textarea
-                id="message"
-                name="message"
-                placeholder="Enter your message..."
-                className="flex min-h-32 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                rows={6}
-                value={formData.message}
-                onChange={handleFormChange}
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-
-            <div className="flex justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsContactDialogOpen(false)}
-                disabled={isSubmitting}
+          <div className="space-y-4">
+            {faqs.map((item, idx) => (
+              <motion.div
+                key={item.q}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
               >
-                Cancel
-              </Button>
-              <Button type="submit" size="lg" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    Submit
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+                <Card className="p-6 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <h3 className="text-lg font-semibold mb-2">{item.q}</h3>
+                  <p className="text-muted-foreground">{item.a}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
-};
-
-export default Home;
+}

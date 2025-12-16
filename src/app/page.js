@@ -349,22 +349,49 @@ export default function Home() {
                 {heroGlanceCards.map((card, idx) => (
                   <motion.div
                     key={card.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 + idx * 0.1 }}
-                    whileHover={{ y: -4 }}
+                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.6 + idx * 0.1,
+                      type: "spring",
+                      stiffness: 100,
+                    }}
+                    whileHover={{ y: -8, scale: 1.02 }}
                   >
-                    <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300 h-full">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-1">
-                        <card.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-semibold mb-1">
-                        {card.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {card.copy}
-                      </p>
-                    </Card>
+                    <motion.div
+                      whileHover={{
+                        boxShadow: "0 20px 40px -5px rgba(0, 0, 0, 0.2)",
+                      }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300 h-full">
+                        <motion.div
+                          className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-1"
+                          whileHover={{ scale: 1.2, rotate: 360 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <motion.div
+                            animate={{
+                              scale: [1, 1.1, 1],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              delay: idx * 0.3,
+                            }}
+                          >
+                            <card.icon className="w-6 h-6 text-primary" />
+                          </motion.div>
+                        </motion.div>
+                        <h3 className="text-lg font-semibold mb-1">
+                          {card.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {card.copy}
+                        </p>
+                      </Card>
+                    </motion.div>
                   </motion.div>
                 ))}
               </motion.div>
@@ -372,28 +399,56 @@ export default function Home() {
 
             <motion.div
               className="relative"
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.3,
+                type: "spring",
+                stiffness: 100,
+              }}
             >
               <div className="p-8 overflow-hidden relative">
                 <div className="relative z-10 space-y-8">
                   <div className="flex flex-col sm:flex-row items-center justify-between w-full gap-8">
                     {/* Illustration - left side, vertically centered */}
-                    <div className="flex justify-center items-center w-full md:min-w-xl">
-                      <div className="relative  w-auto h-auto">
-                        <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl pointer-events-none" />
-                        <img
+                    <motion.div
+                      className="flex justify-center items-center w-full md:min-w-xl"
+                      initial={{ opacity: 0, x: -50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                      <motion.div
+                        className="relative w-auto h-auto"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <motion.div
+                          className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl pointer-events-none"
+                          animate={{
+                            opacity: [0.3, 0.5, 0.3],
+                            scale: [1, 1.1, 1],
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          }}
+                        />
+                        <motion.img
                           src="/home/career_progress.svg"
                           alt="Career guidance illustration"
                           className="relative w-full h-auto object-contain drop-shadow-lg"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.8, delay: 0.5 }}
                         />
-                      </div>
-                    </div>
+                      </motion.div>
+                    </motion.div>
 
                     {/* Feature cards grid - right side, stacked */}
                     <div className="w-full max-w-xl grid gap-5 sm:grid-cols-1">
-                      <Card className="p-5 bg-linear-to-br from-primary/10 via-card to-card border-2 border-primary/20 hover:border-primary/40 transition-all duration-300">
+                      <div className="p-5 bg-linear-to-br from-primary/10 via-card to-card border border-primary/20 rounded-lg hover:border-primary/40 transition-all duration-300">
                         <div className="flex items-start gap-3">
                           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                             <Brain className="w-5 h-5 text-primary" />
@@ -408,8 +463,8 @@ export default function Home() {
                             </p>
                           </div>
                         </div>
-                      </Card>
-                      <Card className="p-5 bg-linear-to-br from-foreground via-foreground/90 to-foreground text-background border-2 border-primary/20 hover:border-primary/40 transition-all duration-300">
+                      </div>
+                      <div className="p-5 bg-linear-to-br from-foreground via-foreground/90 to-foreground text-background border border-primary/20 rounded-lg hover:border-primary/40 transition-all duration-300">
                         <div className="flex items-start gap-3">
                           <div className="w-10 h-10 rounded-lg bg-background/20 flex items-center justify-center shrink-0">
                             <Users className="w-5 h-5 text-background" />
@@ -431,12 +486,12 @@ export default function Home() {
                             </Badge>
                           </div>
                         </div>
-                      </Card>
+                      </div>
                     </div>
                   </div>
 
                   {/* Stats card */}
-                  <Card className="p-5 border-2 border-border bg-muted/30">
+                  <div className="p-5 border border-border bg-muted/30 rounded-lg">
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4 text-center">
                       Fast Track Results
                     </p>
@@ -466,7 +521,7 @@ export default function Home() {
                         </p>
                       </div>
                     </div>
-                  </Card>
+                  </div>
                 </div>
               </div>
             </motion.div>

@@ -123,9 +123,14 @@ const AboutUs = () => {
 
             <motion.h1
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.3,
+                type: "spring",
+                stiffness: 100,
+              }}
             >
               About Us
             </motion.h1>
@@ -145,10 +150,22 @@ const AboutUs = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            <motion.h2
+              className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4"
+              initial={{ opacity: 0, y: -20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
               Our Story
-            </h2>
-            <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
+            </motion.h2>
+            <motion.div
+              className="w-24 h-1 bg-primary mx-auto rounded-full"
+              initial={{ width: 0 }}
+              whileInView={{ width: 96 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            />
           </motion.div>
 
           <div className="space-y-8">
@@ -202,23 +219,48 @@ const AboutUs = () => {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: -30, scale: 0.95 }}
+                whileInView={{ opacity: 1, x: 0, scale: 1 }}
                 viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: item.delay }}
+                transition={{
+                  duration: 0.6,
+                  delay: item.delay,
+                  type: "spring",
+                  stiffness: 100,
+                }}
+                whileHover={{ x: 5 }}
                 className="relative"
               >
                 {item.icon && (
                   <motion.div
                     className="absolute -left-12 top-2 hidden md:block"
-                    initial={{ opacity: 0, scale: 0 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                    whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: item.delay + 0.2 }}
+                    transition={{
+                      duration: 0.6,
+                      delay: item.delay + 0.2,
+                      type: "spring",
+                      stiffness: 200,
+                    }}
+                    whileHover={{ scale: 1.2, rotate: 360 }}
                   >
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <motion.div
+                      className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center"
+                      animate={{
+                        boxShadow: [
+                          "0 0 0 0 rgba(59, 130, 246, 0.4)",
+                          "0 0 0 8px rgba(59, 130, 246, 0)",
+                        ],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: item.delay,
+                      }}
+                    >
                       <item.icon className="w-5 h-5 text-primary" />
-                    </div>
+                    </motion.div>
                   </motion.div>
                 )}
                 <p

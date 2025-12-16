@@ -3,20 +3,28 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 const isPublicRoute = createRouteMatcher([
   "/",
   "/signup",
-  "/report",
   "/login",
+  "/report",
   "/about-us",
   "/about-us1",
   "/privacy-policy",
+  "/terms-and-conditions",
   "/terms-nd-conditions",
   "/contact-us",
   "/process-demo",
   "/services(.*)",
+  "/scoring-services",
+  "/career-mentoring",
+  "/interview-preparation",
   "/pricing",
   "/blog(.*)",
+  "/linkedin(.*)",
+  "/resume(.*)",
+  "/compare(.*)",
   // Fallbacks / static errors
   "/404",
   "/not-found",
+  "/loading",
 ]);
 
 export default clerkMiddleware(async (auth, request) => {

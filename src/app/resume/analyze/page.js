@@ -1,21 +1,33 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import RoleSelector from "@/components/ui/role-selector";
 import JobDescriptionInput from "@/components/ui/job-description-input";
-import StepNavigation from "@/components/ui/step-navigation";
-import StepContainer from "@/components/ui/step-container";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { api } from "@/components/api/api";
 import { handlePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
 import SimpleLoader from "@/components/simple-loader";
 import { useRouter } from "next/navigation";
+import {
+  FileText,
+  Briefcase,
+  CreditCard,
+  ArrowRight,
+  Upload,
+  CheckCircle2,
+  Sparkles,
+} from "lucide-react";
 
 const ResumeAnalyze = () => {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [activeTab, setActiveTab] = useState("resume");
   const [selectedRole, setSelectedRole] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
   const [inputMode, setInputMode] = useState("role"); // "role" or "jobDescription"
@@ -50,37 +62,12 @@ const ResumeAnalyze = () => {
   const { getToken, isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
-  // Step definitions
-  const steps = [
-    {
-      title: "Resume Upload",
-      description: "Upload your resume (PDF, DOCX, or TXT)",
-    },
-    {
-      title: "Job Requirements",
-      description: "Select role or add description",
-    },
-    { title: "Payment", description: "Review and pay" },
+  // Tab definitions
+  const tabs = [
+    { id: "resume", label: "Resume", icon: FileText },
+    { id: "requirements", label: "Job Requirements", icon: Briefcase },
+    { id: "payment", label: "Payment", icon: CreditCard },
   ];
-
-  const totalSteps = steps.length;
-
-  // Navigation functions
-  const nextStep = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const previousStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const goToStep = (step) => {
-    setCurrentStep(step);
-  };
 
   // Remove getRoles function as it's now handled by RoleSelector component
 
@@ -218,14 +205,29 @@ const ResumeAnalyze = () => {
     return validateStep(1) && validateStep(2);
   };
 
-  const handleNextStep = () => {
-    if (validateStep(currentStep)) {
-      nextStep();
+  const handleTabChange = (tabId) => {
+    // Validate before allowing tab change
+    if (tabId === "requirements" && !pdfFile) {
+      setErrors({ resume: "Please upload your resume first" });
+      return;
     }
-  };
-
-  const handlePreviousStep = () => {
-    previousStep();
+    if (tabId === "payment") {
+      if (!pdfFile) {
+        setErrors({ resume: "Please upload your resume first" });
+        setActiveTab("resume");
+        return;
+      }
+      if (
+        (inputMode === "role" && !selectedRole) ||
+        (inputMode === "jobDescription" && !jobDescription.trim())
+      ) {
+        setErrors({ role: "Please select a role or add job description" });
+        setActiveTab("requirements");
+        return;
+      }
+    }
+    setErrors({});
+    setActiveTab(tabId);
   };
 
   const handleStepSubmit = async () => {
@@ -281,7 +283,7 @@ const ResumeAnalyze = () => {
         (errorMsg) => {
           setIsAnalyzing(false);
           setErrors({ general: errorMsg });
-          setCurrentStep(3);
+          setActiveTab("payment");
         },
         getToken
       );
@@ -293,8 +295,8 @@ const ResumeAnalyze = () => {
         error?.message ||
         "Payment initiation failed. Please try again.";
       setErrors({ general: errorMessage });
-      // Stay on payment step so user can see the error
-      setCurrentStep(3);
+      // Stay on payment tab so user can see the error
+      setActiveTab("payment");
     } finally {
       setIsSubmitting(false);
     }
@@ -372,44 +374,39 @@ const ResumeAnalyze = () => {
 
   // Socket useEffect moved above - removed duplicate
 
-  // Show simple loading screen during analysis
-  if (isAnalyzing) {
-    return (
-      <SimpleLoader message="Analyzing your resume... This may take a while." />
-    );
-  }
+  // Show simple loading screen during analysis - render as overlay
 
-  // Render step content
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
+  // Render tab content
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "resume":
         return (
-          <div className="space-y-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+                <FileText className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Resume Upload</h3>
+                <p className="text-xs text-muted-foreground">
+                  Upload your resume (PDF, DOCX, or TXT)
+                </p>
+              </div>
+            </div>
+
             {/* PDF Upload */}
             <div className="space-y-2">
               <Label className="text-sm font-medium flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-blue-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
+                <Upload className="w-4 h-4 text-primary" />
                 Upload Resume
               </Label>
               <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
+                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur-sm ${
                   isDragging
-                    ? "border-primary bg-primary/5"
+                    ? "border-primary bg-primary/10"
                     : errors.resume
                     ? "border-destructive bg-destructive/5"
-                    : "border-border hover:border-primary/50"
+                    : "border-border hover:border-primary/50 hover:bg-primary/5"
                 }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -488,52 +485,47 @@ const ResumeAnalyze = () => {
           </div>
         );
 
-      case 2:
+      case "requirements":
         return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
-                <svg
-                  className="w-4 h-4 text-green-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"
-                  />
-                </svg>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+                <Briefcase className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold">Job Requirements</h3>
+              <div>
+                <h3 className="text-lg font-semibold">Job Requirements</h3>
+                <p className="text-xs text-muted-foreground">
+                  Select a role or paste a job description
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <button
+            <div className="space-y-3">
+              <div className="flex gap-3">
+                <Button
                   type="button"
+                  variant={inputMode === "role" ? "default" : "outline"}
                   onClick={() => setInputMode("role")}
-                  className={`px-4 py-2 rounded-lg border transition-colors ${
+                  className={`rounded-xl transition-all duration-300 ${
                     inputMode === "role"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background border-border hover:border-primary/50"
+                      ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      : ""
                   }`}
                 >
                   Select A Role
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  variant={inputMode === "jobDescription" ? "default" : "outline"}
                   onClick={() => setInputMode("jobDescription")}
-                  className={`px-4 py-2 rounded-lg border transition-colors ${
+                  className={`rounded-xl transition-all duration-300 ${
                     inputMode === "jobDescription"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-background border-border hover:border-primary/50"
+                      ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      : ""
                   }`}
                 >
                   Paste Job Description
-                </button>
+                </Button>
               </div>
 
               {inputMode === "role" ? (
@@ -555,34 +547,32 @@ const ResumeAnalyze = () => {
           </div>
         );
 
-      case 3:
+      case "payment":
         return (
-          <div className="space-y-6">
-            <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-lg p-6 space-y-6 border border-blue-200/50 dark:border-blue-800/30">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <svg
-                    className="w-4 h-4 text-blue-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-semibold">Order Summary</h2>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+                <CreditCard className="w-5 h-5 text-primary" />
               </div>
+              <div>
+                <h3 className="text-lg font-semibold">Payment & Review</h3>
+                <p className="text-xs text-muted-foreground">
+                  Review your order and complete payment
+                </p>
+              </div>
+            </div>
+
+            <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 rounded-xl">
+              <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
+                Order Summary
+              </h4>
 
               {/* Pricing */}
-              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+              <div className="bg-muted/30 rounded-xl p-4 space-y-3 border border-border">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Resume Analysis</span>
-                  <span className="font-semibold">
+                  <span className="text-sm font-medium">Resume Analysis</span>
+                  <span className="font-semibold text-foreground">
                     {isLoadingPricing
                       ? "Loading..."
                       : `₹${pricing.originalPrice}`}
@@ -590,26 +580,27 @@ const ResumeAnalyze = () => {
                 </div>
 
                 {appliedCoupon && (
-                  <div className="flex justify-between items-center text-green-600">
-                    <span className="text-sm">
+                  <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
+                    <span className="text-sm font-medium flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" />
                       Coupon ({appliedCoupon.code})
                     </span>
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-semibold">
                       -₹{appliedCoupon.discount}
                     </span>
                   </div>
                 )}
 
-                <div className="border-t border-border pt-3">
+                <div className="border-t-2 border-border pt-4">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">Total</span>
+                    <span className="text-base font-semibold">Total</span>
                     <div className="text-right">
                       {pricing.discount > 0 && (
-                        <div className="text-xs text-muted-foreground line-through">
+                        <div className="text-xs text-muted-foreground line-through mb-1">
                           ₹{pricing.originalPrice}
                         </div>
                       )}
-                      <div className="text-lg font-bold text-primary">
+                      <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                         {isLoadingPricing
                           ? "Loading..."
                           : `₹${pricing.finalPrice}`}
@@ -620,44 +611,32 @@ const ResumeAnalyze = () => {
               </div>
 
               {/* Coupon Code */}
-              <div className="space-y-2">
+              <div className="space-y-2 mt-4">
                 <Label className="text-sm font-medium flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-orange-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                    />
-                  </svg>
+                  <Sparkles className="w-4 h-4 text-primary" />
                   Coupon Code (Optional)
                 </Label>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
+                  <Input
                     placeholder="Enter coupon code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    className={`flex-1 px-3 py-2 border rounded-md bg-background border-border hover:border-primary/50 transition-colors ${
+                    className={`flex-1 rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${
                       errors.coupon ? "border-destructive" : ""
                     }`}
                     disabled={isApplyingCoupon || !!appliedCoupon}
                   />
                   {appliedCoupon ? (
-                    <LoadingButton
+                    <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={removeCoupon}
                       disabled={isApplyingCoupon}
+                      className="rounded-lg"
                     >
                       Remove
-                    </LoadingButton>
+                    </Button>
                   ) : (
                     <LoadingButton
                       type="button"
@@ -667,6 +646,7 @@ const ResumeAnalyze = () => {
                       isLoading={isApplyingCoupon}
                       loadingText="Applying..."
                       disabled={!couponCode.trim()}
+                      className="rounded-lg"
                     >
                       Apply
                     </LoadingButton>
@@ -676,25 +656,15 @@ const ResumeAnalyze = () => {
                   <p className="text-sm text-destructive">{errors.coupon}</p>
                 )}
                 {appliedCoupon && (
-                  <div className="flex items-center gap-2 text-green-600 text-sm">
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+                    <CheckCircle2 className="w-4 h-4" />
                     <span>
                       Coupon applied! You saved ₹{appliedCoupon.discount}
                     </span>
                   </div>
                 )}
               </div>
-            </div>
+            </Card>
           </div>
         );
 
@@ -703,60 +673,156 @@ const ResumeAnalyze = () => {
     }
   };
 
+  const canProceedToPayment = () => {
+    return (
+      pdfFile &&
+      ((inputMode === "role" && selectedRole) ||
+        (inputMode === "jobDescription" && jobDescription.trim()))
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-            Resume Analysis
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Get AI-powered insights to optimize your resume
-          </p>
+    <div className="min-h-screen bg-background relative">
+      {isAnalyzing && (
+        <SimpleLoader message="Analyzing your resume... This may take a while." />
+      )}
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-6 pb-4">
+        <div className="absolute inset-0 bg-linear-to-br from-background via-muted/20 to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+        <div className="relative container mx-auto px-4 max-w-5xl z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center space-y-2"
+          >
+            <Badge
+              variant="secondary"
+              className="px-3 py-1 text-xs font-medium mb-2"
+            >
+              <Sparkles className="w-3 h-3 mr-1.5 inline" />
+              AI-Powered Analysis
+            </Badge>
+            <h1 className="text-2xl md:text-3xl font-bold leading-tight">
+              Resume Analysis
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+              Get AI-powered insights to optimize your resume
+            </p>
+          </motion.div>
         </div>
-      </div>
+      </section>
 
-      {/* Step Navigation */}
-      <div className="container mx-auto px-4 mb-4">
-        <StepNavigation
-          currentStep={currentStep}
-          totalSteps={totalSteps}
-          steps={steps}
-        />
-      </div>
-
-      {/* Step Content */}
-      <div className="container mx-auto px-4 pb-12">
+      {/* Main Content */}
+      <div className="relative container mx-auto px-4 max-w-5xl pb-8">
         {errors.general && (
-          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg max-w-2xl mx-auto">
-            <p className="text-sm text-destructive">{errors.general}</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm"
+          >
+            <p className="text-sm text-destructive font-medium">
+              {errors.general}
+            </p>
+          </motion.div>
         )}
 
-        <StepContainer
-          title={steps[currentStep - 1]?.title}
-          description={steps[currentStep - 1]?.description}
-          onNext={
-            currentStep === totalSteps ? handleStepSubmit : handleNextStep
-          }
-          onPrevious={handlePreviousStep}
-          nextText={currentStep === totalSteps ? "Start Analysis" : "Next"}
-          previousText="Previous"
-          isNextDisabled={
-            currentStep === 1
-              ? !pdfFile
-              : currentStep === 2
-              ? (inputMode === "role" && !selectedRole) ||
-                (inputMode === "jobDescription" && !jobDescription.trim())
-              : false
-          }
-          isPreviousDisabled={currentStep === 1}
-          showNext={true}
-          showPrevious={currentStep > 1}
-        >
-          {renderStepContent()}
-        </StepContainer>
+        <Card className="p-4 md:p-5 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl">
+          <Tabs
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-3 mb-4 bg-muted/50 rounded-xl p-1">
+              {tabs.map((tab) => {
+                const IconComponent = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <TabsTrigger
+                    key={tab.id}
+                    value={tab.id}
+                    className={`rounded-lg transition-all duration-300 ${
+                      isActive
+                        ? "bg-background shadow-md text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <IconComponent className="w-4 h-4 mr-2" />
+                    {tab.label}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+
+            {tabs.map((tab) => (
+              <TabsContent key={tab.id} value={tab.id} className="mt-0">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {renderTabContent()}
+                </motion.div>
+              </TabsContent>
+            ))}
+          </Tabs>
+
+          {/* Navigation Footer */}
+          <div className="flex justify-between items-center pt-4 mt-4 border-t border-border">
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (activeTab === "requirements") {
+                  setActiveTab("resume");
+                } else if (activeTab === "payment") {
+                  setActiveTab("requirements");
+                }
+              }}
+              disabled={activeTab === "resume"}
+              className="rounded-xl"
+            >
+              Previous
+            </Button>
+            {activeTab === "payment" ? (
+              <Button
+                onClick={handleStepSubmit}
+                disabled={isSubmitting || !canProceedToPayment()}
+                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+              >
+                {isSubmitting ? "Processing..." : "Start Analysis"}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  if (activeTab === "resume") {
+                    if (pdfFile) {
+                      setActiveTab("requirements");
+                    } else {
+                      setErrors({ resume: "Please upload your resume" });
+                    }
+                  } else if (activeTab === "requirements") {
+                    if (
+                      (inputMode === "role" && selectedRole) ||
+                      (inputMode === "jobDescription" && jobDescription.trim())
+                    ) {
+                      setActiveTab("payment");
+                    } else {
+                      setErrors({
+                        role: "Please select a role or add job description",
+                      });
+                    }
+                  }
+                }}
+                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+              >
+                Next
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        </Card>
       </div>
     </div>
   );

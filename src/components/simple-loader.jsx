@@ -77,7 +77,8 @@ export default function SimpleLoader({ message = "Loading...", className }) {
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center min-h-screen px-6",
+        "fixed inset-0 z-[9999] flex flex-col items-center justify-center px-6",
+        "bg-background/95 backdrop-blur-sm",
         className
       )}
     >

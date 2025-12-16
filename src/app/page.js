@@ -27,14 +27,14 @@ import {
 
 const heroGlanceCards = [
   {
-    title: "Career Assessment & Roadmap Guidance",
+    title: "Career Assessment & Roadmap",
     copy: "Clarity on strengths, role-fit, and next steps with a tailored path toward your goals.",
     icon: Target,
     link: "/career-mentoring",
   },
   {
     title: "Interview Preparation",
-    copy: "Mock interviews, expert evaluation, and AI feedback so you present your experience with confidence.",
+    copy: "Mock interviews and expert AI feedback for confident answers.",
     icon: MessageSquare,
     link: "/interview-preparation",
   },

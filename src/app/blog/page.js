@@ -149,7 +149,7 @@ export default function BlogPage() {
                         src={blog.featured_image}
                         alt={blog.title}
                         loading="lazy"
-                        className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                        className="object-cover w-full h-full transition-transform duration-300"
                       />
                     ) : (
                       <div className="flex items-center justify-center w-full h-full text-muted-foreground text-6xl">

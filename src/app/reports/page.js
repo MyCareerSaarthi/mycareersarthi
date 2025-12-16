@@ -611,7 +611,7 @@ const ReportsGrid = ({
           return (
             <Card
               key={report.id}
-              className="group hover:shadow-lg transition-all duration-300 hover:scale-105 border-2 border-gray-200 rounded-xl"
+              className="group hover:shadow-lg transition-all duration-300 border-2 border-gray-200 rounded-xl"
             >
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">

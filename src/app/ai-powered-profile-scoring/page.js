@@ -278,7 +278,7 @@ export default function ScoringServices() {
                         className="max-w-6xl mx-auto"
                       >
                         {service.showImage && service.image ? (
-                          // Layout with image: Title/Icon on top, Content and Image side by side
+                          // Layout with image: Title/Icon on top, Content, then Full-width Image
                           <div className="space-y-8">
                             {/* Icon and Title Section - Full Width */}
                             <div className="flex items-center gap-6">
@@ -339,213 +339,219 @@ export default function ScoringServices() {
                               </motion.div>
                             </div>
 
-                            {/* Content and Image Side by Side */}
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-                              {/* Content Section */}
-                              <div className="space-y-4 order-2 lg:order-1">
-                                <motion.div
-                                  initial={{ opacity: 0, x: -20 }}
-                                  whileInView={{ opacity: 1, x: 0 }}
-                                  transition={{ duration: 0.8, delay: 0.2 }}
-                                  viewport={{ once: true }}
-                                  className="space-y-4"
-                                >
-                                  <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
-                                    {service.description}
-                                  </p>
+                            {/* Content Section */}
+                            <div className="space-y-4">
+                              <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                viewport={{ once: true }}
+                                className="space-y-4"
+                              >
+                                <p className="text-base md:text-lg text-foreground/90 leading-relaxed">
+                                  {service.description}
+                                </p>
 
-                                  {service.bulletPoints && (
-                                    <div className="space-y-3 pt-2">
-                                      <ul className="space-y-2">
-                                        {service.bulletPoints.map(
-                                          (point, idx) => (
-                                            <motion.li
-                                              key={idx}
-                                              initial={{ opacity: 0, x: -20 }}
-                                              whileInView={{ opacity: 1, x: 0 }}
+                                {service.bulletPoints && (
+                                  <div className="space-y-3 pt-2">
+                                    <ul className="space-y-2">
+                                      {service.bulletPoints.map(
+                                        (point, idx) => (
+                                          <motion.li
+                                            key={idx}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            transition={{
+                                              duration: 0.5,
+                                              delay: 0.3 + idx * 0.1,
+                                              type: "spring",
+                                              stiffness: 100,
+                                            }}
+                                            viewport={{ once: true }}
+                                            className="flex items-start gap-3 group"
+                                            whileHover={{ x: 5 }}
+                                          >
+                                            <motion.div
+                                              className="shrink-0 mt-1 group/check"
+                                              whileHover={{
+                                                scale: 1.3,
+                                                rotate: 360,
+                                              }}
                                               transition={{
                                                 duration: 0.5,
-                                                delay: 0.3 + idx * 0.1,
                                                 type: "spring",
-                                                stiffness: 100,
+                                                stiffness: 200,
                                               }}
-                                              viewport={{ once: true }}
-                                              className="flex items-start gap-3 group"
-                                              whileHover={{ x: 5 }}
                                             >
                                               <motion.div
-                                                className="shrink-0 mt-1 group/check"
+                                                className={`w-5 h-5 rounded-full bg-linear-to-br ${service.gradient} flex items-center justify-center shadow-md backdrop-blur-sm`}
                                                 whileHover={{
-                                                  scale: 1.3,
-                                                  rotate: 360,
+                                                  boxShadow:
+                                                    "0 0 20px rgba(59, 130, 246, 0.5)",
+                                                }}
+                                                animate={{
+                                                  scale: [1, 1.15, 1],
                                                 }}
                                                 transition={{
-                                                  duration: 0.5,
-                                                  type: "spring",
-                                                  stiffness: 200,
+                                                  scale: {
+                                                    duration: 2,
+                                                    repeat: Infinity,
+                                                    delay: idx * 0.2,
+                                                  },
+                                                  boxShadow: {
+                                                    duration: 0.3,
+                                                  },
                                                 }}
                                               >
                                                 <motion.div
-                                                  className={`w-5 h-5 rounded-full bg-linear-to-br ${service.gradient} flex items-center justify-center shadow-md backdrop-blur-sm`}
-                                                  whileHover={{
-                                                    boxShadow:
-                                                      "0 0 20px rgba(59, 130, 246, 0.5)",
-                                                  }}
                                                   animate={{
-                                                    scale: [1, 1.15, 1],
+                                                    rotate: [0, 10, -10, 0],
                                                   }}
                                                   transition={{
-                                                    scale: {
-                                                      duration: 2,
-                                                      repeat: Infinity,
-                                                      delay: idx * 0.2,
-                                                    },
-                                                    boxShadow: {
-                                                      duration: 0.3,
-                                                    },
+                                                    duration: 3,
+                                                    repeat: Infinity,
+                                                    delay: idx * 0.3,
                                                   }}
                                                 >
-                                                  <motion.div
-                                                    animate={{
-                                                      rotate: [0, 10, -10, 0],
-                                                    }}
-                                                    transition={{
-                                                      duration: 3,
-                                                      repeat: Infinity,
-                                                      delay: idx * 0.3,
-                                                    }}
-                                                  >
-                                                    <CheckCircle2 className="w-3 h-3 text-white" />
-                                                  </motion.div>
+                                                  <CheckCircle2 className="w-3 h-3 text-white" />
                                                 </motion.div>
                                               </motion.div>
-                                              <motion.span
-                                                className="text-base md:text-lg text-foreground/80 leading-relaxed pt-0.5"
-                                                initial={{ opacity: 0 }}
-                                                whileInView={{ opacity: 1 }}
-                                                transition={{
-                                                  delay: 0.4 + idx * 0.1,
-                                                }}
-                                                viewport={{ once: true }}
-                                              >
-                                                {point}
-                                              </motion.span>
-                                            </motion.li>
-                                          )
-                                        )}
-                                      </ul>
-                                    </div>
-                                  )}
+                                            </motion.div>
+                                            <motion.span
+                                              className="text-base md:text-lg text-foreground/80 leading-relaxed pt-0.5"
+                                              initial={{ opacity: 0 }}
+                                              whileInView={{ opacity: 1 }}
+                                              transition={{
+                                                delay: 0.4 + idx * 0.1,
+                                              }}
+                                              viewport={{ once: true }}
+                                            >
+                                              {point}
+                                            </motion.span>
+                                          </motion.li>
+                                        )
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
 
-                                  {service.closingText && (
-                                    <motion.p
-                                      initial={{ opacity: 0 }}
-                                      whileInView={{ opacity: 1 }}
-                                      transition={{ duration: 0.6, delay: 0.4 }}
-                                      viewport={{ once: true }}
-                                      className="text-base md:text-lg text-foreground/90 leading-relaxed pt-2 italic"
-                                    >
-                                      {service.closingText}
-                                    </motion.p>
-                                  )}
-                                </motion.div>
-                              </div>
-
-                              {/* Image Preview - Bigger and Better */}
-                              <div className="order-1 lg:order-2">
-                                <motion.div
-                                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                                  transition={{
-                                    duration: 0.8,
-                                    delay: 0.3,
-                                    type: "spring",
-                                    stiffness: 100,
-                                  }}
-                                  viewport={{ once: true, margin: "-100px" }}
-                                  className="sticky top-8"
-                                >
-                                  <motion.div
-                                    className="relative group"
-                                    whileHover={{ scale: 1.03, y: -5 }}
-                                    transition={{
-                                      duration: 0.3,
-                                      type: "spring",
-                                      stiffness: 200,
-                                    }}
+                                {service.closingText && (
+                                  <motion.p
+                                    initial={{ opacity: 0 }}
+                                    whileInView={{ opacity: 1 }}
+                                    transition={{ duration: 0.6, delay: 0.4 }}
+                                    viewport={{ once: true }}
+                                    className="text-base md:text-lg text-foreground/90 leading-relaxed pt-2 italic"
                                   >
-                                    {/* Animated glow effect */}
-                                    <motion.div
-                                      className={`absolute -inset-1 bg-linear-to-br ${service.gradient} rounded-2xl opacity-20 blur-xl`}
-                                      animate={{
-                                        opacity: [0.2, 0.3, 0.2],
-                                      }}
-                                      transition={{
-                                        duration: 3,
-                                        repeat: Infinity,
-                                        ease: "easeInOut",
-                                      }}
-                                    />
-                                    {/* Image container */}
-                                    <motion.div
-                                      className="relative rounded-xl overflow-hidden shadow-2xl border-2 border-border/50 bg-card/50 backdrop-blur-sm group/image"
-                                      whileHover={{
-                                        boxShadow:
-                                          "0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 0 40px rgba(59, 130, 246, 0.2)",
-                                        scale: 1.02,
-                                      }}
-                                      transition={{
-                                        duration: 0.3,
-                                        type: "spring",
-                                        stiffness: 200,
-                                      }}
-                                    >
-                                      {/* Gradient overlay on hover */}
-                                      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-xl opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
-                                      <motion.div
-                                        initial={{ scale: 1.1 }}
-                                        whileInView={{ scale: 1 }}
-                                        transition={{
-                                          duration: 0.8,
-                                          delay: 0.5,
-                                        }}
-                                        viewport={{ once: true }}
-                                      >
-                                        <Image
-                                          src={service.image}
-                                          alt={`${service.title} preview`}
-                                          width={1200}
-                                          height={900}
-                                          className="w-full h-auto object-cover"
-                                          priority={serviceIndex === 0}
-                                        />
-                                      </motion.div>
-                                      {/* Animated overlay gradient */}
-                                      <motion.div
-                                        className="absolute inset-0 bg-linear-to-t from-black/5 to-transparent pointer-events-none"
-                                        initial={{ opacity: 0 }}
-                                        whileInView={{ opacity: 1 }}
-                                        transition={{
-                                          duration: 0.6,
-                                          delay: 0.6,
-                                        }}
-                                        viewport={{ once: true }}
-                                      />
-                                      {/* Shine effect on hover */}
-                                      <motion.div
-                                        className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent pointer-events-none z-20"
-                                        initial={{ x: "-100%" }}
-                                        whileHover={{ x: "100%" }}
-                                        transition={{
-                                          duration: 0.8,
-                                          ease: "easeInOut",
-                                        }}
-                                      />
-                                    </motion.div>
-                                  </motion.div>
-                                </motion.div>
-                              </div>
+                                    {service.closingText}
+                                  </motion.p>
+                                )}
+                              </motion.div>
                             </div>
+
+                            {/* Full Width Image Preview with Fade from Bottom */}
+                            <motion.div
+                              initial={{ opacity: 0, y: 100 }}
+                              whileInView={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.8,
+                                delay: 0.3,
+                                ease: [0.16, 1, 0.3, 1],
+                              }}
+                              viewport={{ once: true, margin: "-100px" }}
+                              className="w-full"
+                            >
+                              <motion.div
+                                className="relative group"
+                                transition={{
+                                  duration: 0.3,
+                                  type: "spring",
+                                  stiffness: 200,
+                                }}
+                              >
+                                {/* Animated glow effect */}
+                                <motion.div
+                                  className={`absolute -inset-1 bg-linear-to-br ${service.gradient} rounded-2xl opacity-20 blur-xl`}
+                                  animate={{
+                                    opacity: [0.2, 0.3, 0.2],
+                                  }}
+                                  transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                  }}
+                                />
+                                {/* Image container with fade from bottom mask */}
+                                <motion.div
+                                  className="relative rounded-xl overflow-hidden shadow-2xl border-2 border-border/50 bg-card/50 backdrop-blur-sm group/image w-full"
+                                  whileHover={{
+                                    boxShadow:
+                                      "0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 0 40px rgba(59, 130, 246, 0.2)",
+                                  }}
+                                  transition={{
+                                    duration: 0.3,
+                                    type: "spring",
+                                    stiffness: 200,
+                                  }}
+                                >
+                                  {/* Fade from bottom overlay - animated */}
+                                  <motion.div
+                                    className="absolute inset-0 bg-linear-to-t from-background via-background/50 to-transparent pointer-events-none z-10"
+                                    initial={{ opacity: 1 }}
+                                    whileInView={{ opacity: 0 }}
+                                    transition={{
+                                      duration: 1,
+                                      delay: 0.5,
+                                      ease: "easeOut",
+                                    }}
+                                    viewport={{ once: true }}
+                                  />
+                                  {/* Gradient overlay on hover */}
+                                  <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-primary/5 to-primary/0 rounded-xl opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 z-20 pointer-events-none" />
+                                  <motion.div
+                                    initial={{ y: 50, opacity: 0 }}
+                                    whileInView={{ y: 0, opacity: 1 }}
+                                    transition={{
+                                      duration: 0.8,
+                                      delay: 0.4,
+                                      ease: [0.16, 1, 0.3, 1],
+                                    }}
+                                    viewport={{ once: true }}
+                                    className="relative w-full"
+                                  >
+                                    <Image
+                                      src={service.image}
+                                      alt={`${service.title} preview`}
+                                      width={1200}
+                                      height={900}
+                                      className="w-full h-auto object-cover"
+                                      priority={serviceIndex === 0}
+                                    />
+                                  </motion.div>
+                                  {/* Animated overlay gradient */}
+                                  <motion.div
+                                    className="absolute inset-0 bg-linear-to-t from-black/5 to-transparent pointer-events-none z-10"
+                                    initial={{ opacity: 0 }}
+                                    whileInView={{ opacity: 1 }}
+                                    transition={{
+                                      duration: 0.6,
+                                      delay: 0.8,
+                                    }}
+                                    viewport={{ once: true }}
+                                  />
+                                  {/* Shine effect on hover */}
+                                  <motion.div
+                                    className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent pointer-events-none z-30"
+                                    initial={{ x: "-100%" }}
+                                    whileHover={{ x: "100%" }}
+                                    transition={{
+                                      duration: 0.8,
+                                      ease: "easeInOut",
+                                    }}
+                                  />
+                                </motion.div>
+                              </motion.div>
+                            </motion.div>
                           </div>
                         ) : (
                           // Layout without image: Standard two-column
@@ -639,7 +645,7 @@ export default function ScoringServices() {
                                           >
                                             <div className="shrink-0 mt-1">
                                               <div
-                                                className={`w-5 h-5 rounded-full bg-linear-to-br ${service.gradient} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}
+                                                className={`w-5 h-5 rounded-full bg-linear-to-br ${service.gradient} flex items-center justify-center shadow-md transition-transform`}
                                               >
                                                 <CheckCircle2 className="w-3 h-3 text-white" />
                                               </div>
@@ -677,7 +683,7 @@ export default function ScoringServices() {
                                     {service.title === "Custom LinkedIn Banner Design" ? (
                                       <Button
                                         size="lg"
-                                        className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
+                                        className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
                                         onClick={() => setBookingModalOpen(true)}
                                       >
                                         {service.cta}
@@ -687,7 +693,7 @@ export default function ScoringServices() {
                                       <Link href="/linkedin/analyze">
                                         <Button
                                           size="lg"
-                                          className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group w-full"
+                                          className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group w-full"
                                         >
                                           {service.cta}
                                           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -697,7 +703,7 @@ export default function ScoringServices() {
                                       <Link href="/resume/analyze">
                                         <Button
                                           size="lg"
-                                          className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group w-full"
+                                          className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group w-full"
                                         >
                                           {service.cta}
                                           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -706,7 +712,7 @@ export default function ScoringServices() {
                                     ) : (
                                       <Button
                                         size="lg"
-                                        className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
+                                        className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
                                         onClick={() => setBookingModalOpen(true)}
                                       >
                                         {service.cta}
@@ -775,7 +781,7 @@ export default function ScoringServices() {
             >
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
+                className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
                 onClick={() => setBookingModalOpen(true)}
               >
                 Get Started

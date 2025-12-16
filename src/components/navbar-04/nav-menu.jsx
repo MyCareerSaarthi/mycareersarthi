@@ -32,18 +32,6 @@ export const NavMenu = (props) => {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <HardLink
-              href="/pricing"
-              className="group relative px-4 py-2 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
-            >
-              <span className="relative z-10">Pricing</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
-            </HardLink>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <HardLink
               href="/blog"
               className="group relative px-4 py-2 rounded-lg hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
             >

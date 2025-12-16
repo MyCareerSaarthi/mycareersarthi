@@ -300,11 +300,25 @@ const AboutUs = () => {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
           >
-            <Card className="p-8 md:p-12 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl">
+            <Card className="group relative p-8 md:p-12 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 hover:border-primary/40 transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Quote className="w-6 h-6 text-primary" />
-                </div>
+                <motion.div
+                  className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 backdrop-blur-sm"
+                  whileHover={{ scale: 1.2, rotate: 360 }}
+                  transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+                >
+                  <motion.div
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <Quote className="w-6 h-6 text-primary" />
+                  </motion.div>
+                </motion.div>
                 <div className="flex-1">
                   <p className="text-lg md:text-xl leading-relaxed text-foreground italic mb-6">
                     "When I started MyCareerSarthi, the goal was never just
@@ -362,20 +376,36 @@ const AboutUs = () => {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
             >
-              <Card className="p-8 h-full bg-gradient-to-br from-card to-card/50 border-2 border-primary/20 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Target className="w-8 h-8 text-primary" />
+              <Card className="group relative p-8 h-full bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:shadow-primary/20 hover:border-primary/40 transition-all duration-300 rounded-xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-6">
+                    <motion.div
+                      className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm"
+                      whileHover={{ scale: 1.2, rotate: 360 }}
+                      transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+                    >
+                      <motion.div
+                        animate={{ rotate: [0, 5, -5, 0] }}
+                        transition={{
+                          duration: 4,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        <Target className="w-8 h-8 text-primary" />
+                      </motion.div>
+                    </motion.div>
+                    <h3 className="text-2xl md:text-3xl font-bold">
+                      Our Mission
+                    </h3>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold">
-                    Our Mission
-                  </h3>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    To help professionals communicate their value with clarity and
+                    confidence through structured guidance, precise AI insights,
+                    and a supportive, human-centered approach to career growth.
+                  </p>
                 </div>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  To help professionals communicate their value with clarity and
-                  confidence through structured guidance, precise AI insights,
-                  and a supportive, human-centered approach to career growth.
-                </p>
               </Card>
             </motion.div>
 
@@ -386,18 +416,34 @@ const AboutUs = () => {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
             >
-              <Card className="p-8 h-full bg-gradient-to-br from-card to-card/50 border-2 border-primary/20 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Eye className="w-8 h-8 text-primary" />
+              <Card className="group relative p-8 h-full bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:shadow-primary/20 hover:border-primary/40 transition-all duration-300 rounded-xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-6">
+                    <motion.div
+                      className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm"
+                      whileHover={{ scale: 1.2, rotate: 360 }}
+                      transition={{ duration: 0.5, type: "spring", stiffness: 200 }}
+                    >
+                      <motion.div
+                        animate={{ rotate: [0, 5, -5, 0] }}
+                        transition={{
+                          duration: 4,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
+                      >
+                        <Eye className="w-8 h-8 text-primary" />
+                      </motion.div>
+                    </motion.div>
+                    <h3 className="text-2xl md:text-3xl font-bold">Our Vision</h3>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold">Our Vision</h3>
+                  <p className="text-lg text-muted-foreground leading-relaxed">
+                    A world where every skilled professional is seen, understood,
+                    and considered for the opportunities they deserve, regardless
+                    of how well they can "market" themselves.
+                  </p>
                 </div>
-                <p className="text-lg text-muted-foreground leading-relaxed">
-                  A world where every skilled professional is seen, understood,
-                  and considered for the opportunities they deserve, regardless
-                  of how well they can "market" themselves.
-                </p>
               </Card>
             </motion.div>
           </div>

@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BookingModal } from "@/components/booking/booking-modal";
 import {
   Target,
   Brain,
@@ -77,8 +79,15 @@ const serviceSections = [
 ];
 
 export default function CareerMentoring() {
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <BookingModal
+        open={bookingModalOpen}
+        onOpenChange={setBookingModalOpen}
+        defaultServiceType="career_guidance"
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-12 pb-16">
         {/* Animated gradient background */}
@@ -213,12 +222,16 @@ export default function CareerMentoring() {
                         className="space-y-4"
                       >
                         <motion.div
-                          className={`w-16 h-16 rounded-2xl bg-linear-to-br ${section.gradient} p-4 flex items-center justify-center shadow-lg`}
-                          whileHover={{ scale: 1.1, rotate: 5 }}
+                          className={`w-16 h-16 rounded-xl bg-linear-to-br ${section.gradient} p-4 flex items-center justify-center shadow-lg backdrop-blur-sm`}
+                          whileHover={{
+                            scale: 1.15,
+                            rotate: 5,
+                            boxShadow: "0 20px 40px -5px rgba(0, 0, 0, 0.3)",
+                          }}
                           animate={{
                             boxShadow: [
                               "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
-                              "0 20px 40px -5px rgba(0, 0, 0, 0.2)",
+                              "0 20px 40px -5px rgba(0, 0, 0, 0.25)",
                               "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
                             ],
                           }}
@@ -228,9 +241,20 @@ export default function CareerMentoring() {
                               repeat: Infinity,
                               ease: "easeInOut",
                             },
+                            scale: { duration: 0.3 },
+                            rotate: { duration: 0.3 },
                           }}
                         >
-                          <IconComponent className="w-8 h-8 text-white" />
+                          <motion.div
+                            animate={{ rotate: [0, 5, -5, 0] }}
+                            transition={{
+                              duration: 4,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                          >
+                            <IconComponent className="w-8 h-8 text-white" />
+                          </motion.div>
                         </motion.div>
                         <motion.h2
                           className="text-3xl md:text-4xl font-bold leading-tight"
@@ -294,22 +318,42 @@ export default function CareerMentoring() {
                                   whileHover={{ x: 5 }}
                                 >
                                   <motion.div
-                                    className="shrink-0 mt-1"
-                                    whileHover={{ scale: 1.2, rotate: 360 }}
-                                    transition={{ duration: 0.5 }}
+                                    className="shrink-0 mt-1 group/check"
+                                    whileHover={{ scale: 1.3, rotate: 360 }}
+                                    transition={{
+                                      duration: 0.5,
+                                      type: "spring",
+                                      stiffness: 200,
+                                    }}
                                   >
                                     <motion.div
-                                      className={`w-5 h-5 rounded-full bg-linear-to-br ${section.gradient} flex items-center justify-center shadow-md`}
+                                      className={`w-5 h-5 rounded-full bg-linear-to-br ${section.gradient} flex items-center justify-center shadow-md backdrop-blur-sm`}
                                       animate={{
-                                        scale: [1, 1.1, 1],
+                                        scale: [1, 1.15, 1],
+                                      }}
+                                      whileHover={{
+                                        boxShadow:
+                                          "0 0 20px rgba(59, 130, 246, 0.5)",
                                       }}
                                       transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        delay: idx * 0.2,
+                                        scale: {
+                                          duration: 2,
+                                          repeat: Infinity,
+                                          delay: idx * 0.2,
+                                        },
+                                        boxShadow: { duration: 0.3 },
                                       }}
                                     >
-                                      <CheckCircle2 className="w-3 h-3 text-white" />
+                                      <motion.div
+                                        animate={{ rotate: [0, 10, -10, 0] }}
+                                        transition={{
+                                          duration: 3,
+                                          repeat: Infinity,
+                                          delay: idx * 0.3,
+                                        }}
+                                      >
+                                        <CheckCircle2 className="w-3 h-3 text-white" />
+                                      </motion.div>
                                     </motion.div>
                                   </motion.div>
                                   <motion.span
@@ -393,9 +437,13 @@ export default function CareerMentoring() {
               transition={{ duration: 0.6, delay: 0.3 }}
               viewport={{ once: true }}
             >
-              <Button size="lg" className="rounded-full">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
+                onClick={() => setBookingModalOpen(true)}
+              >
                 Get Started
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </motion.div>
           </motion.div>

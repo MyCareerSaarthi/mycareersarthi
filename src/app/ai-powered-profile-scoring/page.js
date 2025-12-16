@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { BookingModal } from "@/components/booking/booking-modal";
 import {
   BarChart3,
   Linkedin,
@@ -133,8 +135,15 @@ const sections = [
 ];
 
 export default function ScoringServices() {
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <BookingModal
+        open={bookingModalOpen}
+        onOpenChange={setBookingModalOpen}
+        defaultServiceType={null}
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-12 pb-16">
         {/* Animated gradient background */}
@@ -365,25 +374,49 @@ export default function ScoringServices() {
                                               whileHover={{ x: 5 }}
                                             >
                                               <motion.div
-                                                className="shrink-0 mt-1"
+                                                className="shrink-0 mt-1 group/check"
                                                 whileHover={{
-                                                  scale: 1.2,
+                                                  scale: 1.3,
                                                   rotate: 360,
                                                 }}
-                                                transition={{ duration: 0.5 }}
+                                                transition={{
+                                                  duration: 0.5,
+                                                  type: "spring",
+                                                  stiffness: 200,
+                                                }}
                                               >
                                                 <motion.div
-                                                  className={`w-5 h-5 rounded-full bg-linear-to-br ${service.gradient} flex items-center justify-center shadow-md`}
+                                                  className={`w-5 h-5 rounded-full bg-linear-to-br ${service.gradient} flex items-center justify-center shadow-md backdrop-blur-sm`}
+                                                  whileHover={{
+                                                    boxShadow:
+                                                      "0 0 20px rgba(59, 130, 246, 0.5)",
+                                                  }}
                                                   animate={{
-                                                    scale: [1, 1.1, 1],
+                                                    scale: [1, 1.15, 1],
                                                   }}
                                                   transition={{
-                                                    duration: 2,
-                                                    repeat: Infinity,
-                                                    delay: idx * 0.2,
+                                                    scale: {
+                                                      duration: 2,
+                                                      repeat: Infinity,
+                                                      delay: idx * 0.2,
+                                                    },
+                                                    boxShadow: {
+                                                      duration: 0.3,
+                                                    },
                                                   }}
                                                 >
-                                                  <CheckCircle2 className="w-3 h-3 text-white" />
+                                                  <motion.div
+                                                    animate={{
+                                                      rotate: [0, 10, -10, 0],
+                                                    }}
+                                                    transition={{
+                                                      duration: 3,
+                                                      repeat: Infinity,
+                                                      delay: idx * 0.3,
+                                                    }}
+                                                  >
+                                                    <CheckCircle2 className="w-3 h-3 text-white" />
+                                                  </motion.div>
                                                 </motion.div>
                                               </motion.div>
                                               <motion.span
@@ -434,8 +467,12 @@ export default function ScoringServices() {
                                 >
                                   <motion.div
                                     className="relative group"
-                                    whileHover={{ scale: 1.02 }}
-                                    transition={{ duration: 0.3 }}
+                                    whileHover={{ scale: 1.03, y: -5 }}
+                                    transition={{
+                                      duration: 0.3,
+                                      type: "spring",
+                                      stiffness: 200,
+                                    }}
                                   >
                                     {/* Animated glow effect */}
                                     <motion.div
@@ -451,13 +488,20 @@ export default function ScoringServices() {
                                     />
                                     {/* Image container */}
                                     <motion.div
-                                      className="relative rounded-xl overflow-hidden shadow-2xl border-2 border-border/50 bg-card/50 backdrop-blur-sm"
+                                      className="relative rounded-xl overflow-hidden shadow-2xl border-2 border-border/50 bg-card/50 backdrop-blur-sm group/image"
                                       whileHover={{
                                         boxShadow:
-                                          "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                                          "0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 0 40px rgba(59, 130, 246, 0.2)",
+                                        scale: 1.02,
                                       }}
-                                      transition={{ duration: 0.3 }}
+                                      transition={{
+                                        duration: 0.3,
+                                        type: "spring",
+                                        stiffness: 200,
+                                      }}
                                     >
+                                      {/* Gradient overlay on hover */}
+                                      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-xl opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
                                       <motion.div
                                         initial={{ scale: 1.1 }}
                                         whileInView={{ scale: 1 }}
@@ -489,10 +533,13 @@ export default function ScoringServices() {
                                       />
                                       {/* Shine effect on hover */}
                                       <motion.div
-                                        className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent pointer-events-none"
+                                        className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent pointer-events-none z-20"
                                         initial={{ x: "-100%" }}
                                         whileHover={{ x: "100%" }}
-                                        transition={{ duration: 0.6 }}
+                                        transition={{
+                                          duration: 0.8,
+                                          ease: "easeInOut",
+                                        }}
                                       />
                                     </motion.div>
                                   </motion.div>
@@ -516,11 +563,42 @@ export default function ScoringServices() {
                                 viewport={{ once: true }}
                                 className="space-y-4"
                               >
-                                <div
-                                  className={`w-16 h-16 rounded-2xl bg-linear-to-br ${service.gradient} p-4 flex items-center justify-center shadow-lg`}
+                                <motion.div
+                                  className={`w-16 h-16 rounded-xl bg-linear-to-br ${service.gradient} p-4 flex items-center justify-center shadow-lg backdrop-blur-sm`}
+                                  whileHover={{
+                                    scale: 1.15,
+                                    rotate: 5,
+                                    boxShadow:
+                                      "0 20px 40px -5px rgba(0, 0, 0, 0.3)",
+                                  }}
+                                  animate={{
+                                    boxShadow: [
+                                      "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                                      "0 20px 40px -5px rgba(0, 0, 0, 0.25)",
+                                      "0 10px 25px -5px rgba(0, 0, 0, 0.1)",
+                                    ],
+                                  }}
+                                  transition={{
+                                    boxShadow: {
+                                      duration: 3,
+                                      repeat: Infinity,
+                                      ease: "easeInOut",
+                                    },
+                                    scale: { duration: 0.3 },
+                                    rotate: { duration: 0.3 },
+                                  }}
                                 >
-                                  <IconComponent className="w-8 h-8 text-white" />
-                                </div>
+                                  <motion.div
+                                    animate={{ rotate: [0, 5, -5, 0] }}
+                                    transition={{
+                                      duration: 4,
+                                      repeat: Infinity,
+                                      ease: "easeInOut",
+                                    }}
+                                  >
+                                    <IconComponent className="w-8 h-8 text-white" />
+                                  </motion.div>
+                                </motion.div>
                                 <h3 className="text-3xl md:text-4xl font-bold leading-tight">
                                   {service.title}
                                 </h3>
@@ -596,10 +674,45 @@ export default function ScoringServices() {
                                     viewport={{ once: true }}
                                     className="pt-4"
                                   >
-                                    <Button size="lg" className="rounded-full">
-                                      {service.cta}
-                                      <ArrowRight className="w-4 h-4 ml-2" />
-                                    </Button>
+                                    {service.title === "Custom LinkedIn Banner Design" ? (
+                                      <Button
+                                        size="lg"
+                                        className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
+                                        onClick={() => setBookingModalOpen(true)}
+                                      >
+                                        {service.cta}
+                                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                      </Button>
+                                    ) : service.title === "LinkedIn Profile Scoring" ? (
+                                      <Link href="/linkedin/analyze">
+                                        <Button
+                                          size="lg"
+                                          className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group w-full"
+                                        >
+                                          {service.cta}
+                                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                        </Button>
+                                      </Link>
+                                    ) : service.title === "Resume Optimization Support" ? (
+                                      <Link href="/resume/analyze">
+                                        <Button
+                                          size="lg"
+                                          className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group w-full"
+                                        >
+                                          {service.cta}
+                                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                        </Button>
+                                      </Link>
+                                    ) : (
+                                      <Button
+                                        size="lg"
+                                        className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
+                                        onClick={() => setBookingModalOpen(true)}
+                                      >
+                                        {service.cta}
+                                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                      </Button>
+                                    )}
                                   </motion.div>
                                 )}
                               </motion.div>
@@ -660,9 +773,13 @@ export default function ScoringServices() {
               transition={{ duration: 0.6, delay: 0.3 }}
               viewport={{ once: true }}
             >
-              <Button size="lg" className="rounded-full">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
+                onClick={() => setBookingModalOpen(true)}
+              >
                 Get Started
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </motion.div>
           </motion.div>

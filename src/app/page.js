@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import TestimonialCarousel from "@/components/TestimonialCarousel";
+import { BookingModal } from "@/components/booking/booking-modal";
 import {
   Sparkles,
   Target,
@@ -28,16 +30,19 @@ const heroGlanceCards = [
     title: "Career Assessment & Roadmap Guidance",
     copy: "Clarity on strengths, role-fit, and next steps with a tailored path toward your goals.",
     icon: Target,
+    link: "/career-mentoring",
   },
   {
     title: "Interview Preparation",
     copy: "Mock interviews, expert evaluation, and AI feedback so you present your experience with confidence.",
     icon: MessageSquare,
+    link: "/interview-preparation",
   },
   {
     title: "Your Profile Scorer",
     copy: "Built-in AI compares your LinkedIn and resume to target roles, highlighting alignment and gaps.",
     icon: BarChart3,
+    link: "/ai-powered-profile-scoring",
   },
 ];
 
@@ -48,6 +53,8 @@ const serviceStrip = [
       "We guide you through career assessment, skill evaluation, roadmap creation, and job search strategy so you know exactly which roles to target and how to move toward them.",
     cta: "Get Started",
     icon: Briefcase,
+    link: "/career-mentoring",
+    serviceType: "career_guidance",
   },
   {
     title: "Interview Preparation",
@@ -55,6 +62,8 @@ const serviceStrip = [
       "Request mock interviews, receive expert evaluation, and get AI + manual feedback so you know how hiring teams interpret your answers.",
     cta: "Get Started",
     icon: MessageSquare,
+    link: "/interview-preparation",
+    serviceType: "interview_preparation",
   },
   {
     title: "AI-Powered Profile Scoring",
@@ -62,6 +71,8 @@ const serviceStrip = [
       "Our purpose-built AI compares your LinkedIn and resume against your target roles, revealing alignment, keywords, and gaps with clear guidance.",
     cta: "Get Started",
     icon: Brain,
+    link: "/ai-powered-profile-scoring",
+    serviceType: null,
   },
 ];
 
@@ -101,6 +112,8 @@ const professionalServices = [
     ],
     cta: "Get Started",
     icon: Users,
+    route: "/linkedin/analyze",
+    serviceType: null,
   },
   {
     title: "Resume Creation, Review & Optimization",
@@ -114,6 +127,8 @@ const professionalServices = [
     ],
     cta: "Get Started",
     icon: FileText,
+    route: "/resume/analyze",
+    serviceType: null,
   },
 ];
 
@@ -242,8 +257,21 @@ const successStories = [
 ];
 
 export default function Home() {
+  const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [selectedServiceType, setSelectedServiceType] = useState(null);
+
+  const handleBookingClick = (serviceType = null) => {
+    setSelectedServiceType(serviceType);
+    setBookingModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <BookingModal
+        open={bookingModalOpen}
+        onOpenChange={setBookingModalOpen}
+        defaultServiceType={selectedServiceType}
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-12 pb-16 ">
         {/* Animated gradient background */}
@@ -333,12 +361,22 @@ export default function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.9 }}
               >
-                <Button size="lg" className="rounded-full">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+                  onClick={() => handleBookingClick()}
+                >
                   Get Started
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-full">
-                  Learn More
-                </Button>
+                <Link href="/about-us">
+                  <Button
+                    size="lg"
+                    variant="ghost"
+                    className="rounded-xl hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+                  >
+                    Learn More
+                  </Button>
+                </Link>
               </motion.div>
               <motion.div
                 className="grid gap-6 md:grid-cols-3"
@@ -365,32 +403,35 @@ export default function Home() {
                       }}
                       transition={{ duration: 0.3 }}
                     >
-                      <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300 h-full">
-                        <motion.div
-                          className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-1"
-                          whileHover={{ scale: 1.2, rotate: 360 }}
-                          transition={{ duration: 0.5 }}
-                        >
+                      <Link href={card.link}>
+                        <Card className="group relative p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:shadow-primary/20 hover:border-primary/40 transition-all duration-300 h-full rounded-xl overflow-hidden cursor-pointer">
+                          <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                           <motion.div
-                            animate={{
-                              scale: [1, 1.1, 1],
-                            }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
-                              delay: idx * 0.3,
-                            }}
+                            className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-1"
+                            whileHover={{ scale: 1.2, rotate: 360 }}
+                            transition={{ duration: 0.5 }}
                           >
-                            <card.icon className="w-6 h-6 text-primary" />
+                            <motion.div
+                              animate={{
+                                scale: [1, 1.1, 1],
+                              }}
+                              transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                delay: idx * 0.3,
+                              }}
+                            >
+                              <card.icon className="w-6 h-6 text-primary" />
+                            </motion.div>
                           </motion.div>
-                        </motion.div>
-                        <h3 className="text-lg font-semibold mb-1">
-                          {card.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {card.copy}
-                        </p>
-                      </Card>
+                          <h3 className="text-lg font-semibold mb-1">
+                            {card.title}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {card.copy}
+                          </p>
+                        </Card>
+                      </Link>
                     </motion.div>
                   </motion.div>
                 ))}
@@ -578,9 +619,15 @@ export default function Home() {
                         {item.title}
                       </h3>
                       <p className="text-muted-foreground mb-4">{item.body}</p>
-                      <Button variant="ghost" size="sm" className="p-0 h-auto">
-                        Learn more <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
+                      <Link href="/about-us">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="p-0 h-auto hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+                        >
+                          Learn more <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </Card>
@@ -656,12 +703,24 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    variant="outline"
-                    className="rounded-full relative z-10"
-                  >
-                    {service.cta} <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                  {service.route ? (
+                    <Link href={service.route}>
+                      <Button
+                        variant="outline"
+                        className="rounded-full relative z-10 w-full"
+                      >
+                        {service.cta} <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      className="rounded-full relative z-10 w-full"
+                      onClick={() => handleBookingClick(service.serviceType)}
+                    >
+                      {service.cta} <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  )}
                 </Card>
               </motion.div>
             ))}
@@ -848,7 +907,12 @@ export default function Home() {
                 Real impact across industries.
               </h2>
             </div>
-            <Button className="rounded-full">Get Started</Button>
+            <Button
+              className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
+              onClick={() => handleBookingClick()}
+            >
+              Get Started
+            </Button>
           </motion.div>
 
           <div className="grid gap-6 md:grid-cols-3">
@@ -941,7 +1005,10 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full rounded-full">
+                  <Button
+                    className="w-full rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
+                    onClick={() => handleBookingClick()}
+                  >
                     {plan.name === "Starter"
                       ? "Get Started"
                       : "Start Free Trial"}
@@ -976,10 +1043,19 @@ export default function Home() {
                 get you closer to the roles you want.
               </h3>
               <div className="flex flex-wrap justify-center gap-3 mt-6">
-                <Button size="lg" className="rounded-full">
+                <Button
+                  size="lg"
+                  className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
+                  onClick={() => handleBookingClick()}
+                >
                   Get Started Today
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-full">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="rounded-full hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+                  onClick={() => handleBookingClick()}
+                >
                   I'm Ready for Better Roles
                 </Button>
               </div>

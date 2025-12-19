@@ -1,20 +1,32 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Label } from "@/components/ui/label";
-// Role/JD components removed - comparison is LinkedIn vs Resume only
-import StepNavigation from "@/components/ui/step-navigation";
-import StepContainer from "@/components/ui/step-container";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { api } from "@/components/api/api";
 import { handlePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
 import SimpleLoader from "@/components/simple-loader";
 import { useRouter } from "next/navigation";
+import {
+  Linkedin,
+  FileText,
+  CreditCard,
+  ArrowRight,
+  Upload,
+  CheckCircle2,
+  Sparkles,
+  GitCompare,
+} from "lucide-react";
 
 export default function ComparePage() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [activeTab, setActiveTab] = useState("sources");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [linkedinPdf, setLinkedinPdf] = useState(null);
   const [resumePdf, setResumePdf] = useState(null);
@@ -50,26 +62,11 @@ export default function ComparePage() {
   const { getToken, isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
-  // Step definitions
-  const steps = [
-    { title: "Sources", description: "Add LinkedIn and Resume" },
-    { title: "Payment", description: "Review and pay" },
+  // Tab definitions
+  const tabs = [
+    { id: "sources", label: "Sources", icon: GitCompare },
+    { id: "payment", label: "Payment", icon: CreditCard },
   ];
-
-  const totalSteps = steps.length;
-
-  // Navigation functions
-  const nextStep = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const previousStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
 
   const getPricing = async () => {
     try {
@@ -208,14 +205,22 @@ export default function ComparePage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNextStep = () => {
-    if (validateStep(currentStep)) {
-      nextStep();
+  const handleTabChange = (tabId) => {
+    // Validate before allowing tab change
+    if (tabId === "payment") {
+      if (!linkedinUrl && !linkedinPdf) {
+        setErrors({ linkedin: "Please add your LinkedIn profile first" });
+        setActiveTab("sources");
+        return;
+      }
+      if (!resumePdf) {
+        setErrors({ resume: "Please upload your resume first" });
+        setActiveTab("sources");
+        return;
+      }
     }
-  };
-
-  const handlePreviousStep = () => {
-    previousStep();
+    setErrors({});
+    setActiveTab(tabId);
   };
 
   const handleStepSubmit = async () => {
@@ -262,7 +267,7 @@ export default function ComparePage() {
         (errorMsg) => {
           setIsComparing(false);
           setErrors({ general: errorMsg });
-          setCurrentStep(2);
+          setActiveTab("payment");
         },
         getToken
       );
@@ -274,8 +279,8 @@ export default function ComparePage() {
         error?.message ||
         "Payment initiation failed. Please try again.";
       setErrors({ general: errorMessage });
-      // Stay on payment step so user can see the error
-      setCurrentStep(2);
+      // Stay on payment tab so user can see the error
+      setActiveTab("payment");
     } finally {
       setIsSubmitting(false);
     }
@@ -373,270 +378,73 @@ export default function ComparePage() {
 
   // Socket useEffect moved above - removed duplicate
 
-  // Show simple loading screen during comparison
-  if (isComparing) {
-    return (
-      <SimpleLoader message="Comparing your LinkedIn profile and resume... This may take a while." />
-    );
-  }
+  // Show simple loading screen during comparison - render as overlay
 
-  // Render step content
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
+  // Render tab content
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "sources":
         return (
-          <div className="space-y-6">
-            {/* LinkedIn URL Input */}
-            <div className="space-y-2">
-              <Label
-                htmlFor="linkedinUrl"
-                className="text-sm font-medium flex items-center gap-2"
-              >
-                <svg
-                  className="w-4 h-4 text-primary"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-                LinkedIn Profile URL
-              </Label>
-              <Input
-                id="linkedinUrl"
-                placeholder="https://www.linkedin.com/in/your-profile"
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                className={`bg-background border-border hover:border-primary/50 transition-colors ${
-                  errors.linkedinUrl ? "border-destructive" : ""
-                }`}
-              />
-              {errors.linkedinUrl && (
-                <p className="text-sm text-destructive">{errors.linkedinUrl}</p>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="relative py-2">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
+          <div className="space-y-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+                <GitCompare className="w-6 h-6 text-primary" />
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="bg-background px-4 text-muted-foreground">
-                  OR
-                </span>
+              <div>
+                <h3 className="text-xl font-semibold">Upload Sources</h3>
+                <p className="text-sm text-muted-foreground">
+                  Add your LinkedIn profile and resume for comparison
+                </p>
               </div>
             </div>
 
-            {/* LinkedIn PDF Upload */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-blue-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            {/* LinkedIn Section */}
+            <Card className="p-6 bg-card/50 backdrop-blur-sm border-2 border-primary/20 rounded-xl">
+              <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Linkedin className="w-5 h-5 text-primary" />
+                LinkedIn Profile
+              </h4>
+
+              {/* LinkedIn URL Input */}
+              <div className="space-y-2 mb-3">
+                <Label
+                  htmlFor="linkedinUrl"
+                  className="text-sm font-medium flex items-center gap-2"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
-                LinkedIn PDF (optional)
-              </Label>
-              <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                  isDragging
-                    ? "border-primary bg-primary/5"
-                    : errors.linkedin
-                    ? "border-destructive bg-destructive/5"
-                    : "border-border hover:border-primary/50"
-                }`}
-                onDragOver={handleLinkedinDragOver}
-                onDragLeave={handleLinkedinDragLeave}
-                onDrop={handleLinkedinDrop}
-                onClick={() => fileInputRefLinkedin.current?.click()}
-              >
-                <input
-                  type="file"
-                  ref={fileInputRefLinkedin}
-                  className="hidden"
-                  accept=".pdf"
-                  onChange={handleLinkedinFileChange}
+                  <Linkedin className="w-4 h-4 text-primary" />
+                  LinkedIn Profile URL
+                </Label>
+                <Input
+                  id="linkedinUrl"
+                  placeholder="https://www.linkedin.com/in/your-profile"
+                  value={linkedinUrl}
+                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                  className={`rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${
+                    errors.linkedinUrl ? "border-destructive" : ""
+                  }`}
                 />
-                {linkedinPdf ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-center gap-2">
-                      <svg
-                        className="w-5 h-5 text-primary"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <span className="font-medium text-sm">
-                        {linkedinPdf.name}
-                      </span>
-                    </div>
-                    <LoadingButton
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeLinkedinPdf();
-                      }}
-                    >
-                      Remove
-                    </LoadingButton>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <svg
-                      className="w-8 h-8 mx-auto text-muted-foreground"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                    <div>
-                      <p className="text-sm font-medium">
-                        Click to upload or drag and drop
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        PDF files only (max 10MB)
-                      </p>
-                    </div>
-                  </div>
+                {errors.linkedinUrl && (
+                  <p className="text-sm text-destructive">
+                    {errors.linkedinUrl}
+                  </p>
                 )}
               </div>
-              {errors.linkedin && (
-                <p className="text-sm text-destructive">{errors.linkedin}</p>
-              )}
-            </div>
 
-            {/* Resume PDF Upload */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <svg
-                  className="w-4 h-4 text-green-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-                Resume PDF (required)
-              </Label>
-              <div
-                className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-                  isDraggingResume
-                    ? "border-primary bg-primary/5"
-                    : errors.resume
-                    ? "border-destructive bg-destructive/5"
-                    : "border-border hover:border-primary/50"
-                }`}
-                onDragOver={handleResumeDragOver}
-                onDragLeave={handleResumeDragLeave}
-                onDrop={handleResumeDrop}
-                onClick={() => fileInputRefResume.current?.click()}
-              >
-                <input
-                  type="file"
-                  ref={fileInputRefResume}
-                  className="hidden"
-                  accept=".pdf"
-                  onChange={handleResumeFileChange}
-                />
-                {resumePdf ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-center gap-2">
-                      <svg
-                        className="w-5 h-5 text-primary"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <span className="font-medium text-sm">
-                        {resumePdf.name}
-                      </span>
-                    </div>
-                    <LoadingButton
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeResumePdf();
-                      }}
-                    >
-                      Remove
-                    </LoadingButton>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <svg
-                      className="w-8 h-8 mx-auto text-muted-foreground"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                    <div>
-                      <p className="text-sm font-medium">
-                        Click to upload or drag and drop
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        PDF files only (max 10MB)
-                      </p>
-                    </div>
-                  </div>
-                )}
+              {/* Divider */}
+              <div className="relative py-1">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-background px-3 text-muted-foreground">
+                    OR
+                  </span>
+                </div>
               </div>
-              {errors.resume && (
-                <p className="text-sm text-destructive">{errors.resume}</p>
-              )}
-            </div>
-          </div>
-        );
 
-      case 2:
-        return (
-          <div className="space-y-6">
-            <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-lg p-6 space-y-6 border border-blue-200/50 dark:border-blue-800/30">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
+              {/* LinkedIn PDF Upload */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium flex items-center gap-2">
                   <svg
                     className="w-4 h-4 text-blue-500"
                     fill="none"
@@ -647,18 +455,201 @@ export default function ComparePage() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                     />
                   </svg>
+                  LinkedIn PDF (optional)
+                </Label>
+                <div
+                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur-sm ${
+                    isDragging
+                      ? "border-primary bg-primary/10"
+                      : errors.linkedin
+                      ? "border-destructive bg-destructive/5"
+                      : "border-border hover:border-primary/50 hover:bg-primary/5"
+                  }`}
+                  onDragOver={handleLinkedinDragOver}
+                  onDragLeave={handleLinkedinDragLeave}
+                  onDrop={handleLinkedinDrop}
+                  onClick={() => fileInputRefLinkedin.current?.click()}
+                >
+                  <input
+                    type="file"
+                    ref={fileInputRefLinkedin}
+                    className="hidden"
+                    accept=".pdf"
+                    onChange={handleLinkedinFileChange}
+                  />
+                  {linkedinPdf ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-center gap-2">
+                        <svg
+                          className="w-5 h-5 text-primary"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        <span className="font-medium text-sm">
+                          {linkedinPdf.name}
+                        </span>
+                      </div>
+                      <LoadingButton
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeLinkedinPdf();
+                        }}
+                      >
+                        Remove
+                      </LoadingButton>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mx-auto">
+                        <Upload className="w-8 h-8 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">
+                          Click to upload or drag and drop
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          PDF files only (max 10MB)
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <h2 className="text-xl font-semibold">Order Summary</h2>
+                {errors.linkedin && (
+                  <p className="text-sm text-destructive mt-2">
+                    {errors.linkedin}
+                  </p>
+                )}
               </div>
+            </Card>
+
+            {/* Resume Section */}
+            <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 rounded-xl">
+              <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
+                <FileText className="w-4 h-4 text-primary" />
+                Resume PDF (required)
+              </h4>
+
+              <div className="space-y-2">
+                <div
+                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur-sm ${
+                    isDraggingResume
+                      ? "border-primary bg-primary/10"
+                      : errors.resume
+                      ? "border-destructive bg-destructive/5"
+                      : "border-border hover:border-primary/50 hover:bg-primary/5"
+                  }`}
+                  onDragOver={handleResumeDragOver}
+                  onDragLeave={handleResumeDragLeave}
+                  onDrop={handleResumeDrop}
+                  onClick={() => fileInputRefResume.current?.click()}
+                >
+                  <input
+                    type="file"
+                    ref={fileInputRefResume}
+                    className="hidden"
+                    accept=".pdf"
+                    onChange={handleResumeFileChange}
+                  />
+                  {resumePdf ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-center gap-2">
+                        <svg
+                          className="w-5 h-5 text-primary"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                          />
+                        </svg>
+                        <span className="font-medium text-sm">
+                          {resumePdf.name}
+                        </span>
+                      </div>
+                      <LoadingButton
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeResumePdf();
+                        }}
+                      >
+                        Remove
+                      </LoadingButton>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mx-auto">
+                        <Upload className="w-8 h-8 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">
+                          Click to upload or drag and drop
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          PDF files only (max 10MB)
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {errors.resume && (
+                  <p className="text-sm text-destructive mt-2">
+                    {errors.resume}
+                  </p>
+                )}
+              </div>
+            </Card>
+          </div>
+        );
+
+      case "payment":
+        return (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+                <CreditCard className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Payment & Review</h3>
+                <p className="text-xs text-muted-foreground">
+                  Review your order and complete payment
+                </p>
+              </div>
+            </div>
+
+            <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 rounded-xl">
+              <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
+                Order Summary
+              </h4>
 
               {/* Pricing */}
-              <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+              <div className="bg-muted/30 rounded-xl p-4 space-y-3 border border-border">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">LinkedIn ↔ Resume Comparison</span>
-                  <span className="font-semibold">
+                  <span className="text-sm font-medium">
+                    LinkedIn ↔ Resume Comparison
+                  </span>
+                  <span className="font-semibold text-foreground">
                     {isLoadingPricing
                       ? "Loading..."
                       : `₹${pricing.originalPrice}`}
@@ -666,26 +657,27 @@ export default function ComparePage() {
                 </div>
 
                 {appliedCoupon && (
-                  <div className="flex justify-between items-center text-green-600">
-                    <span className="text-sm">
+                  <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
+                    <span className="text-sm font-medium flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" />
                       Coupon ({appliedCoupon.code})
                     </span>
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-semibold">
                       -₹{appliedCoupon.discount}
                     </span>
                   </div>
                 )}
 
-                <div className="border-t border-border pt-3">
+                <div className="border-t-2 border-border pt-4">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">Total</span>
+                    <span className="text-base font-semibold">Total</span>
                     <div className="text-right">
                       {pricing.discount > 0 && (
-                        <div className="text-xs text-muted-foreground line-through">
+                        <div className="text-xs text-muted-foreground line-through mb-1">
                           ₹{pricing.originalPrice}
                         </div>
                       )}
-                      <div className="text-lg font-bold text-primary">
+                      <div className="text-2xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                         {isLoadingPricing
                           ? "Loading..."
                           : `₹${pricing.finalPrice}`}
@@ -694,81 +686,61 @@ export default function ComparePage() {
                   </div>
                 </div>
               </div>
+            </Card>
 
-              {/* Coupon Code */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4 text-orange-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+            {/* Coupon Code */}
+            <div className="space-y-2 mt-4">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Coupon Code (Optional)
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter coupon code"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  className={`flex-1 rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${
+                    errors.coupon ? "border-destructive" : ""
+                  }`}
+                  disabled={isApplyingCoupon || !!appliedCoupon}
+                />
+                {appliedCoupon ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={removeCoupon}
+                    disabled={isApplyingCoupon}
+                    className="rounded-lg"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                    />
-                  </svg>
-                  Coupon Code (Optional)
-                </Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Enter coupon code"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    className={`flex-1 bg-background border-border hover:border-primary/50 transition-colors ${
-                      errors.coupon ? "border-destructive" : ""
-                    }`}
-                    disabled={isApplyingCoupon || !!appliedCoupon}
-                  />
-                  {appliedCoupon ? (
-                    <LoadingButton
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={removeCoupon}
-                      disabled={isApplyingCoupon}
-                    >
-                      Remove
-                    </LoadingButton>
-                  ) : (
-                    <LoadingButton
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={applyCoupon}
-                      isLoading={isApplyingCoupon}
-                      loadingText="Applying..."
-                      disabled={!couponCode.trim()}
-                    >
-                      Apply
-                    </LoadingButton>
-                  )}
-                </div>
-                {errors.coupon && (
-                  <p className="text-sm text-destructive">{errors.coupon}</p>
-                )}
-                {appliedCoupon && (
-                  <div className="flex items-center gap-2 text-green-600 text-sm">
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span>
-                      Coupon applied! You saved ₹{appliedCoupon.discount}
-                    </span>
-                  </div>
+                    Remove
+                  </Button>
+                ) : (
+                  <LoadingButton
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={applyCoupon}
+                    isLoading={isApplyingCoupon}
+                    loadingText="Applying..."
+                    disabled={!couponCode.trim()}
+                    className="rounded-lg"
+                  >
+                    Apply
+                  </LoadingButton>
                 )}
               </div>
+              {errors.coupon && (
+                <p className="text-sm text-destructive">{errors.coupon}</p>
+              )}
+              {appliedCoupon && (
+                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>
+                    Coupon applied! You saved ₹{appliedCoupon.discount}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         );
@@ -778,60 +750,141 @@ export default function ComparePage() {
     }
   };
 
+  const canProceedToPayment = () => {
+    return (linkedinUrl || linkedinPdf) && resumePdf;
+  };
+
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-            LinkedIn ↔ Resume Comparison
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Compare your LinkedIn profile with your resume to identify gaps,
-            mismatches, alignments, and inconsistencies
-          </p>
+    <div className="min-h-screen bg-background relative">
+      {isComparing && (
+        <SimpleLoader message="Comparing your LinkedIn profile and resume... This may take a while." />
+      )}
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-6 pb-4">
+        <div className="absolute inset-0 bg-linear-to-br from-background via-muted/20 to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+        <div className="relative container mx-auto px-4 max-w-5xl z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center space-y-2"
+          >
+            <Badge
+              variant="secondary"
+              className="px-3 py-1 text-xs font-medium mb-2"
+            >
+              <Sparkles className="w-3 h-3 mr-1.5 inline" />
+              AI-Powered Comparison
+            </Badge>
+            <h1 className="text-2xl md:text-3xl font-bold leading-tight">
+              LinkedIn ↔ Resume Comparison
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+              Compare your LinkedIn profile with your resume to identify gaps
+              and inconsistencies
+            </p>
+          </motion.div>
         </div>
-      </div>
+      </section>
 
-      {/* Step Navigation */}
-      <div className="container mx-auto px-4 mb-4">
-        <StepNavigation
-          currentStep={currentStep}
-          totalSteps={totalSteps}
-          steps={steps}
-        />
-      </div>
-
-      {/* Step Content */}
-      <div className="container mx-auto px-4 pb-12">
+      {/* Main Content */}
+      <div className="relative container mx-auto px-4 max-w-5xl pb-8">
         {errors.general && (
-          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg max-w-2xl mx-auto">
-            <p className="text-sm text-destructive">{errors.general}</p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm"
+          >
+            <p className="text-sm text-destructive font-medium">
+              {errors.general}
+            </p>
+          </motion.div>
         )}
 
-        <StepContainer
-          title={steps[currentStep - 1]?.title}
-          description={steps[currentStep - 1]?.description}
-          onNext={
-            currentStep === totalSteps ? handleStepSubmit : handleNextStep
-          }
-          onPrevious={handlePreviousStep}
-          nextText={currentStep === totalSteps ? "Start Comparison" : "Next"}
-          previousText="Previous"
-          isNextDisabled={
-            currentStep === 1
-              ? (!linkedinUrl && !linkedinPdf) || !resumePdf
-              : currentStep === 2
-              ? isSubmitting
-              : false
-          }
-          isPreviousDisabled={currentStep === 1}
-          showNext={true}
-          showPrevious={currentStep > 1}
-        >
-          {renderStepContent()}
-        </StepContainer>
+        <Card className="p-4 md:p-5 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl">
+          <Tabs
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-2 mb-4 bg-muted/50 rounded-xl p-1">
+              {tabs.map((tab) => {
+                const IconComponent = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <TabsTrigger
+                    key={tab.id}
+                    value={tab.id}
+                    className={`rounded-lg transition-all duration-300 ${
+                      isActive
+                        ? "bg-background shadow-md text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <IconComponent className="w-4 h-4 mr-2" />
+                    {tab.label}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+
+            {tabs.map((tab) => (
+              <TabsContent key={tab.id} value={tab.id} className="mt-0">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {renderTabContent()}
+                </motion.div>
+              </TabsContent>
+            ))}
+          </Tabs>
+
+          {/* Navigation Footer */}
+          <div className="flex justify-between items-center pt-4 mt-4 border-t border-border">
+            <Button
+              variant="outline"
+              onClick={() => setActiveTab("sources")}
+              disabled={activeTab === "sources"}
+              className="rounded-xl"
+            >
+              Previous
+            </Button>
+            {activeTab === "payment" ? (
+              <Button
+                onClick={handleStepSubmit}
+                disabled={isSubmitting || !canProceedToPayment()}
+                className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+              >
+                {isSubmitting ? "Processing..." : "Start Comparison"}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  if (canProceedToPayment()) {
+                    setActiveTab("payment");
+                  } else {
+                    if (!linkedinUrl && !linkedinPdf) {
+                      setErrors({
+                        linkedin: "Please add your LinkedIn profile",
+                      });
+                    }
+                    if (!resumePdf) {
+                      setErrors({ resume: "Please upload your resume" });
+                    }
+                  }
+                }}
+                className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+              >
+                Next
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        </Card>
       </div>
     </div>
   );

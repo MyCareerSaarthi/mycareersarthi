@@ -9,237 +9,251 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Linkedin, FileText, ArrowLeftRight } from "lucide-react";
+import {
+  Linkedin,
+  FileText,
+  ArrowLeftRight,
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+} from "lucide-react";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import Link from "next/link";
+
+const services = [
+  {
+    icon: Linkedin,
+    title: "LinkedIn Profile Review",
+    description:
+      "AI-powered section-by-section analysis with detailed scoring.",
+    href: "/linkedin/analyze",
+    color: "from-blue-500 to-cyan-500",
+    bgLight:
+      "from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20",
+  },
+  {
+    icon: FileText,
+    title: "Resume Review",
+    description: "ATS compatibility check with keyword optimization feedback.",
+    href: "/resume/analyze",
+    color: "from-violet-500 to-purple-500",
+    bgLight:
+      "from-violet-50 to-purple-50 dark:from-violet-950/20 dark:to-purple-950/20",
+  },
+  {
+    icon: ArrowLeftRight,
+    title: "Alignment Review",
+    description: "Compare LinkedIn and resume to ensure consistency.",
+    href: "/compare",
+    color: "from-emerald-500 to-teal-500",
+    bgLight:
+      "from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20",
+  },
+];
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden mt-0 pt-10 pb-32">
-      {/* ---------------------------------------------------------------- */}
-      {/*                       TRUE TASKHARBOR SVG BACKGROUND             */}
-      {/* ---------------------------------------------------------------- */}
-      {/* ONLY CHANGE: dark:hidden added */}
-      <svg
-        className="absolute inset-0 w-full h-full pointer-events-none dark:hidden"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <filter id="blurMe" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="120" />
-          </filter>
-        </defs>
+    <section className="relative overflow-hidden flex items-center pt-6 md:pt-6">
+      {/* Animated gradient background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-muted/20 to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
 
-        {/* MAIN TOP OVAL */}
-        <ellipse
-          cx="50%"
-          cy="5%"
-          rx="550"
-          ry="320"
-          fill="oklch(0.9604 0.0186 265.9842 / 0.65)"
-          filter="url(#blurMe)"
-        />
-
-        {/* INNER PURPLE HALO */}
-        <ellipse
-          cx="50%"
-          cy="10%"
-          rx="380"
-          ry="220"
-          fill="oklch(0.5106 0.2301 276.9656 / 0.55)"
-          filter="url(#blurMe)"
-        />
-
-        {/* BLUE/PURPLE RING */}
-        <ellipse
-          cx="50%"
-          cy="5%"
-          rx="450"
-          ry="260"
-          fill="oklch(0.9299 0.0334 272.7879 / 0.55)"
-          filter="url(#blurMe)"
-        />
-
-        {/* BOTTOM SWEEP */}
-        <ellipse
-          cx="50%"
-          cy="100%"
-          rx="600"
-          ry="260"
-          fill="oklch(0.9604 0.0186 265.9842 / 0.45)"
-          filter="url(#blurMe)"
-        />
-
-        {/* LEFT BEAM */}
-        <rect
-          x="-20%"
-          y="0"
-          width="60%"
-          height="120%"
-          transform="rotate(-20)"
-          fill="white"
-          opacity="0.22"
-        />
-
-        {/* RIGHT BEAM */}
-        <rect
-          x="70%"
-          y="-10%"
-          width="50%"
-          height="120%"
-          transform="rotate(18)"
-          fill="white"
-          opacity="0.18"
-        />
-      </svg>
-
-      {/* ---------------------------------------------------------------- */}
-      {/*                           HERO CONTENT                           */}
-      {/* ---------------------------------------------------------------- */}
-      <div className="mt-8 relative container mx-auto px-6 max-w-6xl text-center z-10">
-        {/* BADGE */}
+        {/* Animated gradient orbs */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-3 flex justify-center"
-        >
-          <div className="px-1 rounded-full bg-secondary/50 text-[12px] font-medium shadow-sm">
-            ✨ AI-Powered Career Growth Platform
-          </div>
-        </motion.div>
-
-        {/* TITLE */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="font-bold text-4xl md:text-4xl leading-tight text-foreground"
-        >
-          Transform Your Career with
-          <span
-            className="block"
-            style={{ color: "oklch(0.5106 0.2301 276.9656)" }}
-          >
-            Expert Guidance
-          </span>
-        </motion.h1>
-
-        {/* SUBTITLE */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-4 text-md md:text-md max-w-3xl mx-auto text-muted-foreground"
-        >
-          Unlock tailored recommendations, role-fit analysis, and powerful
-          branding using next-gen AI models built for modern professionals.
-        </motion.p>
-
-        {/* CTA BUTTONS */}
+          className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-to-br from-blue-500/20 via-violet-500/20 to-purple-500/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, 30, 0],
+            opacity: [0.5, 0.8, 0.5],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-4 flex justify-center gap-4"
-        >
-          <Button className="px-6 rounded-[10px] bg-primary text-primary-foreground hover:bg-primary/90">
-            Get Started
-          </Button>
+          className="absolute bottom-0 right-1/4 w-96 h-96 bg-gradient-to-br from-emerald-500/20 via-cyan-500/20 to-teal-500/20 rounded-full blur-3xl"
+          animate={{
+            x: [0, -50, 0],
+            y: [0, -30, 0],
+            opacity: [0.8, 0.5, 0.8],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2,
+          }}
+        />
 
-          <Button
-            variant="outline"
-            className="px-6 rounded-[10px] border-primary/50 text-primary hover:bg-primary/10"
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
+      </div>
+
+      <div className="relative container mx-auto px-4 max-w-7xl z-10 w-full">
+        {/* Top content - Badge, heading, subtitle, CTAs */}
+        <div className="text-center space-y-4 md:space-y-6 mb-8 md:mb-4">
+          {/* Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex justify-center"
           >
-            Learn More
-          </Button>
-        </motion.div>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 border border-primary/30 text-primary text-xs md:text-sm font-semibold shadow-lg backdrop-blur-sm">
+              <Sparkles className="w-3 h-3 md:w-4 md:h-4" />
+              AI-Powered Career Review Platform
+            </div>
+          </motion.div>
 
-        {/* ---------------------------------------------------------------- */}
-        {/*                               CARDS                              */}
-        {/* ---------------------------------------------------------------- */}
+          {/* Main heading */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="space-y-3 md:space-y-4"
+          >
+            <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight tracking-tight">
+              <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
+                Transform Your Career
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
+                with Expert Guidance
+              </span>
+            </h1>
+
+            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
+              Get comprehensive analysis and actionable feedback on your
+              LinkedIn profile, resume, and professional alignment.
+            </p>
+          </motion.div>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2"
+          >
+            <SignedOut>
+              <Button
+                asChild
+                size="lg"
+                className="group px-6 md:px-8 py-5 md:py-6 text-base md:text-lg bg-gradient-to-r from-primary via-primary to-primary/80 hover:shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+              >
+                <Link href="/signup" className="inline-flex items-center">
+                  Get Started Free
+                  <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="px-6 md:px-8 py-5 md:py-6 text-base md:text-lg border-2 border-primary/30 hover:bg-primary/5 transition-colors"
+              >
+                <Link href="/contact-us">Talk to Expert</Link>
+              </Button>{" "}
+            </SignedOut>
+          </motion.div>
+        </div>
+
+        {/* Service cards - Always visible in viewport */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.45 }}
-          className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-12 mx-auto max-w-5xl"
+          transition={{ duration: 0.6, delay: 0.35 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-6xl mx-auto"
         >
-          {/* CARD 1 */}
-          <Card className="w-full h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
-            <CardHeader className="items-start p-0 m-0">
-              <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
-                <Linkedin className="h-5 w-5 text-primary" />
-              </div>
-
-              <CardTitle className="text-[18px] ml-4 text-card-foreground">
-                LinkedIn Profile Review
-              </CardTitle>
-
-              <CardDescription className="ml-4 mb-0 text-muted-foreground">
-                Optimize your LinkedIn to attract top recruiters.
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="pl-3">
-              <Button
-                className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
-                onClick={() => (window.location.href = "/linkedin/analyze")}
+          {services.map((service, index) => {
+            const IconComponent = service.icon;
+            return (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.45 + index * 0.1 }}
+                whileHover={{ y: -6 }}
+                className="group"
               >
-                Get Started
-              </Button>
-            </CardContent>
-          </Card>
+                <Card
+                  className={`relative h-full overflow-hidden border-0 bg-gradient-to-br ${service.bgLight} hover:shadow-2xl transition-all duration-500`}
+                >
+                  {/* Gradient glow on hover */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-xl`}
+                  />
 
-          {/* CARD 2 */}
-          <Card className="w-full h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
-            <CardHeader className="items-start p-0 m-0">
-              <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
-                <FileText className="h-5 w-5 text-primary" />
-              </div>
+                  <CardHeader className="relative space-y-3 pb-3 pt-6 px-5">
+                    {/* Icon */}
+                    <div
+                      className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center shadow-lg group-hover:-translate-y-1 group-hover:rotate-6 transition-all duration-300`}
+                    >
+                      <IconComponent className="w-6 h-6 md:w-7 md:h-7 text-white" />
+                    </div>
 
-              <CardTitle className="text-[18px] ml-4 text-card-foreground">
-                Resume Review
-              </CardTitle>
+                    <div className="space-y-2">
+                      <CardTitle className="text-lg md:text-xl font-bold leading-tight">
+                        {service.title}
+                      </CardTitle>
+                      <CardDescription className="text-sm leading-relaxed text-foreground/70">
+                        {service.description}
+                      </CardDescription>
+                    </div>
+                  </CardHeader>
 
-              <CardDescription className="ml-4 mb-0 text-muted-foreground">
-                Create and optimize resumes that pass ATS screening.
-              </CardDescription>
-            </CardHeader>
+                  <CardContent className="relative pt-0 px-5 pb-5">
+                    <SignedOut>
+                      <Button
+                        asChild
+                        size="sm"
+                        className={`w-full bg-gradient-to-r ${service.color} text-white border-0 hover:opacity-90 transition-opacity shadow-lg text-sm`}
+                      >
+                        <Link href="/signup">Get Started</Link>
+                      </Button>
+                    </SignedOut>
 
-            <CardContent className="pl-3">
-              <Button
-                className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
-                onClick={() => (window.location.href = "/resume/analyze")}
-              >
-                Get Started
-              </Button>
-            </CardContent>
-          </Card>
+                    <SignedIn>
+                      <Button
+                        asChild
+                        size="sm"
+                        className={`w-full bg-gradient-to-r ${service.color} text-white border-0 hover:opacity-90 transition-opacity shadow-lg text-sm`}
+                      >
+                        <Link href={service.href}>Start Review</Link>
+                      </Button>
+                    </SignedIn>
+                  </CardContent>
 
-          {/* CARD 3 */}
-          <Card className="w-full h-50 shadow-md hover:shadow-xl transition-all duration-300 bg-card/90 backdrop-blur border-border text-left">
-            <CardHeader className="items-start p-0 m-0">
-              <div className="w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center ml-2">
-                <ArrowLeftRight className="h-5 w-5 text-primary" />
-              </div>
+                  {/* Decorative element */}
+                  <div
+                    className={`absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-br ${service.color} opacity-5 rounded-tl-full group-hover:opacity-10 group-hover:rotate-12 transition-all duration-700`}
+                  />
+                </Card>
+              </motion.div>
+            );
+          })}
+        </motion.div>
 
-              <CardTitle className="text-[17px] ml-4 text-card-foreground">
-                LinkedIn & Resume Alignment
-              </CardTitle>
-
-              <CardDescription className="ml-4 mb-0 text-muted-foreground">
-                Ensure your LinkedIn & Resume reflect a cohesive personal brand.
-              </CardDescription>
-            </CardHeader>
-
-            <CardContent className="pl-3">
-              <Button
-                className="mt-0 bg-primary/20 rounded-[10px] text-primary hover:bg-primary hover:text-primary-foreground"
-                onClick={() => (window.location.href = "/linkedin/analyze")}
-              >
-                Get Started
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Bottom CTA - Compact */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.75 }}
+          className="mt-6 md:mt-8 text-center"
+        >
+          <p className="text-sm md:text-base text-muted-foreground">
+            Need professional optimization?{" "}
+            <Link
+              href="/contact-us"
+              className="text-primary hover:underline font-semibold inline-flex items-center gap-1"
+            >
+              Contact our experts
+              <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
+            </Link>
+          </p>
         </motion.div>
       </div>
     </section>

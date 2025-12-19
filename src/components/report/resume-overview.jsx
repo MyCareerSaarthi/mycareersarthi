@@ -175,7 +175,7 @@ const ResumeOverview = ({ data, onNavigate }) => {
         {orderedSections?.map((section, index) => (
           <Card
             key={index}
-            className={`border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-[1.02] ${
+            className={`border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-1 ${
               onNavigate ? "hover:border-primary/30" : ""
             }`}
             onClick={() =>

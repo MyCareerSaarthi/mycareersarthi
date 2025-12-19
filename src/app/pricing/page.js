@@ -1,187 +1,186 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
+import React from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
-import { CheckIcon } from "lucide-react";
-import Link from "next/link";
+import { CheckCircle2, IndianRupee, Sparkles } from "lucide-react";
 
-const pricingPlans = [
+const pricingData = [
   {
-    name: "Starter",
-    price: "₹0",
-    period: "forever",
-    description: "Perfect for getting started with career development",
-    features: [
-      "Basic LinkedIn profile review",
-      "Resume scoring (limited)",
-      "Access to career resources",
-      "Community support",
+    service: "LinkedIn Profile Re-Design & Optimization",
+    details: [
+      "Current Profile Analysis with Report",
+      "Profile Optimization with Target Score > 7+",
     ],
-    cta: "Get Started",
-    popular: false,
-    featured: false,
+    price: "7,999",
   },
   {
-    name: "Professional",
-    price: "₹999",
-    period: "month",
-    description: "Ideal for serious job seekers",
-    features: [
-      "Comprehensive LinkedIn optimization",
-      "Full resume analysis & scoring",
-      "3 AI mock interviews/month",
-      "Personalized career roadmap",
-      "Priority email support",
-      "Access to premium resources",
+    service: "Resume Redesign & Enrichment",
+    details: [
+      "Current Resume Analysis with Report",
+      "Resume Re-design & Optimization with Target Score > 7+",
     ],
-    cta: "Start Free Trial",
-    popular: false,
-    featured: true,
+    price: "7,999",
   },
   {
-    name: "Expert",
-    price: "₹2999",
-    period: "month",
-    description: "For those seeking personalized expert guidance",
-    features: [
-      "Everything in Professional",
-      "Unlimited AI mock interviews",
-      "2 one-on-one coaching sessions/month",
-      "Personalized job recommendations",
-      "Interview preparation strategies",
-      "Dedicated career coach",
-      "Resume writing assistance",
+    service: "LinkedIn & Resume Alignment",
+    details: [
+      "Current Alignment Score with Gaps",
+      "Closure of All Gaps & Revised Alignment Score > 7+",
     ],
-    cta: "Start Free Trial",
-    popular: false,
-    featured: false,
+    price: "7,999",
+  },
+  {
+    service: "Interview Preparation Module",
+    details: [
+      "Mock Interview Round 1",
+      "Mock Interview Report with Gaps & Suggestions",
+      "Interview Script Preparation",
+      "Mock Interview Round 2",
+    ],
+    price: "9,999",
   },
 ];
 
-const PricingPage = () => {
+const bundles = [
+  {
+    title: "Career Foundation Bundle",
+    description: "Perfect for strong positioning & clarity",
+    includes: [
+      "LinkedIn Optimization",
+      "Resume Redesign",
+      "LinkedIn & Resume Alignment",
+      "Career Assessment & Roadmap",
+    ],
+    price: "15,999",
+    highlight: true,
+  },
+];
+
+const Pricing = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="container mx-auto px-4 py-20 max-w-7xl">
-        <div className="text-center mb-16">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
-            Simple, Transparent Pricing
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Choose the plan that works best for your career journey. All plans
-            include our core features.
-          </p>
-        </div>
+    <div className="container mx-auto py-16 px-4">
+      {/* Header */}
+      <div className="text-center max-w-2xl mx-auto mb-14">
+        <h1 className="text-4xl font-bold tracking-tight">
+          Career Services Pricing
+        </h1>
+        <p className="mt-4 text-muted-foreground text-lg">
+          Choose individual services or save more with bundled packages.
+        </p>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {pricingPlans.map((plan, index) => (
-            <div key={index} className="h-full">
-              <Card
-                className={`bg-card border border-primary/10 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30 h-full flex flex-col ${
-                  plan.featured ? "ring-2 ring-primary/50 scale-105" : ""
-                }`}
-              >
-                {plan.featured && (
-                  <div className="bg-primary/10 text-primary text-xs font-semibold px-4 py-2 text-center">
-                    RECOMMENDED
+      {/* Individual Services */}
+      <div className="mb-20">
+        <h2 className="text-2xl font-semibold mb-8 text-center">
+          Individual Services
+        </h2>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {pricingData.map((item, index) => (
+            <Card key={index} className="flex flex-col">
+              <CardHeader>
+                <CardTitle className="text-lg">{item.service}</CardTitle>
+                <CardDescription>
+                  Includes analysis, optimization & review
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="flex flex-col justify-between h-full">
+                <ul className="space-y-3 mb-6">
+                  {item.details.map((detail, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2 text-sm"
+                    >
+                      <CheckCircle2 className="h-4 w-4 text-primary mt-0.5" />
+                      <span>{detail}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-auto pt-4 border-t">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">
+                      Price
+                    </span>
+                    <div className="flex items-center gap-1 text-xl font-semibold">
+                      <IndianRupee className="h-4 w-4" />
+                      {item.price}
+                    </div>
                   </div>
-                )}
-
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-xl font-bold">
-                    {plan.name}
-                  </CardTitle>
-                  <CardDescription className="text-muted-foreground">
-                    {plan.description}
-                  </CardDescription>
-                  <div className="mt-4">
-                    <span className="text-3xl font-bold">{plan.price}</span>
-                    {plan.period !== "forever" && (
-                      <span className="text-muted-foreground">
-                        /{plan.period}
-                      </span>
-                    )}
-                  </div>
-                </CardHeader>
-
-                <CardContent className="flex-grow">
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start">
-                        <CheckIcon className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-
-                <CardFooter className="flex flex-col">
-                  <Button
-                    asChild
-                    variant={plan.featured ? "default" : "outline"}
-                    className={`w-full rounded-full py-5 font-medium hover:scale-105 transition-transform ${
-                      plan.featured
-                        ? ""
-                        : "border-primary/30 hover:bg-primary/10"
-                    }`}
-                  >
-                    <Link href="/signup">{plan.cta}</Link>
-                  </Button>
-                  {plan.period !== "forever" && (
-                    <p className="text-xs text-muted-foreground mt-3 text-center">
-                      7-day money-back guarantee
-                    </p>
-                  )}
-                </CardFooter>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
+      </div>
 
-        <div className="mt-20 max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8">
-            Frequently Asked Questions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-card rounded-2xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
-              <h3 className="font-semibold mb-2">Can I switch plans later?</h3>
-              <p className="text-muted-foreground text-sm">
-                Yes, you can upgrade or downgrade your plan at any time.
-              </p>
-            </div>
-            <div className="bg-card rounded-2xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
-              <h3 className="font-semibold mb-2">Do you offer discounts?</h3>
-              <p className="text-muted-foreground text-sm">
-                We offer special pricing for students and annual subscriptions.
-              </p>
-            </div>
-            <div className="bg-card rounded-2xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
-              <h3 className="font-semibold mb-2">
-                What payment methods do you accept?
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                We accept all major credit cards, UPI, and bank transfers.
-              </p>
-            </div>
-            <div className="bg-card rounded-2xl p-6 border border-primary/10 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10">
-              <h3 className="font-semibold mb-2">Is there a free trial?</h3>
-              <p className="text-muted-foreground text-sm">
-                Yes, our paid plans come with a 7-day free trial.
-              </p>
-            </div>
-          </div>
+      {/* Bundles */}
+      <div>
+        <h2 className="text-2xl font-semibold mb-8 text-center">
+          Bundled Packages
+        </h2>
+
+        <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
+          {bundles.map((bundle, index) => (
+            <Card
+              key={index}
+              className={`relative ${
+                bundle.highlight
+                  ? "border-2 border-primary shadow-lg"
+                  : ""
+              }`}
+            >
+              {bundle.highlight && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" />
+                  Best Value
+                </div>
+              )}
+
+              <CardHeader>
+                <CardTitle className="text-xl">{bundle.title}</CardTitle>
+                <CardDescription>{bundle.description}</CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <ul className="space-y-3 mb-6">
+                  {bundle.includes.map((item, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start gap-2 text-sm"
+                    >
+                      <CheckCircle2 className="h-4 w-4 text-primary mt-0.5" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="pt-4 border-t flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    Bundle Price
+                  </span>
+                  <div className="flex items-center gap-1 text-2xl font-bold">
+                    <IndianRupee className="h-5 w-5" />
+                    {bundle.price}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
+
+      {/* Footer Note */}
+      <p className="mt-12 text-center text-sm text-muted-foreground">
+        * Prices are subject to change. Custom packages available on request.
+      </p>
     </div>
   );
 };
 
-export default PricingPage;
+export default Pricing;

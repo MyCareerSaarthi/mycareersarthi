@@ -53,7 +53,7 @@ const serviceStrip = [
   {
     title: "Career Mentoring",
     description:
-      "We guide you through career assessment, skill evaluation, roadmap creation, and job search strategy so you know exactly which roles to target and how to move toward them.",
+      "We guide you through career assessment, skill evaluation, roadmap creation, and job search strategy so you know exactly which roles to target and how to move toward them. You gain clarity on your strengths, direction, and next steps with a strong focus on building an effective job search strategy that works in today's market.",
     cta: "Get Started",
     icon: Briefcase,
     link: "/career-mentoring",
@@ -62,7 +62,7 @@ const serviceStrip = [
   {
     title: "Interview Preparation",
     description:
-      "Request mock interviews, receive expert evaluation, and get AI + manual feedback so you know how hiring teams interpret your answers.",
+      "You can request mock interviews, receive expert evaluation, and get AI + manual feedback on your performance. We help you understand how hiring teams interpret your answers, improve how you present your experience, and prepare you confidently for real interview conversations.",
     cta: "Get Started",
     icon: MessageSquare,
     link: "/interview-preparation",
@@ -71,7 +71,7 @@ const serviceStrip = [
   {
     title: "AI-Powered Profile Scoring",
     description:
-      "Our purpose-built AI compares your LinkedIn and resume against your target roles, revealing alignment, keywords, and gaps with clear guidance.",
+      "Our purpose-built AI engine compares your LinkedIn and resume against your target job roles, giving you clear insights on alignment, keywords, and gaps, and helping you refine your profile to meet hiring expectations confidently.",
     cta: "Get Started",
     icon: Brain,
     link: "/ai-powered-profile-scoring",
@@ -79,26 +79,65 @@ const serviceStrip = [
   },
 ];
 
+const featuredInLogos = [
+  {
+    src: "/newspaper-logo/economic-times.png",
+    alt: "Economic Times",
+    bg: false
+  },
+  {
+    src: "/newspaper-logo/express-computer.png",
+    alt: "Express Computer",
+    bg: false
+  },
+  {
+    src: "/newspaper-logo/hans-india.png",
+    alt: "Hans India",
+    bg: false
+  },
+  {
+    src: "/newspaper-logo/daily-gaurdian.png",
+    alt: "The Daily Guardian",
+    bg: false
+  },
+  {
+    src: "/newspaper-logo/people-matters.png",
+    alt: "People Matters",
+    bg: true
+  },
+  {
+    src: "/newspaper-logo/startup-talky.png",
+    alt: "Startup Talky",
+    bg: false
+  },
+  {
+    src: "/newspaper-logo/time-of-india.svg",
+    alt: "Time of India",
+    bg: false
+  }  
+]
+
+
 const whyChoose = [
   {
-    title: "AI-Powered Analysis",
-    body: "Understand strengths, role-fit, and career path so you know exactly which opportunities to target and how to approach them.",
-    icon: Brain,
+    title: "Get Clarity on Where You Stand and What to Aim For",
+    body: "Many job seekers struggle because they are unsure whether they are targeting the right roles or even moving in the right direction. We help you understand your current position, identify realistic next steps, and align your career decisions with roles that truly fit your experience and aspirations. This clarity removes confusion and replaces it with focus.",
+    icon: Target,
   },
   {
-    title: "Expert Guidance",
-    body: "Recommendations grounded in hiring insights and recruiter behavior to align your profile with decision-makers' expectations.",
-    icon: Award,
-  },
-  {
-    title: "Comprehensive Reports",
-    body: "Clear steps to refine LinkedIn, resume, and narrative so your professional identity communicates your value effectively.",
+    title: "Present Your Experience in a Way Recruiters Understand",
+    body: "Strong experience often goes unnoticed because it is not communicated the right way. We help you shape your LinkedIn profile and resume so your work, impact, and growth are clearly visible to recruiters and hiring managers. Your profile stops sounding generic and starts reflecting who you really are as a professional.",
     icon: FileText,
   },
   {
-    title: "Measurable Improvement",
-    body: "Mentoring on visibility, engagement, and strategy so you see progress in recruiter interest and search performance.",
-    icon: TrendingUp,
+    title: "Stop Blind Applying and Build a Smarter Job Search",
+    body: "Applying everywhere rarely works and leads to burnout. We help you approach your job search strategically, deciding where to apply, whom to connect with, and how to position yourself for inbound and outbound opportunities. This saves time, reduces frustration, and improves your chances of getting the right calls.",
+    icon: Briefcase,
+  },
+  {
+    title: "Walk Into Interviews with Confidence, Not Anxiety",
+    body: "Interviews are not just about answers; they are about how you think, explain, and position your experience. We prepare you through structured guidance, mock interviews, and feedback so you know what to expect and how to respond. This builds confidence and helps you perform at your best when it matters most.",
+    icon: MessageSquare,
   },
 ];
 
@@ -106,7 +145,7 @@ const professionalServices = [
   {
     title: "LinkedIn Profile Review & Optimization",
     description:
-      "A detailed evaluation with specific recommendations to improve relevance and recruiter engagement.",
+      "A detailed evaluation of your profile with specific recommendations to improve relevance and recruiter engagement.",
     items: [
       "Headline and summary enhancement",
       "Keywords based on target roles",
@@ -121,7 +160,7 @@ const professionalServices = [
   {
     title: "Resume Creation, Review & Optimization",
     description:
-      "A resume that reflects achievements and passes ATS screening.",
+      "A resume that reflects your achievements and passes ATS screening.",
     items: [
       "Resume creation or restructuring",
       "ATS compatibility check",
@@ -251,30 +290,43 @@ export default function Home() {
       {/* Hero Section */}
       <HeroCarousel />
 
-      {/* Stats card */}
-
-      <div className="p-5 rounded-lg max-w-7xl mx-auto">
-        <p className="text-base font-semibold uppercase tracking-wider text-foreground mb-4 text-center">
-          Featured In
-        </p>
-        <div className="grid grid-cols-3 gap-3">
-          <div className="text-center p-3 rounded-xl bg-card/50 border border-border">
-            <p className="text-xl font-bold text-primary mb-1">3x</p>
-            <p className="text-xs text-muted-foreground">Profile views</p>
+      {/* Featured In Section */}
+      <section className="py-10 max-w-7xl mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center"
+        >
+          <p className="text-base font-semibold uppercase tracking-wider text-muted-foreground mb-8">
+            Featured In
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 items-center justify-items-center">
+            {featuredInLogos.map((logo, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: idx * 0.1 }}
+                className={`hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100 ${idx -1  ? "grid-cols-2 mx-auto": ""} ${logo.bg ? "bg-black rounded-sm px-2 py-1" : ""}`}
+              >
+                <Image
+                  src={logo.src}
+                  alt={`Featured in publication ${idx + 1}`}
+                  width={120}
+                  height={60}
+                  className="object-contain h-12 w-auto"
+                />
+              </motion.div>
+            ))}
           </div>
-          <div className="text-center p-3 rounded-xl bg-card/50 border border-border">
-            <p className="text-xl font-bold text-primary mb-1">2.5x</p>
-            <p className="text-xs text-muted-foreground">Interview calls</p>
-          </div>
-          <div className="text-center p-3 rounded-xl bg-card/50 border border-border">
-            <p className="text-xl font-bold text-primary mb-1">14d</p>
-            <p className="text-xs text-muted-foreground">Time to clarity</p>
-          </div>
-        </div>
-      </div>
+        </motion.div>
+      </section>
 
       {/* Why Choose Section */}
-      <section className="relative py-10 overflow-hidden">
+      <section className="relative py-16 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-muted/10 to-background" />
         <div className="relative container mx-auto px-4 max-w-7xl">
           <motion.div
@@ -282,60 +334,112 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="mb-16"
           >
             <Badge
               variant="secondary"
-              className="px-4 py-2 text-sm font-medium mb-6"
+              className="px-4 py-2 text-sm font-medium mb-6 mx-auto block w-fit"
             >
               <Award className="w-4 h-4 mr-2 inline" />
               AI-Powered Career Growth Platform
             </Badge>
-            <h2 className="text-3xl md:text-4xl text-justify lg:text-5xl font-bold mb-4 leading-tight">
-              Transform Your Career With Expert Guidance and Built-in AI
-              Insights
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight text-center">
+              Transform Your Career with Expert Guidance and Built-in AI Insights
             </h2>
-            <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
-            <p className="text-lg text-muted-foreground mx-auto mt-6">
-              MyCareerSarthi combines career coaching, mentoring, and profile
-              transformation so you move confidently toward the roles you want.
+            <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-8" />
+            <p className="text-lg text-muted-foreground max-w-5xl mx-auto leading-relaxed text-justify">
+              Today's job market is confusing, crowded, and unforgiving. Hard work alone doesn't guarantee growth anymore. What professionals need is clarity on direction, the right positioning in the market, and guidance that helps them move forward with confidence. MyCareerSarthi supports you through this entire journey so you are not guessing, applying blindly, or feeling stuck.
             </p>
           </motion.div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            {whyChoose.map((item, idx) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                whileHover={{ y: -4 }}
-              >
-                <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <div className="flex gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <item.icon className="w-6 h-6 text-primary" />
+          <div className="space-y-8">
+            {/* First Featured Card - Full Width */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <Card className="relative p-10 md:p-12 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent backdrop-blur-sm border-2 border-primary/40 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden group">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
+                
+                <div className="relative flex flex-col md:flex-row gap-8 items-start">
+                  <div className="relative">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-linear-to-br from-primary to-primary/60 flex items-center justify-center shadow-2xl transition-all duration-500">
+                      {React.createElement(whyChoose[0].icon, { className: "w-10 h-10 md:w-12 md:h-12 text-primary-foreground" })}
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold mb-2">
+                    <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm shadow-lg">
+                      1
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
+                      {whyChoose[0].title}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed text-justify text-base md:text-lg mb-6">
+                      {whyChoose[0].body}
+                    </p>
+                    <Link href="/about-us">
+                      <Button className="group/btn">
+                        Learn more 
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+
+            {/* Grid of 3 Cards */}
+            <div className="grid md:grid-cols-3 gap-6">
+              {whyChoose.slice(1).map((item, idx) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: (idx + 1) * 0.15 }}
+                  className="h-full"
+                >
+                  <Card className="relative h-full p-8 bg-card/50 backdrop-blur-sm border-2 border-border hover:border-primary/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    <div className="relative flex flex-col h-full">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                          <item.icon className="w-7 h-7 text-primary" />
+                        </div>
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                          <span className="text-xl font-bold text-primary">
+                            {idx + 2}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-xl font-bold mb-4 leading-tight">
                         {item.title}
                       </h3>
-                      <p className="text-muted-foreground mb-4">{item.body}</p>
+                      
+                      <p className="text-muted-foreground leading-relaxed text-justify text-sm mb-6 flex-1">
+                        {item.body}
+                      </p>
+                      
                       <Link href="/about-us">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="p-0 h-auto hover:bg-primary/10 hover:-translate-y-0.5 transition-all duration-300"
+                          className="group/btn p-0 h-auto text-primary hover:text-primary font-semibold hover:bg-transparent w-fit"
                         >
-                          Learn more <ArrowRight className="w-4 h-4 ml-2" />
+                          Learn more 
+                          <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
                         </Button>
                       </Link>
                     </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -360,12 +464,10 @@ export default function Home() {
                 Your Career Transformation Journey
               </Badge>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                A simple, structured process combining expert mentoring and
-                in-house AI
+                A simple and structured process that combines expert mentoring with our built-in, in-house AI
               </h2>
               <p className="text-lg text-muted-foreground">
-                Strengthen your positioning, improve visibility, and move closer
-                to the roles you want.
+                Strengthen your positioning, improve your visibility, and move you closer to the roles you want.
               </p>
               <StepsRoadmap />
               {/* <div className="grid gap-4 sm:grid-cols-2">
@@ -396,7 +498,7 @@ export default function Home() {
                 Success stories
               </Badge>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-                Real impact across professionals
+                Professionals across industries trust MyCareerSarthi to strengthen their positioning, improve visibility, and secure better opportunities through clearer guidance and a stronger profile strategy.
               </h2>
             </div>
           </motion.div>
@@ -577,18 +679,18 @@ export default function Home() {
                 />
                 <div className="mt-6 mb-3 flex flex-col items-center text-center z-10">
                   <h3 className="text-xl md:text-2xl font-bold mb-1 text-primary">
-                    Ready for Career Growth?
+                    Ready to Transform Your Career?
                   </h3>
                   <p className="text-base text-muted-foreground mb-3">
-                    Real results start with real guidance.
+                    If you are aiming for better roles, your profile and positioning must support that goal.
                     <br />
-                    Take your first step with a proven method—align your
-                    strengths, tell your story, and open new doors.
+                    Start refining your LinkedIn and resume with a process built to help you move toward the opportunities you want.
                   </p>
                   <Button
                     size="lg"
                     className="rounded-full font-semibold px-6 py-2"
                     tabIndex={-1}
+                    onClick={() => handleBookingClick()}
                   >
                     Get Started Today <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>

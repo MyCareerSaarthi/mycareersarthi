@@ -197,20 +197,48 @@ const pricingPlans = [
 
 const faqs = [
   {
-    q: "Can I switch plans later?",
-    a: "Yes, you can upgrade or downgrade your plan at any time.",
+    q: "Who is MyCareerSarthi best suited for?",
+    a: "MyCareerSarthi is designed for students, early-career professionals, mid-level managers, and experienced professionals who want clarity, better positioning, and structured guidance in their job search or career growth.",
   },
   {
-    q: "Do you offer discounts?",
-    a: "We offer special pricing for students and annual subscriptions.",
+    q: "I already have a resume and LinkedIn profile. Do I still need this?",
+    a: "Most professionals do. Having a resume or LinkedIn profile is not the same as having one that reflects your real impact, aligns with your target roles, and works the way recruiters evaluate candidates today. We help refine, align, and position what you already have.",
   },
   {
-    q: "What payment methods do you accept?",
-    a: "All major credit cards, UPI, and bank transfers.",
+    q: "Will this help if I am actively looking for a job right now?",
+    a: "Yes. Our services are especially useful if you are currently job searching, getting limited interview calls, or feeling unsure about your approach. We focus on clarity, job search strategy, profile positioning, and interview preparation.",
   },
   {
-    q: "Is there a free trial?",
-    a: "Yes, our paid plans come with a 7-day free trial.",
+    q: "What if I am not sure about my next career move yet?",
+    a: "That’s exactly where we start. Through career assessment, coaching, and mentoring, we help you gain clarity on direction, realistic role options, and next steps before you invest time and effort in applications.",
+  },
+  {
+    q: "How is MyCareerSarthi different from resume writing services?",
+    a: "We do not just create documents. We work on your overall career positioning through a highly personalised approach. This includes career assessment, LinkedIn and resume alignment, job search strategy, interview preparation, AI-powered evaluation, and one-on-one discussions with our experts to guide you at every step.",
+  },
+  {
+    q: "Do you provide one-on-one guidance or only AI-based reports?",
+    a: "You receive both. Our in-house AI helps identify gaps and alignment issues, while expert mentors guide you on decisions, positioning, and execution. AI supports the process; humans guide the journey.",
+  },
+  {
+    q: "Can I change my plan later?",
+    a: "Yes. You can upgrade or move to another plan at any point based on your evolving needs.",
+  },
+    {
+    q: "Do you offer any discounts?",
+    a: "Yes. We offer special pricing for students and discounted annual plans. If you are unsure, you can speak with us before enrolling.",
+  },
+  {
+    q: "What payment methods are supported?",
+    a: "We accept all major credit cards, UPI, and bank transfers for convenience.",
+  },
+  {
+    q: "Is there a trial or refund policy?",
+    a: "Yes. Our paid plans come with a 7-day trial period. If you feel the service is not right for you, you can request a refund within this period.",
+  },
+  {
+    q: "How soon can I expect results?",
+    a: "This depends on your starting point and goals. Some professionals see improvements in visibility and interview calls within weeks, while others benefit from longer-term clarity, positioning, and confidence building.",
   },
 ];
 
@@ -235,6 +263,8 @@ const successStories = [
 export default function Home() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState(null);
+  const [openIndex, setOpenIndex] = useState(null)
+
 
   const handleBookingClick = (serviceType = null) => {
     setSelectedServiceType(serviceType);
@@ -510,51 +540,85 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="relative py-10 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-b from-muted/10 to-background" />
-        <div className="relative container mx-auto px-4 max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <Badge
-              variant="secondary"
-              className="px-4 py-2 text-sm font-medium mb-6"
-            >
-              <MessageSquare className="w-4 h-4 mr-2 inline" />
-              Frequently Asked Questions
-            </Badge>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-              Answers to common questions
-            </h2>
-            <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-4" />
-            <p className="text-lg text-muted-foreground">
-              Everything you need to know about plans, payments, and support.
-            </p>
-          </motion.div>
+  {/* FAQ Section */}  
+   <section className="relative py-10 overflow-hidden">
+      <div className="absolute inset-0 bg-linear-to-b from-muted/10 to-background" />
 
-          <div className="space-y-4">
-            {faqs.map((item, idx) => (
-              <motion.div
-                key={item.q}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-              >
-                <Card className="p-6 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                  <h3 className="text-lg font-semibold mb-2">{item.q}</h3>
-                  <p className="text-muted-foreground">{item.a}</p>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+      <div className="relative container mx-auto px-4 max-w-4xl">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <Badge
+            variant="secondary"
+            className="px-4 py-2 text-sm font-medium mb-6"
+          >
+            <MessageSquare className="w-4 h-4 mr-2 inline" />
+            Frequently Asked Questions
+          </Badge>
+
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            Answers to common questions
+          </h2>
+
+          <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-4" />
+
+          <p className="text-lg text-muted-foreground">
+            Everything you need to know about plans, payments, and support.
+          </p>
+        </motion.div>
+
+        {/* FAQ Items */}
+        <div className="space-y-6">
+          {faqs.map((item, idx) => (
+            <motion.div
+              key={item.q}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+            >
+              <Card className="p-6 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div
+                  className="cursor-pointer select-none"
+                  onClick={() =>
+                    setOpenIndex(openIndex === idx ? null : idx)
+                  }
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">
+                      {item.q}
+                    </h3>
+                    <span className="text-xl font-bold">
+                      {openIndex === idx ? "−" : "+"}
+                    </span>
+                  </div>
+
+                  <motion.div
+                    initial={false}
+                    animate={{
+                      height: openIndex === idx ? "auto" : 0,
+                      opacity: openIndex === idx ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <p className="mt-3 text-muted-foreground">
+                      {item.a}
+                    </p>
+                  </motion.div>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
         </div>
-      </section>
+      </div>
+    </section>
+      
       <section className="relative py-10 bg-muted/30 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
         <div className="relative container mx-auto px-4 max-w-7xl z-10">

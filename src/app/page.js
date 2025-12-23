@@ -498,10 +498,11 @@ export default function Home() {
                 Your Career Transformation Journey
               </Badge>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                A simple and structured process that combines expert mentoring with our built-in, in-house AI
+                A Structured Path to the Right Roles
+
               </h2>
               <p className="text-lg text-muted-foreground">
-                Strengthen your positioning, improve your visibility, and move you closer to the roles you want.
+               A simple and structured process that combines expert mentoring with our built-in, in-house AI to strengthen your positioning, improve your visibility, and move you closer to the roles you want.
               </p>
               <StepsRoadmap />
               {/* <div className="grid gap-4 sm:grid-cols-2">
@@ -532,7 +533,7 @@ export default function Home() {
                 Success stories
               </Badge>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-                Professionals across industries trust MyCareerSarthi to strengthen their positioning, improve visibility, and secure better opportunities through clearer guidance and a stronger profile strategy.
+                Real impact across professionals
               </h2>
             </div>
           </motion.div>

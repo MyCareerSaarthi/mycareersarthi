@@ -254,7 +254,7 @@ export default function Home() {
       {/* Stats card */}
 
       <div className="p-5 rounded-lg max-w-7xl mx-auto">
-        <p className="text-base font-semibold uppercase tracking-wider text-foreground mb-4 text-center">
+        <p className="text-xl font-semibold tracking-wider text-foreground mb-4 text-center">
           Featured In
         </p>
         <div className="grid grid-cols-3 gap-3">
@@ -291,12 +291,12 @@ export default function Home() {
               <Award className="w-4 h-4 mr-2 inline" />
               AI-Powered Career Growth Platform
             </Badge>
-            <h2 className="text-3xl md:text-4xl text-justify lg:text-5xl font-bold mb-4 leading-tight">
+            <h2 className="text-center text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight text-balance">
               Transform Your Career With Expert Guidance and Built-in AI
               Insights
             </h2>
-            <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
-            <p className="text-lg text-muted-foreground mx-auto mt-6">
+            <div className="w-26 h-1 bg-primary mx-auto rounded-full" />
+            <p className="max-w-6xl text-md text-muted-foreground mx-auto mt-6">
               MyCareerSarthi combines career coaching, mentoring, and profile
               transformation so you move confidently toward the roles you want.
             </p>
@@ -346,7 +346,7 @@ export default function Home() {
         <div className="relative container mx-auto px-4 max-w-7xl">
           <div className="grid gap-12 lg:grid-cols-[1.1fr,0.9fr]">
             <motion.div
-              className="space-y-6"
+              className="text-center"
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
@@ -359,7 +359,7 @@ export default function Home() {
                 <Rocket className="w-4 h-4 mr-2 inline" />
                 Your Career Transformation Journey
               </Badge>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+              <h2 className="text-center text-2xl md:text-3xl lg:text-4xl font-bold mb-4 leading-tight text-balance">
                 A simple, structured process combining expert mentoring and
                 in-house AI
               </h2>
@@ -381,25 +381,24 @@ export default function Home() {
         <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
         <div className="relative container mx-auto px-4 max-w-7xl z-10">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-12"
-          >
-            <div>
-              <Badge
-                variant="secondary"
-                className="px-4 py-2 text-sm font-medium mb-4"
-              >
-                <Users className="w-4 h-4 mr-2 inline" />
-                Success stories
-              </Badge>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-                Real impact across professionals
-              </h2>
-            </div>
-          </motion.div>
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.6 }}
+      className="mb-12 flex flex-col items-center text-center gap-4"
+    >
+      <Badge
+        variant="secondary"
+        className="px-4 py-2 text-sm font-medium"
+      >
+        <Users className="w-4 h-4 mr-2 inline" />
+        Success stories
+      </Badge>
+
+      <h2 className="max-w-4xl text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+        Real impact across professionals
+      </h2>
+    </motion.div>
 
           <div className="grid gap-6 md:grid-cols-3">
             {successStories.map((story, idx) => (

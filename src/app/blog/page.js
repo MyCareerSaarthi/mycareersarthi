@@ -56,7 +56,7 @@ export default function BlogPage() {
 
         <div className="relative container mx-auto px-4 max-w-7xl z-10">
           <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
               <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
                 Inspiration & Insights
               </span>
@@ -65,7 +65,7 @@ export default function BlogPage() {
                 At MyCareerSarthi
               </span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Your everyday growth companion: read, reflect, and level-up your
               career journey with practical, engaging content.
             </p>

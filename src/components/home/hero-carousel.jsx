@@ -4,9 +4,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Check, Linkedin, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
+const slideShellClass =
+  'grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center relative overflow-hidden min-h-[calc(100svh-10rem)] sm:min-h-[520px] md:min-h-[600px]';
+
 const CareerAssessmentSlide = () => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[500px] md:min-h-[600px] relative overflow-hidden">
+    <div className={slideShellClass}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-10 left-10 w-56 h-56 bg-gradient-to-br from-purple-300/50 to-pink-300/50 rounded-full blur-3xl"></div>
@@ -18,8 +21,8 @@ const CareerAssessmentSlide = () => {
       </div>
 
       {/* Left Content Section */}
-      <div className="flex flex-col justify-center space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight tracking-tight text-white drop-shadow-lg">
+      <div className="flex flex-col justify-center space-y-5 sm:space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-white drop-shadow-lg">
           Career Assessment & Roadmap
         </h1>
 
@@ -59,7 +62,7 @@ const CareerAssessmentSlide = () => {
 
       {/* Right Image Section */}
       <div className="flex items-center justify-center order-1 lg:order-2 relative z-10">
-        <div className="relative w-full max-w-lg">
+        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
           <img
             src="/home/slide/career-assessment.svg"
             alt="Career Assessment & Roadmap"
@@ -73,7 +76,7 @@ const CareerAssessmentSlide = () => {
 
 const InterviewPreparationSlide = () => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[500px] md:min-h-[600px] relative overflow-hidden">
+    <div className={slideShellClass}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-10 right-10 w-56 h-56 bg-gradient-to-br from-yellow-400/50 to-red-400/50 rounded-full blur-3xl"></div>
@@ -90,8 +93,8 @@ const InterviewPreparationSlide = () => {
       </div>
 
       {/* Left Content Section */}
-      <div className="flex flex-col justify-center space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight tracking-tight text-white drop-shadow-lg">
+      <div className="flex flex-col justify-center space-y-5 sm:space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-white drop-shadow-lg">
           Interview Preparation
         </h1>
 
@@ -131,7 +134,7 @@ const InterviewPreparationSlide = () => {
 
       {/* Right Image Section */}
       <div className="flex items-center justify-center order-1 lg:order-2 relative z-10">
-        <div className="relative w-full max-w-lg">
+        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
           <img
             src="/home/slide/interview-preparation.svg"
             alt="Interview Preparation"
@@ -145,7 +148,7 @@ const InterviewPreparationSlide = () => {
 
 const AIProfileScorerSlide = () => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[500px] md:min-h-[600px] relative overflow-hidden">
+    <div className={slideShellClass}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-10 left-10 w-52 h-52 bg-gradient-to-br from-blue-300/50 to-cyan-300/50 rounded-full blur-3xl"></div>
@@ -162,8 +165,8 @@ const AIProfileScorerSlide = () => {
       </div>
 
       {/* Left Content Section */}
-      <div className="flex flex-col justify-center space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight tracking-tight text-white drop-shadow-lg">
+      <div className="flex flex-col justify-center space-y-5 sm:space-y-6 md:space-y-8 order-2 lg:order-1 relative z-10">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight text-white drop-shadow-lg">
           AI Profile Scorer
         </h1>
 
@@ -203,10 +206,10 @@ const AIProfileScorerSlide = () => {
 
       {/* Right Image Section with Floating LinkedIn Logo */}
       <div className="flex items-center justify-center order-1 lg:order-2 relative z-10">
-        <div className="relative w-full max-w-lg">
+        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
           {/* Floating LinkedIn Logo */}
-          <div className="absolute -top-6 -right-6 z-20">
-            <div className="bg-white p-4 rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-300">
+          <div className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 z-20">
+            <div className="bg-white p-3 sm:p-4 rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-300">
               <Linkedin className="w-10 h-10 md:w-12 md:h-12 text-[#0A66C2]" fill="#0A66C2" />
             </div>
           </div>
@@ -297,7 +300,7 @@ const HeroCarousel = () => {
 
   return (
     <section 
-      className={`relative max-w-3/4 rounded mx-auto w-full overflow-hidden transition-all duration-700 ease-in-out ${slides[activeSlide].bg} ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+      className={`relative mx-auto w-full overflow-hidden transition-all duration-700 ease-in-out ${slides[activeSlide].bg} ${isDragging ? 'cursor-grabbing' : 'cursor-grab'} min-h-svh md:min-h-[640px] md:rounded-2xl md:max-w-[95%] lg:max-w-7xl`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleDragStart}
@@ -307,9 +310,9 @@ const HeroCarousel = () => {
       onTouchMove={handleDragMove}
       onTouchEnd={handleDragEnd}
     >
-      <div className="container relative mx-auto px-4 md:px-6 lg:px-8 max-w-7xl select-none">
+      <div className="relative mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 select-none min-h-svh md:min-h-[640px] flex flex-col justify-center pt-[calc(env(safe-area-inset-top)+1.25rem)] pb-[calc(env(safe-area-inset-bottom)+4.75rem)] md:pt-14 md:pb-16">
         {/* Slides Container */}
-        <div className="relative min-h-[500px] md:min-h-[600px]">
+        <div className="relative flex-1 min-h-0">
           {slides.map((slide, index) => (
             <div
               key={index}
@@ -329,30 +332,30 @@ const HeroCarousel = () => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20  backdrop-blur-sm text-white rounded-r-xl transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-0 focus:ring-white/50"
+          className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 z-20 text-white rounded-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-0 shadow-lg"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
         </button>
         
         <button
           onClick={nextSlide}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 backdrop-blur-sm text-white rounded-l-xl transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-0 focus:ring-white/50"
+          className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 z-20 text-white rounded-xl transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-0 shadow-lg"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
         </button>
 
         {/* Pagination Dots */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+        <div className="absolute bottom-4 md:bottom-7 left-1/2 -translate-x-1/2 z-20 flex gap-2.5 md:gap-3">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
               className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-white/50 ${
                 index === activeSlide
-                  ? 'bg-white w-12 h-3'
-                  : 'bg-white/40 hover:bg-white/60 w-3 h-3'
+                  ? 'bg-white w-10 md:w-12 h-2.5 md:h-3'
+                  : 'bg-white/40 hover:bg-white/60 w-2.5 md:w-3 h-2.5 md:h-3'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

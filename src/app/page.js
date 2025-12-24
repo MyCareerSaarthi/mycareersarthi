@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
@@ -29,6 +29,8 @@ import {
   Briefcase,
   MessageSquare,
   BarChart3,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import HeroCarousel from "@/components/home/hero-carousel";
 import Image from "next/image";
@@ -122,6 +124,16 @@ const featuredInLogos = [
     bg: false
   }  
 ]
+
+ const alumniThriveLogos = [
+   { src: "/home/alumni-logo/godaddy.svg", alt: "GoDaddy" },
+   { src: "/home/alumni-logo/acro.png", alt: "Acro" },
+   { src: "/home/alumni-logo/citibank.svg", alt: "CitiBank" },
+   { src: "/home/alumni-logo/coforge.svg", alt: "Coforge" },
+   { src: "/home/alumni-logo/epikdoc.png", alt: "Epikdoc" },
+   { src: "/home/alumni-logo/nagarro.svg", alt: "Nagarro" },
+   { src: "/home/alumni-logo/tata-power.svg", alt: "Tata Power" },
+ ];
 
 
 const whyChoose = [
@@ -305,6 +317,117 @@ const successStories = [
   },
 ];
 
+const videoShowcase = [
+  {
+    type: "youtube",
+    src: "https://www.youtube.com/embed/o0JvhOMlSig?si=OpfoBMfyA_zqcgJ9",
+  },
+
+];
+
+function VideoCarousel({ items = [] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (items.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % items.length);
+    }, 7000);
+    return () => clearInterval(interval);
+  }, [items.length]);
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % items.length);
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
+  if (items.length === 0) return null;
+
+  const active = items[currentIndex];
+
+  return (
+    <div className="relative w-full">
+      <div className="bg-card/50 rounded-xl backdrop-blur-sm shadow-lg overflow-hidden">
+        <div className="">
+          <div className="relative w-full overflow-hidden rounded-xl ">
+            <div className="aspect-video">
+              {active.type === "youtube" ? (
+                <iframe
+                  className="h-full w-full"
+                  src={active.src}
+                  title={active.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  className="h-full w-full"
+                  src={active.src}
+                  poster={active.poster}
+                  controls
+                  playsInline
+                  preload="metadata"
+                />
+              )}
+            </div>
+
+            {items.length > 1 && (
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20">
+                <div className="flex items-center gap-2 rounded-full bg-background/70 backdrop-blur border border-border px-3 py-2 shadow-sm">
+                  {items.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        index === currentIndex
+                          ? "w-6 bg-primary"
+                          : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60"
+                      }`}
+                      aria-label={`Go to video ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {items.length > 1 && (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute left-2 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-background/80 hover:bg-background border border-border shadow-sm"
+              onClick={goToPrevious}
+              aria-label="Previous video"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-background/80 hover:bg-background border border-border shadow-sm"
+              onClick={goToNext}
+              aria-label="Next video"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState(null);
@@ -357,6 +480,137 @@ export default function Home() {
             ))}
           </div>
         </motion.div>
+      </section>
+
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-background via-primary/5 to-background" />
+        <div className="absolute inset-0 opacity-40 mask-[radial-gradient(ellipse_at_center,black,transparent_65%)]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(99,102,241,0.18)_1px,transparent_0)] bg-size-[22px_22px]" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                Where our alumni thrive
+              </p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5">
+                Career outcomes that speak for themselves
+              </h2>
+              <div className="w-24 h-1 bg-primary rounded-full mb-6" />
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
+                Our alumni are building impact across leading teams. Here are a few of the companies where they're thriving today.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="relative"
+            >
+              <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full" />
+
+              <div className="relative mx-auto w-full max-w-xl">
+                <div className="grid grid-cols-6 gap-4 sm:gap-5">
+                  {alumniThriveLogos.map((logo, idx) => {
+                    const placement = [
+                      "col-start-2 col-span-2",
+                      "col-start-4 col-span-2",
+                      "col-start-1 col-span-2",
+                      "col-start-3 col-span-2",
+                      "col-start-5 col-span-2",
+                      "col-start-2 col-span-2",
+                      "col-start-4 col-span-2",
+                    ][idx];
+
+                    const floatDelay = idx * 0.18;
+
+                    return (
+                      <motion.div
+                        key={logo.alt}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true, margin: "-120px" }}
+                        animate={{ y: [0, -7, 0] }}
+                        className={`${placement} flex items-center justify-center`}
+                      >
+                        <motion.div
+                          whileHover={{ scale: 1.04 }}
+                          transition={{ type: "spring", stiffness: 220, damping: 18 }}
+                          className="group relative w-full aspect-[1/0.92]"
+                        >
+                          <div
+                            className="absolute inset-0 rounded-2xl bg-card/60 backdrop-blur border border-primary/20 shadow-lg group-hover:shadow-xl group-hover:border-primary/40 transition-all duration-300"
+                            style={{
+                              clipPath:
+                                "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
+                            }}
+                          />
+                          <div
+                            className="absolute inset-[10%] flex items-center justify-center"
+                            style={{
+                              clipPath:
+                                "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
+                            }}
+                          >
+                            <Image
+                              src={logo.src}
+                              alt={logo.alt}
+                              width={160}
+                              height={80}
+                              className="object-contain w-[90%] h-full opacity-90 group-hover:opacity-100 transition-opacity duration-300"
+                            />
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-b from-background via-primary/5 to-background" />
+        <div className="relative max-w-7xl mx-auto px-4">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-120px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                Watch and learn
+              </p>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5">
+                Video highlights from your career growth journey
+              </h2>
+              <div className="w-24 h-1 bg-primary rounded-full mb-6" />
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
+                See how MyCareerSarthi helps you get role clarity, improve your profile positioning, and prepare for interviews with structured guidance backed by AI insights.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-120px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <VideoCarousel items={videoShowcase} />
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* Why Choose Section */}

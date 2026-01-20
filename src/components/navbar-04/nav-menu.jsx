@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { HardLink } from "@/components/ui/hard-link";
 import { useAuth } from "@clerk/nextjs";
-import { ProductDropdown } from "./product-dropdown";
+import { ServicesMenuItem } from "./services-nav-menu";
 import { motion } from "framer-motion";
 
 export const NavMenu = (props) => {
@@ -28,7 +28,7 @@ export const NavMenu = (props) => {
             </HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
-        
+
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <HardLink
@@ -40,11 +40,21 @@ export const NavMenu = (props) => {
             </HardLink>
           </NavigationMenuLink>
         </NavigationMenuItem>
-        
+
+        {/* Services Navigation Menu with hover submenus */}
+        <ServicesMenuItem />
+
         <NavigationMenuItem>
-          <ProductDropdown />
+          <NavigationMenuLink asChild>
+            <HardLink
+              href="/pricing"
+              className="group relative px-4 py-2 rounded-lg hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <span className="relative z-10">Pricing</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 rounded-lg opacity-0 transition-opacity" />
+            </HardLink>
+          </NavigationMenuLink>
         </NavigationMenuItem>
-        
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <HardLink

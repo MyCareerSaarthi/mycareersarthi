@@ -33,6 +33,12 @@ const nextConfig = {
         hostname: "admin.mycareersarthi.com",
         pathname: "/**",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3000",
+        pathname: "/**",
+      },
     ],
   },
 };

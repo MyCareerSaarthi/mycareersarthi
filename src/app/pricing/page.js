@@ -71,69 +71,6 @@ const bundles = [
   },
 ];
 
-const subscriptionPlans = [
-  {
-    name: "Starter",
-    subtitle: "Best for getting started with profile improvement",
-    price: "₹2,499",
-    period: "",
-    highlights:
-      "A structured beginning to strengthen your LinkedIn and resume with essential insights.",
-    features: [
-      "LinkedIn profile optimisation",
-      "Basic resume analysis and ATS scoring",
-      "Access to built-in MCS AI tools",
-      "Community support",
-      "Essential career resources",
-    ],
-    cta: "Get Started",
-    ctaSecondary: "I'm Ready for Better Roles",
-    badge: "",
-  },
-  {
-    name: "Professional",
-    subtitle: "Designed for active job seekers",
-    price: "₹4,999",
-    period: "/month",
-    highlights:
-      "Advanced optimisation, deeper analysis, and a clear roadmap to help you move toward your target roles.",
-    features: [
-      "Comprehensive LinkedIn optimisation",
-      "Full resume optimisation and rewriting for ATS",
-      "Three AI mock interviews each month",
-      "Personalized career roadmap",
-      "Priority email support",
-      "Access to premium resources",
-      "Role-fit guidance",
-    ],
-    cta: "Start Free Trial",
-    ctaSecondary: "I'm Ready for Better Roles",
-    badge: "Recommended",
-    note: "7-day money-back guarantee",
-  },
-  {
-    name: "Expert",
-    subtitle: "For professionals who want structured mentoring and personalised support",
-    price: "₹8,999",
-    period: "/month",
-    highlights:
-      "Expert-led mentoring combined with AI insights and one-on-one coaching to help you prepare confidently for your next opportunity.",
-    features: [
-      "Everything in Professional",
-      "Two one-on-one coaching sessions each month",
-      "Personalized job recommendations",
-      "Interview preparation strategies",
-      "Unlimited AI mock interviews",
-      "Dedicated career coaches",
-      "Resume writing assistance from scratch",
-    ],
-    cta: "Start Free Trial",
-    ctaSecondary: "I'm Ready for Better Roles",
-    badge: "",
-    note: "7-day money-back guarantee",
-  },
-];
-
 const Pricing = () => {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState(null);
@@ -150,37 +87,6 @@ const Pricing = () => {
         onOpenChange={setBookingModalOpen}
         defaultServiceType={selectedServiceType}
       />
-
-      {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
-        <div className="relative container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <Badge
-              variant="secondary"
-              className="px-4 py-2 text-sm font-medium mb-6"
-            >
-              <Sparkles className="w-4 h-4 mr-2 inline" />
-              Pricing Plans
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              If your current profile isn't opening doors, choose the support
-              that will.
-            </h1>
-            <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-6" />
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Choose a plan that matches your needs and the level of support you
-              want for your career growth. All plans include access to our
-              built-in, in-house AI for analysis and insights.
-            </p>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Bundles Section */}
       <section className="relative py-16 overflow-hidden">
@@ -226,9 +132,7 @@ const Pricing = () => {
                       <bundle.icon className="w-7 h-7 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-bold mb-2">
-                        {bundle.name}
-                      </h3>
+                      <h3 className="text-2xl font-bold mb-2">{bundle.name}</h3>
                       <div className="flex items-baseline gap-2 mb-4">
                         <span className="text-4xl font-bold text-primary">
                           {bundle.price}
@@ -269,98 +173,6 @@ const Pricing = () => {
                       Get Started <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Subscription Plans Section */}
-      <section className="relative py-16 bg-muted/30 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/20 to-background" />
-        <div className="relative container mx-auto px-4 max-w-7xl z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <Badge
-              variant="secondary"
-              className="px-4 py-2 text-sm font-medium mb-6"
-            >
-              <Zap className="w-4 h-4 mr-2 inline" />
-              Monthly Subscriptions
-            </Badge>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-              Ongoing Support for Active Job Seekers
-            </h2>
-            <div className="w-24 h-1 bg-primary mx-auto rounded-full mb-4" />
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Continuous guidance, AI-powered insights, and expert mentoring to
-              accelerate your career journey.
-            </p>
-          </motion.div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {subscriptionPlans.map((plan, idx) => (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                whileHover={{ y: -8 }}
-              >
-                <Card className="relative flex h-full flex-col gap-4 p-8 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300">
-                  {plan.badge && (
-                    <Badge className="absolute right-4 top-4">
-                      {plan.badge}
-                    </Badge>
-                  )}
-                  <div>
-                    <p className="text-sm font-semibold text-muted-foreground mb-1">
-                      {plan.subtitle}
-                    </p>
-                    <h3 className="text-2xl font-bold">{plan.name}</h3>
-                  </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    <span className="text-muted-foreground">{plan.period}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {plan.highlights}
-                  </p>
-                  <ul className="space-y-2 flex-1">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
-                        <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                        <span className="text-sm text-muted-foreground">
-                          {feature}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    className="w-full rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300"
-                    onClick={() => handleBookingClick()}
-                  >
-                    {plan.cta}
-                  </Button>
-                  {plan.note && (
-                    <p className="text-center text-xs font-semibold text-muted-foreground">
-                      {plan.note}
-                    </p>
-                  )}
-                  <Button
-                    variant="outline"
-                    className="w-full rounded-full border-2 border-primary/30 hover:bg-primary/10 transition-all duration-300"
-                    onClick={() => handleBookingClick()}
-                  >
-                    {plan.ctaSecondary}
-                  </Button>
                 </Card>
               </motion.div>
             ))}

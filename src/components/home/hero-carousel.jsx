@@ -92,11 +92,15 @@ const CareerAssessmentSlide = () => {
 
       {/* Right Image Section */}
       <div className="flex items-center justify-center order-1 lg:order-2 relative z-10">
-        <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[400px]">
-          <img
-            src="/home/slide/career-assessment.svg"
-            alt="Career Assessment & Roadmap"
-            className="w-full h-auto object-cover drop-shadow-2xl pointer-events-none"
+        <div className="relative w-full max-w-full">
+          <video
+            src="https://res.cloudinary.com/rohanphulkar/video/upload/v1768917721/career-assessment_k7tema.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            unselectable="on"
+            className="w-full h-auto object-cover pointer-events-none rounded"
           />
         </div>
       </div>
@@ -265,24 +269,39 @@ const AIProfileScorerSlide = () => {
         </Link>
       </div>
 
-      {/* Right Image Section with Floating LinkedIn Logo */}
+      {/* Right Image Section with MacBook Pro Style Frame */}
       <div className="flex items-center justify-center order-1 lg:order-2 relative z-10">
-        <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[400px]">
-          {/* Floating LinkedIn Logo */}
-          <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 z-20">
-            <div className="bg-white p-2 sm:p-3 rounded-xl shadow-2xl transform hover:scale-110 transition-transform duration-300">
-              <Linkedin
-                className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-[#0A66C2]"
-                fill="#0A66C2"
-              />
+        <div className="relative w-full max-w-md lg:max-w-lg xl:max-w-xl">
+          {/* MacBook Pro Container */}
+          <div className="relative">
+            {/* Screen Lid */}
+            <div className="relative bg-gradient-to-b from-[#06080d] via-[#010101] to-[#000000] rounded-t-[12px] sm:rounded-t-[16px] p-[6px] sm:p-2 shadow-xl">
+              {/* Inner Black Bezel */}
+              <div className="relative bg-black rounded-t-[10px] sm:rounded-t-[14px] overflow-hidden">
+                {/* Notch with Camera */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60px] sm:w-[80px] h-[6px] sm:h-[8px] bg-black rounded-b-[4px] sm:rounded-b-[6px] flex items-center justify-center z-20">
+                  <div className="w-[3px] sm:w-[4px] h-[3px] sm:h-[4px] rounded-full bg-[#1a1a1a] ring-1 ring-[#333]"></div>
+                </div>
+
+                {/* Video Content - fills the screen */}
+                <video
+                  src="https://res.cloudinary.com/rohanphulkar/video/upload/v1768918507/profile-scoring.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  unselectable="on"
+                  className="w-full h-auto object-cover pointer-events-none"
+                />
+              </div>
+            </div>
+
+            {/* Laptop Base - thin strip */}
+            <div className="relative h-[6px] sm:h-[8px] bg-gradient-to-b from-[#c8c9cb] via-[#d8d9db] to-[#e8e9eb] rounded-b-[6px] sm:rounded-b-[8px] shadow-lg">
+              {/* Center notch/indent */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40px] sm:w-[60px] h-[2px] sm:h-[3px] bg-gradient-to-b from-[#b0b1b3] to-[#c0c1c3] rounded-b-full"></div>
             </div>
           </div>
-
-          <img
-            src="/home/slide/ai-profile-scorer.svg"
-            alt="AI Profile Scorer"
-            className="w-full h-auto object-cover drop-shadow-2xl pointer-events-none"
-          />
         </div>
       </div>
     </div>

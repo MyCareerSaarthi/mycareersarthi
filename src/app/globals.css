@@ -233,6 +233,8 @@
   animation-delay: 300ms;
 }
 
+
+
 /* Keyframes */
 @keyframes fadeIn {
   from {
@@ -328,6 +330,93 @@
   animation: marquee-vertical var(--duration, 40s) linear infinite;
 }
 
+/* ============================= */
+/* HEX BASE (SAFE) */
+/* ============================= */
+.hex-card {
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 0 18px rgba(59,130,246,0.22),
+    inset 0 0 12px rgba(255,255,255,0.05);
+  animation: hexPulse 5s ease-in-out infinite;
+}
+
+/* ============================= */
+/* BLUE SHINE STRIP */
+/* ============================= */
+.hex-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 42%,
+    #a5b2ff,
+    transparent 58%
+  );
+  transform: translateX(-120%);
+  animation: hexShineMove 4s ease-in-out infinite;
+  opacity: 0.60;
+  filter: blur(30px);
+  pointer-events: none;
+}
+
+/* ============================= */
+/* ANIMATIONS */
+/* ============================= */
+@keyframes hexShineMove {
+  0% {
+    transform: translateX(-120%) rotate(10deg);
+  }
+  45% {
+    transform: translateX(120%) rotate(10deg);
+  }
+  100% {
+    transform: translateX(120%) rotate(10deg);
+  }
+}
+
+@keyframes hexPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 18px rgba(59,130,246,0.22),
+      inset 0 0 12px rgba(255,255,255,0.05);
+  }
+  50% {
+    box-shadow:
+      0 0 38px rgba(59,130,246,0.45),
+      inset 0 0 20px rgba(255,255,255,0.1);
+  }
+}
+
+/* ============================= */
+/* HOVER BOOST */
+/* ============================= */
+.group:hover .hex-card {
+  box-shadow:
+    0 0 55px rgba(59,130,246,0.6),
+    inset 0 0 24px rgba(255,255,255,0.12);
+}
+
+/* ============================= */
+/* STAGGER SHINE (VERY IMPORTANT) */
+/* ============================= */
+.group:nth-child(2) .hex-shine { animation-delay: 1s; }
+.group:nth-child(3) .hex-shine { animation-delay: 2s; }
+.group:nth-child(4) .hex-shine { animation-delay: 3s; }
+.group:nth-child(5) .hex-shine { animation-delay: 4s; }
+
+/* ============================= */
+/* ACCESSIBILITY */
+/* ============================= */
+@media (prefers-reduced-motion: reduce) {
+  .hex-card,
+  .hex-shine {
+    animation: none;
+  }
+}
+
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -336,3 +425,5 @@
     @apply bg-background text-foreground;
   }
 }
+
+

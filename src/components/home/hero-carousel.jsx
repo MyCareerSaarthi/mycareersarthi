@@ -85,7 +85,7 @@ const CareerAssessmentSlide = () => {
           <button
             className={`${buttonBaseClass} bg-white text-purple-600 hover:bg-purple-50`}
           >
-            Get Started
+            Get career clarity
           </button>
         </Link>
       </div>
@@ -166,7 +166,7 @@ const InterviewPreparationSlide = () => {
           <button
             className={`${buttonBaseClass} bg-white text-orange-600 hover:bg-orange-50`}
           >
-            Start Practicing
+            Prepare the right way
           </button>
         </Link>
       </div>
@@ -260,7 +260,7 @@ const AIProfileScorerSlide = () => {
           <button
             className={`${buttonBaseClass} bg-white text-[#0A66C2] hover:bg-blue-50`}
           >
-            Score My Profile
+            Score my profile
           </button>
         </Link>
       </div>

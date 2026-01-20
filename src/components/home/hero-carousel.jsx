@@ -137,7 +137,7 @@ const InterviewPreparationSlide = () => {
 
       {/* Left Content Section */}
       <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
-        <h1 className={headingClass}>Interview Preparation</h1>
+        <h1 className={headingClass}>Job Search Strategy & Interview Prep</h1>
 
         <ul className="space-y-3 sm:space-y-4">
           <li className="flex items-start gap-2 sm:gap-3">
@@ -173,14 +173,15 @@ const InterviewPreparationSlide = () => {
 
       {/* Right Image Section */}
       <div className="flex items-center justify-center order-1 lg:order-2 relative z-10">
-        <div className="relative w-full max-w-[200px] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[400px]">
+        <div className="relative w-full max-w-full">
           <video
-            src="/home/interview-preparation.mp4"
+            src="https://res.cloudinary.com/rohanphulkar/video/upload/v1768904684/interview-preparation_huxamd.mp4"
             autoPlay
             muted
             loop
             playsInline
-            className="w-full h-auto object-cover drop-shadow-2xl pointer-events-none"
+            unselectable="on"
+            className="w-full h-auto object-cover pointer-events-none rounded"
           />
         </div>
       </div>
@@ -296,14 +297,14 @@ const HeroCarousel = () => {
   const [isDragging, setIsDragging] = useState(false);
 
   const slides = [
+    {
+      component: <AIProfileScorerSlide />,
+      bg: "bg-gradient-to-br from-[#0A66C2] via-[#0077B5] to-[#004182] dark:from-[#004182] dark:via-[#003366] dark:to-[#002244]",
+    },
     { component: <CareerAssessmentSlide />, bg: "bg-primary dark:bg-primary" },
     {
       component: <InterviewPreparationSlide />,
       bg: "bg-gradient-to-br from-orange-400 to-orange-400 dark:from-orange-600 dark:to-orange-700",
-    },
-    {
-      component: <AIProfileScorerSlide />,
-      bg: "bg-gradient-to-br from-[#0A66C2] via-[#0077B5] to-[#004182] dark:from-[#004182] dark:via-[#003366] dark:to-[#002244]",
     },
   ];
 
@@ -330,7 +331,7 @@ const HeroCarousel = () => {
 
     const interval = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [isAutoPlaying, nextSlide]);
@@ -371,7 +372,7 @@ const HeroCarousel = () => {
 
   return (
     <section
-      className={`relative mx-auto w-full overflow-hidden transition-all duration-700 ease-in-out ${slides[activeSlide].bg} ${isDragging ? "cursor-grabbing" : "cursor-grab"} min-h-[520px] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[580px] md:rounded-2xl md:max-w-[95%] lg:max-w-[85rem]`}
+      className={`relative mx-auto w-full overflow-hidden transition-all duration-700 ease-in-out ${slides[activeSlide].bg} ${isDragging ? "cursor-grabbing" : "cursor-grab"} min-h-[550px] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[580px] md:rounded-2xl md:max-w-[95%] lg:max-w-[85rem]`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleDragStart}
@@ -381,7 +382,7 @@ const HeroCarousel = () => {
       onTouchMove={handleDragMove}
       onTouchEnd={handleDragEnd}
     >
-      <div className="relative mx-auto w-full max-w-7xl h-full px-4 sm:px-6 lg:px-8 select-none min-h-[520px] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[580px] flex flex-col justify-center py-8 sm:py-10 md:py-12 lg:py-14">
+      <div className="relative mx-auto w-full max-w-7xl h-full px-4 sm:px-6 lg:px-8 select-none min-h-[550px] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[580px] flex flex-col justify-center py-8 sm:py-10 md:py-12 lg:py-14">
         {/* Slides Container */}
         <div className="relative flex-1 min-h-0">
           {slides.map((slide, index) => (

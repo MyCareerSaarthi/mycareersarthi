@@ -6,10 +6,10 @@ import Image from "next/image";
 
 const alumniThriveLogos = [
   { src: "/home/alumni-logo/godaddy.svg", alt: "GoDaddy" },
-  { src: "/home/alumni-logo/acro.svg", alt: "Acro" },
+  { src: "/home/alumni-logo/acro.png", alt: "Acro" },
   { src: "/home/alumni-logo/citibank.svg", alt: "CitiBank" },
   { src: "/home/alumni-logo/coforge.svg", alt: "Coforge" },
-  { src: "/home/alumni-logo/epikdoc.svg", alt: "Epikdoc" },
+  { src: "/home/alumni-logo/epikdoc.png", alt: "Epikdoc" },
   { src: "/home/alumni-logo/nagarro.svg", alt: "Nagarro" },
   { src: "/home/alumni-logo/tata-power.svg", alt: "Tata Power" },
 ];
@@ -41,16 +41,15 @@ const FloatingLogos = () => {
             return (
               <motion.div
                 key={logo.alt}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
-                className={`${placement} flex items-center justify-center`}
+                className={`${placement} flex items-center justify-center `}
               >
                 <motion.div
-                  whileHover={{ scale: 1.04 }}
                   transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                  className="group relative w-full aspect-[1/0.92]"
+                  className="group relative w-full aspect-[1/0.92] "
                 >
                   {/* Shadow layer */}
                   <div
@@ -78,7 +77,7 @@ const FloatingLogos = () => {
 
                   {/* Border overlay */}
                   <div
-                    className="absolute inset-0 transition-all duration-300 group-hover:opacity-100 opacity-80"
+                    className="absolute inset-0 transition-all duration-300 group-hover:opacity-100 opacity-80 "
                     style={{
                       clipPath:
                         "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
@@ -93,7 +92,7 @@ const FloatingLogos = () => {
 
                   {/* Inner highlight */}
                   <div
-                    className="absolute inset-[2px]"
+                    className="absolute inset-[2px] "
                     style={{
                       clipPath:
                         "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",

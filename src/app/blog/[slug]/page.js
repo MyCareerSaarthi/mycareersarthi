@@ -1,191 +1,395 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { useUser } from "@clerk/nextjs";
 import { BlogAPI } from "@/components/api/blog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, ArrowLeft, Share2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  ArrowLeft,
+  Heart,
+  MessageSquare,
+  Send,
+  Link2,
+  Check,
+} from "lucide-react";
 
 export default function BlogDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user, isLoaded: isUserLoaded } = useUser();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [likingInProgress, setLikingInProgress] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentForm, setCommentForm] = useState({
+    author_name: "",
+    author_email: "",
+    content: "",
+  });
+  const [submittingComment, setSubmittingComment] = useState(false);
+  const [showFloatingBar, setShowFloatingBar] = useState(true);
+  const commentsRef = useRef(null);
+
+  const isLoggedIn = isUserLoaded && user;
+  const getUserName = () =>
+    user?.fullName || user?.firstName || user?.username || "";
+  const getUserEmail = () => user?.primaryEmailAddress?.emailAddress || "";
 
   useEffect(() => {
     if (params.slug) {
       loadBlog();
+      loadLikeStatus();
+      loadComments();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.slug]);
+
+  // Hide floating bar when comments section is visible
+  useEffect(() => {
+    const handleScroll = () => {
+      if (commentsRef.current) {
+        const rect = commentsRef.current.getBoundingClientRect();
+        setShowFloatingBar(rect.top > window.innerHeight - 100);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const loadBlog = async () => {
     try {
       setLoading(true);
-      setError(null);
       const response = await BlogAPI.getBlogBySlug(params.slug);
       setBlog(response);
+      setLikesCount(response.likes_count || 0);
     } catch (err) {
-      console.error("Error loading blog:", err);
-      setError(err.error || "Failed to load blog post");
+      setError(err.error || "Failed to load");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: blog?.title,
-        text: blog?.excerpt,
-        url: window.location.href,
-      });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
+  const loadLikeStatus = async () => {
+    try {
+      const r = await BlogAPI.getLikeStatus(params.slug);
+      setLiked(r.liked);
+      setLikesCount(r.likes_count);
+    } catch {}
+  };
+
+  const loadComments = async () => {
+    try {
+      setCommentsLoading(true);
+      const r = await BlogAPI.getComments(params.slug);
+      setComments(r.comments || []);
+    } catch {
+    } finally {
+      setCommentsLoading(false);
     }
+  };
+
+  const handleLike = async () => {
+    if (likingInProgress) return;
+    setLikingInProgress(true);
+    try {
+      const r = liked
+        ? await BlogAPI.unlikeBlog(params.slug)
+        : await BlogAPI.likeBlog(params.slug);
+      setLiked(!liked);
+      setLikesCount(r.likes_count);
+    } catch {
+    } finally {
+      setLikingInProgress(false);
+    }
+  };
+
+  const handleComment = async (e) => {
+    e.preventDefault();
+    const name = isLoggedIn ? getUserName() : commentForm.author_name;
+    const email = isLoggedIn ? getUserEmail() : commentForm.author_email;
+    if (!name.trim() || !commentForm.content.trim()) return;
+    setSubmittingComment(true);
+    try {
+      await BlogAPI.addComment(params.slug, {
+        author_name: name,
+        author_email: email,
+        content: commentForm.content,
+      });
+      setCommentForm({ author_name: "", author_email: "", content: "" });
+      loadComments();
+    } catch {
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background text-foreground">
-        <main className="container mx-auto px-4 py-12 max-w-4xl">
-          <div className="animate-pulse space-y-8">
-            <div className="h-12 bg-muted rounded w-3/4" />
-            <div className="h-80 bg-muted rounded" />
-            <div className="space-y-3">
-              <div className="h-5 bg-muted rounded w-2/4" />
-              <div className="h-4 bg-muted rounded" />
-              <div className="h-4 bg-muted rounded w-5/6" />
-              <div className="h-4 bg-muted rounded" />
-              <div className="h-4 bg-muted rounded" />
-            </div>
-          </div>
-        </main>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   if (error || !blog) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center max-w-xl mx-auto px-4 space-y-6">
-          <h1 className="text-3xl font-bold text-muted-foreground">
-            Blog Post Not Found
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            {error || "The blog post you're looking for doesn't exist."}
-          </p>
-          <Button onClick={() => router.push("/blog")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Blog
-          </Button>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <p className="text-gray-500">Article not found</p>
+        <Button variant="outline" onClick={() => router.push("/blog")}>
+          <ArrowLeft className="w-4 h-4 mr-2" /> Back
+        </Button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Header/Hero Section */}
-      <section className="relative overflow-hidden py-12 md:py-16">
-        {/* Background gradient */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-background via-muted/20 to-background" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+    <div className="min-h-screen bg-white">
+      {/* Simple Back Button */}
+      <div className="w-full lg:w-3/4 mx-auto px-4 pt-6">
+        <button
+          onClick={() => router.push("/blog")}
+          className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Blog
+        </button>
+      </div>
+
+      {/* Hero */}
+      <header className="w-full lg:w-3/4 mx-auto px-4 pt-8 pb-6">
+        <div className="flex items-center gap-3 text-sm text-gray-500 mb-4">
+          <span className="px-2.5 py-0.5 bg-primary/10 text-primary rounded-full font-medium">
+            {blog.category || "Article"}
+          </span>
+          {blog.published_at && (
+            <time>{format(new Date(blog.published_at), "MMM d, yyyy")}</time>
+          )}
         </div>
-
-        <div className="relative container mx-auto px-4 max-w-4xl z-10">
-          <div className="space-y-6">
-            <Button
-              variant="ghost"
-              onClick={() => router.push("/blog")}
-              className="mb-4"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Blog
-            </Button>
-
-            <div className="space-y-4">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-                {blog.title}
-              </h1>
-              {blog.excerpt && (
-                <p className="text-lg md:text-xl text-muted-foreground italic leading-relaxed">
-                  {blog.excerpt}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4 text-sm">
-              {blog.published_at && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>
-                    {format(new Date(blog.published_at), "MMMM d, yyyy")}
-                  </span>
-                </div>
-              )}
-              <Badge variant="secondary" className="text-xs">
-                {blog.category || "Blog"}
-              </Badge>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleShare}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+          {blog.title}
+        </h1>
+        {blog.excerpt && (
+          <p className="mt-4 text-lg text-gray-600 leading-relaxed">
+            {blog.excerpt}
+          </p>
+        )}
+      </header>
 
       {/* Featured Image */}
       {blog.featured_image && (
-        <section className="container mx-auto px-4 max-w-4xl mb-12">
-          <Card className="overflow-hidden">
-            <div className="w-full aspect-video bg-muted">
-              <img
-                src={blog.featured_image}
-                alt={blog.title}
-                className="object-cover w-full h-full"
-                loading="eager"
-              />
-            </div>
-          </Card>
-        </section>
+        <figure className="w-full lg:w-3/4 mx-auto px-4 mb-8">
+          <img
+            src={blog.featured_image}
+            alt={blog.title}
+            className="w-full rounded-xl object-cover max-h-[500px]"
+          />
+        </figure>
       )}
 
       {/* Content */}
-      <main className="container mx-auto px-4 pb-12 max-w-4xl">
-        <Card className="prose prose-lg dark:prose-invert max-w-none">
-          <CardContent className="p-8 md:p-12">
-            <div
-              dangerouslySetInnerHTML={{ __html: blog.content }}
-              className="prose-headings:font-bold prose-p:text-foreground prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-foreground prose-ul:text-foreground prose-ol:text-foreground prose-li:text-foreground"
-            />
-          </CardContent>
-        </Card>
+      <main className="w-full lg:w-3/4 mx-auto px-4 pb-24">
+        <article
+          className="blog-content"
+          dangerouslySetInnerHTML={{ __html: blog.content }}
+        />
 
-        {/* Back to Blog */}
-        <div className="mt-12 text-center">
-          <Button
-            variant="outline"
-            onClick={() => router.push("/blog")}
-            size="lg"
+        {/* Like Button */}
+        <div className="mt-8 pt-6 border-t flex items-center gap-4">
+          <button
+            onClick={handleLike}
+            disabled={likingInProgress}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-medium transition ${
+              liked
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to All Posts
-          </Button>
+            <Heart className={`w-5 h-5 ${liked ? "fill-white" : ""}`} />
+            {liked ? "Liked" : "Like"} ({likesCount})
+          </button>
+          <span className="text-sm text-gray-500">
+            {likesCount} {likesCount === 1 ? "person likes" : "people like"}{" "}
+            this
+          </span>
         </div>
       </main>
+
+      {/* Floating Action Bar */}
+      {showFloatingBar && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+          <div className="flex items-center gap-2 bg-white rounded-full shadow-lg border px-2 py-1.5">
+            <button
+              onClick={handleLike}
+              disabled={likingInProgress}
+              className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition ${
+                liked
+                  ? "bg-red-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${liked ? "fill-white" : ""}`} />
+              {likesCount}
+            </button>
+            <a
+              href="#comments"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition"
+            >
+              <MessageSquare className="w-4 h-4" />
+              {comments.length}
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* Comments */}
+      <section id="comments" ref={commentsRef} className="bg-slate-100 py-12">
+        <div className="w-full lg:w-3/4 mx-auto px-4">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-primary" />
+            {comments.length} Comment{comments.length !== 1 ? "s" : ""}
+          </h2>
+
+          {/* Comment Form */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-8">
+            <h3 className="font-semibold text-gray-900 mb-4">
+              Leave a comment
+            </h3>
+            <form onSubmit={handleComment}>
+              {isLoggedIn ? (
+                <div className="flex items-center gap-3 mb-4 p-3 bg-slate-50 rounded-lg">
+                  {user.imageUrl ? (
+                    <img
+                      src={user.imageUrl}
+                      alt=""
+                      className="w-10 h-10 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-medium">
+                      {getUserName().charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div>
+                    <div className="font-medium text-gray-900">
+                      {getUserName()}
+                    </div>
+                    <div className="text-xs text-gray-500">Signed in</div>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3 mb-4">
+                  <Input
+                    placeholder="Your name *"
+                    value={commentForm.author_name}
+                    onChange={(e) =>
+                      setCommentForm({
+                        ...commentForm,
+                        author_name: e.target.value,
+                      })
+                    }
+                    required
+                    className="h-11 bg-slate-50 border-slate-200"
+                  />
+                  <Input
+                    placeholder="Email (optional)"
+                    type="email"
+                    value={commentForm.author_email}
+                    onChange={(e) =>
+                      setCommentForm({
+                        ...commentForm,
+                        author_email: e.target.value,
+                      })
+                    }
+                    className="h-11 bg-slate-50 border-slate-200"
+                  />
+                </div>
+              )}
+              <Textarea
+                placeholder="Share your thoughts..."
+                value={commentForm.content}
+                onChange={(e) =>
+                  setCommentForm({ ...commentForm, content: e.target.value })
+                }
+                rows={4}
+                required
+                className="resize-none mb-4 bg-slate-50 border-slate-200"
+              />
+              <Button type="submit" disabled={submittingComment}>
+                <Send className="w-4 h-4 mr-2" />
+                {submittingComment ? "Posting..." : "Post Comment"}
+              </Button>
+            </form>
+          </div>
+
+          {/* Comments List */}
+          {commentsLoading ? (
+            <div className="text-center py-12 text-gray-400">
+              Loading comments...
+            </div>
+          ) : comments.length === 0 ? (
+            <div className="text-center py-12">
+              <MessageSquare className="w-12 h-12 mx-auto text-slate-300 mb-3" />
+              <p className="text-gray-500">
+                No comments yet. Be the first to share your thoughts!
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {comments.map((c, index) => (
+                <div
+                  key={c.id}
+                  className="bg-white rounded-xl p-5 shadow-sm border border-slate-200 hover:border-slate-300 transition"
+                >
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium shrink-0"
+                      style={{
+                        backgroundColor: [
+                          "#6366f1",
+                          "#8b5cf6",
+                          "#06b6d4",
+                          "#10b981",
+                          "#f59e0b",
+                          "#ef4444",
+                        ][index % 6],
+                      }}
+                    >
+                      {c.author_name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-gray-900">
+                          {c.author_name}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {format(new Date(c.created_at), "MMM d, yyyy")}
+                        </span>
+                      </div>
+                      <p className="text-gray-700 leading-relaxed">
+                        {c.content}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

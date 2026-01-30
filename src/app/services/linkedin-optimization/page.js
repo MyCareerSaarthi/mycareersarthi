@@ -1,390 +1,187 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  CheckCircle,
   Linkedin,
-  TrendingUp,
-  Users,
-  Target,
-  Zap,
-  Award,
-  Star,
+  Brain,
+  ClipboardCheck,
+  FileEdit,
+  UserCheck,
+  CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 
 const LinkedinOptimizationPage = () => {
-  const features = [
+  const processSteps = [
     {
-      icon: <Target className="w-6 h-6" />,
-      title: "Profile Optimization",
+      icon: Brain,
+      title: "AI Profile Scoring (Role-Based)",
       description:
-        "Complete LinkedIn profile makeover with keyword optimization, compelling headlines, and professional summaries.",
+        "We begin by scoring your LinkedIn profile against the specific job roles and job descriptions you are targeting.",
+      subTitle: "Our proprietary AI engine evaluates:",
+      points: [
+        "Role relevance of your headline and summary",
+        "Keyword alignment with target job descriptions",
+        "Experience depth versus role expectations",
+        "Missing signals that recruiters and search algorithms look for",
+      ],
+      outcome:
+        "You get a clear view of where your profile stands today and why it may not be getting shortlisted.",
     },
     {
-      icon: <TrendingUp className="w-6 h-6" />,
-      title: "Content Strategy",
+      icon: ClipboardCheck,
+      title: "Profile Diagnostic Assessment",
       description:
-        "Personalized content calendar and posting strategy to increase engagement and build thought leadership.",
+        "After AI scoring, our experts review your profile in detail.",
+      subTitle: "This assessment focuses on:",
+      points: [
+        "How your experience is currently being interpreted",
+        "Whether your responsibilities reflect seniority, impact, and progression",
+        "Gaps between what you have done and what recruiters expect to see",
+        "Sections that create confusion, dilution, or misalignment",
+      ],
+      outcome:
+        "This step ensures that the optimization is based on context and judgment, not automation alone.",
     },
     {
-      icon: <Users className="w-6 h-6" />,
-      title: "Network Growth",
+      icon: FileEdit,
+      title: "Role-Aligned Profile Optimization",
       description:
-        "Strategic networking tactics to connect with industry leaders and expand your professional reach.",
+        "Your LinkedIn profile is then rewritten and structured specifically for the roles you want.",
+      subTitle: "This includes:",
+      points: [
+        "Refining headlines and summaries to reflect target roles",
+        "Reworking experience sections to show scope, decision-making, and outcomes",
+        "Correcting keyword usage so it sounds natural and professional",
+        "Aligning your profile narrative with how hiring teams shortlist candidates",
+      ],
+      outcome:
+        "The objective is clarity, not exaggeration, branding language, or generic claims.",
     },
     {
-      icon: <Zap className="w-6 h-6" />,
-      title: "Engagement Boost",
+      icon: UserCheck,
+      title: "Recruiter-Readable Final Output",
       description:
-        "Proven techniques to increase profile views, connection requests, and meaningful interactions.",
-    },
-  ];
-
-  const benefits = [
-    "Increase profile views by 300%",
-    "Get 5x more connection requests",
-    "Build thought leadership in your industry",
-    "Attract better job opportunities",
-    "Establish professional credibility",
-    "Create meaningful business relationships",
-  ];
-
-  const process = [
-    {
-      step: "01",
-      title: "Profile Audit",
-      description:
-        "Comprehensive analysis of your current LinkedIn profile and identification of improvement areas.",
-    },
-    {
-      step: "02",
-      title: "Strategy Development",
-      description:
-        "Custom strategy tailored to your industry, goals, and target audience.",
-    },
-    {
-      step: "03",
-      title: "Profile Optimization",
-      description:
-        "Complete profile makeover including headline, summary, experience, and skills optimization.",
-    },
-    {
-      step: "04",
-      title: "Content Planning",
-      description:
-        "30-day content calendar with engaging posts designed to showcase your expertise.",
-    },
-    {
-      step: "05",
-      title: "Implementation Support",
-      description:
-        "Ongoing guidance and support to implement the strategy and track results.",
+        "Your final LinkedIn profile is reviewed for real-world usability.",
+      subTitle: "We ensure it:",
+      points: [
+        "Makes sense within seconds to a recruiter",
+        "Appears in relevant LinkedIn searches",
+        "Communicates role-fit clearly without overexplaining",
+        "Supports interviews and conversations, not just clicks",
+      ],
+      outcome:
+        "You walk away with a LinkedIn profile that accurately represents your experience and supports your job search instead of working against it.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="space-y-6"
-            >
-              <Badge variant="outline" className="w-fit">
-                <Linkedin className="w-4 h-4 mr-2" />
-                LinkedIn Optimization
-              </Badge>
-
-              <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                Transform Your LinkedIn Profile Into a{" "}
-                <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  Career Magnet
-                </span>
-              </h1>
-
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                Get expert LinkedIn optimization to attract better
-                opportunities, build thought leadership, and grow your
-                professional network with proven strategies.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90"
-                >
-                  <Link href="/linkedin/analyze">Get Started Now</Link>
-                </Button>
-                <Button variant="outline" size="lg" asChild>
-                  <Link href="/contact-us">Schedule Consultation</Link>
-                </Button>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-primary/10 to-blue-600/10 rounded-2xl p-8 backdrop-blur-sm border border-primary/20">
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                      <Linkedin className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">Profile Views</h3>
-                      <p className="text-2xl font-bold text-primary">+300%</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center">
-                      <Users className="w-6 h-6 text-blue-500" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">New Connections</h3>
-                      <p className="text-2xl font-bold text-blue-500">+500%</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center">
-                      <Award className="w-6 h-6 text-green-500" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">Job Opportunities</h3>
-                      <p className="text-2xl font-bold text-green-500">+200%</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Hero */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              What You'll Get
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive LinkedIn optimization services designed to maximize
-              your professional impact
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-6">
+              <Linkedin className="w-7 h-7 text-primary" />
+            </div>
+
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              LinkedIn Profile Optimization
+            </h1>
+
+            <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+              A focused LinkedIn profile optimization service built around how
+              recruiters, hiring managers, and LinkedIn search actually work
+              today.
             </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
-                      {feature.icon}
-                    </div>
-                    <CardTitle className="text-xl">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-base">
-                      {feature.description}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Why LinkedIn Optimization Matters
-              </h2>
-              <p className="text-lg text-muted-foreground mb-8">
-                LinkedIn is the world's largest professional network with over
-                900 million users. A well-optimized profile can be your gateway
-                to career opportunities, business partnerships, and industry
-                recognition.
-              </p>
-
-              <div className="space-y-4">
-                {benefits.map((benefit, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="flex items-center gap-3"
-                  >
-                    <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                    <span className="text-lg">{benefit}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
-              <div className="bg-gradient-to-br from-primary/5 to-blue-600/5 rounded-2xl p-8 border border-primary/10">
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Star className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">Proven Results</h3>
-                    <p className="text-muted-foreground">
-                      Our clients see an average increase of 300% in profile
-                      views and 500% more connection requests within 30 days.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 text-center">
-                    <div className="bg-background/50 rounded-lg p-4">
-                      <div className="text-2xl font-bold text-primary">30+</div>
-                      <div className="text-sm text-muted-foreground">
-                        Industries Served
-                      </div>
-                    </div>
-                    <div className="bg-background/50 rounded-lg p-4">
-                      <div className="text-2xl font-bold text-blue-500">
-                        1000+
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Profiles Optimized
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Our 5-Step Process
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              A systematic approach to transform your LinkedIn presence
+            <p className="text-foreground text-lg leading-relaxed mb-8 font-medium">
+              This is not about making your profile look good. It is about
+              making it accurate, searchable, and relevant for the roles you are
+              targeting.
             </p>
-          </motion.div>
 
-          <div className="space-y-8">
-            {process.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="flex flex-col md:flex-row items-start gap-6"
-              >
-                <div className="flex-shrink-0">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-primary">
-                      {step.step}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
-                  <p className="text-lg text-muted-foreground">
-                    {step.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to Transform Your LinkedIn Presence?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8">
-              Join thousands of professionals who have elevated their careers
-              through strategic LinkedIn optimization.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                asChild
-                size="lg"
-                className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90"
-              >
-                <Link href="/linkedin/analyze">Start Your Optimization</Link>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Button asChild>
+                <Link href="/linkedin/analyze">
+                  Get Started <ArrowRight className="w-4 h-4 ml-1" />
+                </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link href="/contact-us">Book Free Consultation</Link>
+              <Button variant="outline" asChild>
+                <Link href="/contact-us">Schedule Consultation</Link>
               </Button>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Steps */}
+      <section className="pb-20">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <div className="space-y-12">
+            {processSteps.map((step, index) => (
+              <motion.article
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                viewport={{ once: true }}
+                className="border-b border-border pb-12 last:border-0"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <step.icon className="w-5 h-5 text-primary" />
+                  <h2 className="text-xl font-semibold">{step.title}</h2>
+                </div>
+
+                <p className="text-muted-foreground mb-4">{step.description}</p>
+
+                <p className="text-sm font-medium text-foreground mb-2">
+                  {step.subTitle}
+                </p>
+                <ul className="space-y-1.5 mb-4">
+                  {step.points.map((point, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="text-sm text-foreground">{step.outcome}</p>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-16 border-t border-border">
+        <div className="container mx-auto px-4 max-w-3xl text-center">
+          <h2 className="text-2xl font-bold mb-3">
+            Ready to Optimize Your Profile?
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            Get a LinkedIn profile that supports your job search.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Button asChild>
+              <Link href="/linkedin/analyze">
+                Start Optimization <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/contact-us">Book Consultation</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>

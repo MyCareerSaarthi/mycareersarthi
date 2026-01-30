@@ -260,7 +260,7 @@ const AIProfileScorerSlide = () => {
           </li>
         </ul>
 
-        <Link href="/ai-powered-profile-scoring" className="pt-1 sm:pt-2">
+        <Link href="/linkedin/analyze" className="pt-1 sm:pt-2">
           <button
             className={`${buttonBaseClass} bg-white text-[#0A66C2] hover:bg-blue-50`}
           >

@@ -1,59 +1,185 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎯 MyCareerSarthi Client
 
-## Getting Started
+<div align="center">
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js_16-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React_19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS_4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+
+**Modern, Responsive Frontend for the MyCareerSarthi Platform**
+
+[Features](#-features) • [Getting Started](#-getting-started) • [Project Structure](#-project-structure) • [Tech Stack](#-tech-stack)
+
+</div>
+
+---
+
+## 📋 Overview
+
+The **MyCareerSarthi Client** is a cutting-edge Next.js 16 application that provides users with an intuitive interface for career analysis, LinkedIn profile optimization, resume evaluation, and personalized career guidance powered by AI.
+
+## ✨ Features
+
+| Feature               | Description                                 |
+| --------------------- | ------------------------------------------- |
+| 🔐 **Authentication** | Seamless Clerk auth with social logins      |
+| 📊 **Dashboard**      | Interactive analytics with Recharts         |
+| 🤖 **AI Analysis**    | LinkedIn & Resume analysis tools            |
+| 💳 **Payments**       | Secure Razorpay checkout                    |
+| 📝 **Blog**           | SEO-optimized blog with engagement features |
+| 🌙 **Dark Mode**      | System-aware theme switching                |
+| 📱 **Responsive**     | Mobile-first design approach                |
+| ⚡ **Performance**    | Turbopack for lightning-fast dev            |
+
+## 🛠 Tech Stack
+
+```
+├── Framework       → Next.js 16 (App Router)
+├── UI Library      → React 19
+├── Styling         → Tailwind CSS 4
+├── Components      → Radix UI Primitives
+├── Animations      → Framer Motion
+├── Authentication  → Clerk
+├── Payments        → Razorpay
+├── Charts          → Recharts
+├── Icons           → Lucide React
+├── Carousel        → Swiper
+└── Loading         → NextJS Top Loader
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js v20+
+- Yarn or npm
+
+### Installation
 
 ```bash
-npm run dev
-# or
+# Navigate to client directory
+cd client
+
+# Install dependencies
+yarn install
+
+# Setup environment variables
+cp .env.example .env.local
+# Edit .env.local with your credentials
+
+# Start development server (with Turbopack)
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+| Variable                            | Description              |
+| ----------------------------------- | ------------------------ |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk public key         |
+| `CLERK_SECRET_KEY`                  | Clerk secret key         |
+| `NEXT_PUBLIC_API_URL`               | Backend API URL          |
+| `NEXT_PUBLIC_RAZORPAY_KEY`          | Razorpay publishable key |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📦 Available Scripts
 
-## Razorpay Payment Integration
+| Command      | Description                     |
+| ------------ | ------------------------------- |
+| `yarn dev`   | Start dev server with Turbopack |
+| `yarn build` | Create production build         |
+| `yarn start` | Start production server         |
 
-This application includes Razorpay payment gateway integration for profile analysis services.
+## 🏗 Project Structure
 
-### Setup
-
-1. Create a Razorpay account at [https://razorpay.com](https://razorpay.com)
-2. Obtain your API keys from the Razorpay dashboard
-3. Add the following environment variables to your `.env` file:
-
-```env
-NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_key_id_here
-RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
+```
+client/
+├── src/
+│   ├── app/              # Next.js App Router pages
+│   │   ├── (auth)/       # Authentication routes
+│   │   ├── (dashboard)/  # Protected dashboard routes
+│   │   ├── blog/         # Blog pages
+│   │   └── layout.js     # Root layout
+│   ├── components/       # Reusable UI components
+│   │   ├── ui/           # Base UI primitives
+│   │   └── shared/       # Shared components
+│   ├── lib/              # Utility functions
+│   ├── hooks/            # Custom React hooks
+│   └── styles/           # Global styles
+├── public/               # Static assets
+├── next.config.mjs       # Next.js configuration
+└── tailwind.config.js    # Tailwind configuration
 ```
 
-### How It Works
+## 🎨 UI Components
 
-- Users must complete payment before accessing profile analysis features
-- Payment is processed through Razorpay checkout
-- All payments are verified server-side for security
+Built on **Radix UI** primitives with custom styling:
 
-For detailed setup instructions, see [RAZORPAY_SETUP.md](RAZORPAY_SETUP.md).
+- **Accordion** - Collapsible content sections
+- **Avatar** - User profile images
+- **Dialog** - Modal windows
+- **Dropdown Menu** - Action menus
+- **Navigation Menu** - Site navigation
+- **Progress** - Loading indicators
+- **Select** - Custom dropdowns
+- **Separator** - Content dividers
 
-## Learn More
+## 🔧 Development
 
-To learn more about Next.js, take a look at the following resources:
+### Code Conventions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **File naming**: kebab-case for files, PascalCase for components
+- **Imports**: Absolute imports using `@/` alias
+- **Styling**: Tailwind utility classes with `cn()` helper
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Adding New Pages
 
-## Deploy on Vercel
+```jsx
+// src/app/new-page/page.js
+export default function NewPage() {
+  return <div>New Page Content</div>;
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Creating Components
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```jsx
+// src/components/ui/button.jsx
+import { cn } from "@/lib/utils";
+
+export function Button({ className, ...props }) {
+  return <button className={cn("base-styles", className)} {...props} />;
+}
+```
+
+## 🌐 Key Routes
+
+| Route                   | Description        |
+| ----------------------- | ------------------ |
+| `/`                     | Landing page       |
+| `/sign-in`              | Authentication     |
+| `/dashboard`            | User dashboard     |
+| `/dashboard/linkedin`   | LinkedIn analysis  |
+| `/dashboard/resume`     | Resume analysis    |
+| `/dashboard/comparison` | Profile comparison |
+| `/blog`                 | Blog listing       |
+| `/pricing`              | Pricing plans      |
+
+## ⚡ Performance Features
+
+- **Turbopack** - Fast development builds
+- **Image Optimization** - Next.js Image component
+- **Font Optimization** - Next.js Font optimization
+- **Code Splitting** - Automatic chunk splitting
+- **Prefetching** - Link prefetching
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the MyCareerSarthi Team**
+
+</div>

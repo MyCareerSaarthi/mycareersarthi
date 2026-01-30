@@ -4,30 +4,30 @@ import { motion } from "framer-motion";
 const steps = [
   {
     step: "01",
-    title: "Sign Up and Define Your Job Goals",
+    title: "Sign Up and Define Your Goals",
     description:
-      "Share your experience, current situation, and the roles or companies you want to target. This helps us understand where you stand today and align your job search in the right direction from day one.",
+      "Share your experience, career goals, and target roles so we can set the right direction from day one.",
     position: "bottom",
   },
   {
     step: "02",
     title: "Build Your Profile Inside MCS",
     description:
-      "Add your career details, achievements, skills, and job preferences in one place. This becomes the foundation for role-specific evaluation, expert review, and AI-based analysis aligned to the jobs you want.",
+      "Create your career profile with key details and achievements for expert review and in-house AI evaluation",
     position: "top",
   },
   {
     step: "03",
-    title: "Get Clear Insights from Experts and AI",
+    title: "Get Expert + In-House AI Insights",
     description:
-      "Receive a detailed assessment of your LinkedIn profile, resume, and overall job positioning. We identify gaps, strengths, and mismatches, and convert them into clear, practical steps you can act on immediately.",
+      "Receive a clear assessment of your LinkedIn, resume, and positioning with role-aligned, actionable guidance.",
     position: "bottom",
   },
   {
     step: "04",
     title: "Implement Changes and Track Progress",
     description:
-      "Apply the recommendations and track how your profile visibility, recruiter reach, and interview traction improve over time. You move forward with clarity instead of guessing or applying blindly.",
+      "Apply improvements and track visibility, profile performance, and recruiter responses over time.",
     position: "top",
   },
 ];

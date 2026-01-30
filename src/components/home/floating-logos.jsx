@@ -6,13 +6,16 @@ import Image from "next/image";
 
 const alumniThriveLogos = [
   { src: "/home/alumni-logo/godaddy.svg", alt: "GoDaddy" },
-  { src: "/home/alumni-logo/acro.svg", alt: "Acro" },
+  { src: "/home/alumni-logo/acro.png", alt: "Acro" },
   { src: "/home/alumni-logo/citibank.svg", alt: "CitiBank" },
   { src: "/home/alumni-logo/coforge.svg", alt: "Coforge" },
-  { src: "/home/alumni-logo/epikdoc.svg", alt: "Epikdoc" },
+  { src: "/home/alumni-logo/epikdoc.png", alt: "Epikdoc" },
   { src: "/home/alumni-logo/nagarro.svg", alt: "Nagarro" },
   { src: "/home/alumni-logo/tata-power.svg", alt: "Tata Power" },
 ];
+
+const hexagonClipPath =
+  "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)";
 
 const FloatingLogos = () => {
   return (
@@ -23,7 +26,7 @@ const FloatingLogos = () => {
       transition={{ duration: 0.6, delay: 0.1 }}
       className="relative"
     >
-      <div className="absolute inset-0 bg-primary/10 blur-3xl rounded-full" />
+      <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 blur-3xl rounded-full" />
 
       <div className="relative mx-auto w-full max-w-xl">
         <div className="grid grid-cols-6 gap-4 sm:gap-5">
@@ -41,74 +44,80 @@ const FloatingLogos = () => {
             return (
               <motion.div
                 key={logo.alt}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: idx * 0.08 }}
                 className={`${placement} flex items-center justify-center`}
               >
                 <motion.div
-                  whileHover={{ scale: 1.04 }}
                   transition={{ type: "spring", stiffness: 220, damping: 18 }}
                   className="group relative w-full aspect-[1/0.92]"
                 >
-                  {/* Shadow layer */}
+                  {/* Soft shadow */}
                   <div
                     className="absolute inset-0 translate-y-2"
                     style={{
-                      clipPath:
-                        "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
-                      background: "rgba(99, 102, 241, 0.15)",
-                      filter: "blur(12px)",
+                      clipPath: hexagonClipPath,
                     }}
-                  />
+                  >
+                    <div className="w-full h-full bg-slate-400/10 dark:bg-slate-900/40 blur-lg" />
+                  </div>
 
                   {/* Main hexagon background */}
                   <div
                     className="absolute inset-0 transition-all duration-300"
                     style={{
-                      clipPath:
-                        "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
-                      background:
-                        "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(241,245,249,0.98) 100%)",
-                      boxShadow:
-                        "0 8px 32px rgba(99, 102, 241, 0.12), 0 2px 8px rgba(0,0,0,0.06)",
+                      clipPath: hexagonClipPath,
                     }}
-                  />
+                  >
+                    {/* Light mode: soft white gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white via-slate-50 to-slate-100 dark:hidden" />
+                    {/* Dark mode: soft dark gradient - easy on eyes */}
+                    <div className="absolute inset-0 hidden dark:block bg-gradient-to-br from-slate-800/90 via-slate-800/95 to-slate-900/90" />
+                  </div>
 
-                  {/* Border overlay */}
+                  {/* Subtle border glow */}
                   <div
-                    className="absolute inset-0 transition-all duration-300 group-hover:opacity-100 opacity-80"
+                    className="absolute inset-0 transition-all duration-300 opacity-60 group-hover:opacity-100"
                     style={{
-                      clipPath:
-                        "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
+                      clipPath: hexagonClipPath,
                       background:
-                        "linear-gradient(135deg, rgba(99,102,241,0.25) 0%, rgba(139,92,246,0.15) 50%, rgba(99,102,241,0.25) 100%)",
+                        "linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.1) 50%, rgba(99,102,241,0.15) 100%)",
                       mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
                       maskComposite: "xor",
                       WebkitMaskComposite: "xor",
-                      padding: "2px",
+                      padding: "1.5px",
                     }}
                   />
 
-                  {/* Inner highlight */}
+                  {/* Inner subtle highlight - only light mode */}
                   <div
-                    className="absolute inset-[2px]"
+                    className="absolute inset-[2px] dark:hidden"
                     style={{
-                      clipPath:
-                        "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
+                      clipPath: hexagonClipPath,
                       background:
-                        "linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.3) 30%, transparent 60%)",
+                        "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 50%)",
+                      pointerEvents: "none",
+                    }}
+                  />
+
+                  {/* Dark mode inner subtle glow */}
+                  <div
+                    className="absolute inset-[2px] hidden dark:block"
+                    style={{
+                      clipPath: hexagonClipPath,
+                      background:
+                        "linear-gradient(180deg, rgba(148,163,184,0.08) 0%, transparent 40%)",
                       pointerEvents: "none",
                     }}
                   />
 
                   {/* Logo container */}
                   <div
-                    className="absolute inset-[10%] flex items-center justify-center"
+                    className="absolute inset-[12%] flex items-center justify-center"
                     style={{
-                      clipPath:
-                        "polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%)",
+                      clipPath: hexagonClipPath,
                     }}
                   >
                     <Image
@@ -116,7 +125,7 @@ const FloatingLogos = () => {
                       alt={logo.alt}
                       width={160}
                       height={80}
-                      className="object-contain w-[90%] h-full opacity-85 group-hover:opacity-100 transition-opacity duration-300"
+                      className="object-contain w-[85%] h-[85%] opacity-80 group-hover:opacity-100 transition-all duration-300 dark:brightness-110 dark:contrast-110"
                     />
                   </div>
                 </motion.div>

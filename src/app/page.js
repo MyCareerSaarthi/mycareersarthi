@@ -516,7 +516,7 @@ export default function Home() {
       </section> */}
 
       {/* Why Choose Section */}
-      <section className="relative py-16 overflow-hidden">
+      {/* <section className="relative py-16 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-muted/10 to-background" />
         <div className="relative container mx-auto px-4 max-w-7xl">
           <motion.div
@@ -548,7 +548,6 @@ export default function Home() {
           </motion.div>
 
           <div className="space-y-8">
-            {/* First Featured Card - Full Width */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -589,7 +588,6 @@ export default function Home() {
               </Card>
             </motion.div>
 
-            {/* Grid of 3 Cards */}
             <div className="grid md:grid-cols-3 gap-6">
               {whyChoose.slice(1).map((item, idx) => (
                 <motion.div
@@ -640,7 +638,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="relative py-16 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-background via-primary/5 to-background" />

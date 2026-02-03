@@ -33,8 +33,11 @@ const footerSections = [
 ];
 
 const socialLinks = [
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
+  {
+    icon: Linkedin,
+    href: "https://www.linkedin.com/company/mycareersarthi-1",
+    label: "LinkedIn",
+  },
 ];
 
 export const Footer = () => {

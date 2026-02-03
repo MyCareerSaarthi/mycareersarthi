@@ -7,7 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, Phone, Clock, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  ArrowRight,
+  Mail,
+  Phone,
+  Clock,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { api } from "@/components/api/api";
 
 export default function ContactUsPage() {
@@ -15,6 +23,7 @@ export default function ContactUsPage() {
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,7 +51,7 @@ export default function ContactUsPage() {
 
     try {
       const response = await api.post("/api/contact", formData);
-      
+
       if (response.data.success) {
         setSubmitStatus("success");
         // Reset form
@@ -50,6 +59,7 @@ export default function ContactUsPage() {
           firstName: "",
           lastName: "",
           email: "",
+          phone: "",
           message: "",
         });
       } else {
@@ -60,8 +70,8 @@ export default function ContactUsPage() {
       setSubmitStatus("error");
       setErrorMessage(
         error.response?.data?.error ||
-        error.message ||
-        "Failed to submit form. Please try again later."
+          error.message ||
+          "Failed to submit form. Please try again later.",
       );
     } finally {
       setIsSubmitting(false);
@@ -111,21 +121,6 @@ export default function ContactUsPage() {
 
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Phone className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <a
-                    href="tel:+919810291730"
-                    className="text-base font-medium hover:text-primary transition-colors"
-                  >
-                    +91 98102 91730
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                   <Clock className="h-6 w-6 text-primary" />
                 </div>
                 <div>
@@ -151,17 +146,15 @@ export default function ContactUsPage() {
                 <h2 className="text-2xl font-semibold mb-6">
                   Send us a Message
                 </h2>
-                <form
-                  className="space-y-6"
-                  onSubmit={handleSubmit}
-                >
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   {/* Success Message */}
                   {submitStatus === "success" && (
                     <div className="p-4 rounded-md bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                          Thank you for contacting us! We'll get back to you soon.
+                          Thank you for contacting us! We'll get back to you
+                          soon.
                         </p>
                       </div>
                     </div>
@@ -173,7 +166,8 @@ export default function ContactUsPage() {
                       <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                          {errorMessage || "Failed to submit form. Please try again."}
+                          {errorMessage ||
+                            "Failed to submit form. Please try again."}
                         </p>
                       </div>
                     </div>
@@ -205,19 +199,34 @@ export default function ContactUsPage() {
                       />
                     </div>
                   </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email address..."
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email address..."
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      disabled={isSubmitting}
-                    />
+                    <div className="space-y-2">
+                      <Label htmlFor="phone">Phone Number</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="Enter your phone number..."
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                        disabled={isSubmitting}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -236,9 +245,9 @@ export default function ContactUsPage() {
                   </div>
 
                   <div className="flex justify-end">
-                    <Button 
-                      type="submit" 
-                      size="lg" 
+                    <Button
+                      type="submit"
+                      size="lg"
                       className="px-8"
                       disabled={isSubmitting}
                     >

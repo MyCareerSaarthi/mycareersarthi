@@ -1,0 +1,54 @@
+/* Locked section styles */
+.locked-content {
+  position: relative;
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.locked-section-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.locked-section-overlay-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 500px;
+}
+
+.locked-section-overlay h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.locked-section-overlay p {
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.locked-section-overlay button {
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.locked-section-overlay button:hover {
+  transform: scale(1.05);
+}

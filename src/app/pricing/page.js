@@ -253,84 +253,81 @@ const Pricing = () => {
                 </p>
               </div>
 
-              <div
-                className={`grid gap-8 ${category.bundlePrice ? "lg:grid-cols-2" : "lg:grid-cols-1 max-w-2xl mx-auto"}`}
-              >
+              <div className={``}>
                 {/* Individual Services Column */}
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-primary" />
-                    Individual Services
-                  </h3>
-
-                  {category.services.map((service, idx) => (
-                    <motion.div
-                      key={service.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: idx * 0.1 }}
-                    >
-                      <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
-                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="text-lg font-semibold">
-                                {service.name}
-                              </h4>
-                              {service.isPromo && (
-                                <Badge
-                                  variant="secondary"
-                                  className="bg-green-500/10 text-green-600 border-green-500/20"
-                                >
-                                  <Star className="w-3 h-3 mr-1" />
-                                  Special Offer
-                                </Badge>
+                  <div
+                    className={`grid gap-8 lg:grid-cols-${category.services.length} ${category.services.length === 1 ? "max-w-xl mx-auto" : ""}`}
+                  >
+                    {category.services.map((service, idx) => (
+                      <motion.div
+                        key={service.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, delay: idx * 0.1 }}
+                      >
+                        <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+                            <div className="">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h4 className="text-lg font-semibold">
+                                  {service.name}
+                                </h4>
+                                {service.isPromo && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="bg-green-500/10 text-green-600 border-green-500/20"
+                                  >
+                                    <Star className="w-3 h-3 mr-1" />
+                                    Special Offer
+                                  </Badge>
+                                )}
+                              </div>
+                              {service.priceBreakdown && (
+                                <p className="text-xs text-muted-foreground mb-2">
+                                  {service.priceBreakdown}
+                                </p>
                               )}
                             </div>
-                            {service.priceBreakdown && (
-                              <p className="text-xs text-muted-foreground mb-2">
-                                {service.priceBreakdown}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-foreground">
-                              ₹{formatPrice(service.price)}
-                            </div>
-                            {service.bundlePrice && (
-                              <div className="text-sm text-green-600 font-medium">
-                                Bundle: ₹{formatPrice(service.bundlePrice)}
+                            <div className="text-right">
+                              <div className="text-2xl font-bold text-foreground">
+                                ₹{formatPrice(service.price)}
                               </div>
-                            )}
+                              {service.bundlePrice && (
+                                <div className="text-sm text-green-600 font-medium">
+                                  Bundle: ₹{formatPrice(service.bundlePrice)}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
 
-                        <ul className="space-y-2 mb-4">
-                          {service.details.map((detail, i) => (
-                            <li
-                              key={i}
-                              className="flex items-start gap-2 text-sm text-muted-foreground"
-                            >
-                              <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                              {detail}
-                            </li>
-                          ))}
-                        </ul>
+                          <ul className="space-y-2 mb-4">
+                            {service.details.map((detail, i) => (
+                              <li
+                                key={i}
+                                className="flex items-start gap-2 text-sm text-muted-foreground"
+                              >
+                                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                                {detail}
+                              </li>
+                            ))}
+                          </ul>
 
-                        <Button
-                          variant="outline"
-                          className="w-full rounded-full border-primary/30 hover:bg-primary/10 hover:border-primary transition-all duration-300"
-                          onClick={() => handleBookingClick(service.name)}
-                        >
-                          Get Started
-                          <ChevronRight className="w-4 h-4 ml-1" />
-                        </Button>
-                      </Card>
-                    </motion.div>
-                  ))}
+                          <Button
+                            variant="outline"
+                            className="w-full rounded-full border-primary/30 hover:bg-primary/10 hover:border-primary transition-all duration-300"
+                            onClick={() => handleBookingClick(service.name)}
+                          >
+                            Get Started
+                            <ChevronRight className="w-4 h-4 ml-1" />
+                          </Button>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
                 {category.bundlePrice && (
-                  <div>
+                  <div className="col-span-3 mt-8">
                     <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
                       <Package className="w-5 h-5 text-primary" />
                       Save with Bundle

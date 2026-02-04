@@ -15,6 +15,9 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/components/api/api";
 import { useAuth } from "@clerk/nextjs";
 import { LoadingButton } from "@/components/ui/loading-button";
+import LockedSectionOverlay from "@/components/locked-section-overlay";
+import FloatingUnlockTab from "@/components/floating-unlock-tab";
+import { Lock } from "lucide-react";
 
 const LinkedinReport = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -25,6 +28,20 @@ const LinkedinReport = () => {
   const [loading, setLoading] = useState(true);
   const { getToken } = useAuth();
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [isPaid, setIsPaid] = useState(false);
+
+  // Define free sections (accessible without payment)
+  const freeSections = ["overview", "profile-info", "headline", "about"];
+
+  // Define locked sections (require payment)
+  const lockedSections = [
+    "profile-picture",
+    "banner",
+    "experience",
+    "skill",
+    "education",
+    "certification",
+  ];
 
   // Check if device is mobile
   useEffect(() => {
@@ -39,11 +56,13 @@ const LinkedinReport = () => {
     };
   }, []);
 
+  // Reordered tabs: FREE sections first, then LOCKED sections
   const tabs = [
+    // FREE SECTIONS (Always accessible)
     {
       id: "overview",
       label: "Overview",
-      component: <Overview data={linkedinReport} onNavigate={setActiveTab} />,
+      component: <Overview data={linkedinReport} />,
     },
     {
       id: "profile-info",
@@ -56,20 +75,11 @@ const LinkedinReport = () => {
       component: <Headline data={linkedinReport} />,
     },
     {
-      id: "profile-picture",
-      label: "Profile Picture",
-      component: <ProfilePicture data={linkedinReport} />,
-    },
-    {
-      id: "banner",
-      label: "Banner",
-      component: <Banner data={linkedinReport} />,
-    },
-    {
       id: "about",
       label: "About",
       component: <About data={linkedinReport} />,
     },
+    // LOCKED SECTIONS (Require payment)
     {
       id: "experience",
       label: "Experience",
@@ -90,6 +100,16 @@ const LinkedinReport = () => {
       label: "Certifications",
       component: <Certification data={linkedinReport} />,
     },
+    {
+      id: "profile-picture",
+      label: "Profile Picture",
+      component: <ProfilePicture data={linkedinReport} />,
+    },
+    {
+      id: "banner",
+      label: "Banner",
+      component: <Banner data={linkedinReport} />,
+    },
   ];
 
   const getLinkedinReport = async () => {
@@ -102,6 +122,7 @@ const LinkedinReport = () => {
         },
       });
       setLinkedinReport(response.data);
+      setIsPaid(response.data.is_paid || false);
     } catch (error) {
       console.error("Error fetching LinkedIn report:", error);
     } finally {
@@ -133,7 +154,7 @@ const LinkedinReport = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -142,13 +163,17 @@ const LinkedinReport = () => {
         throw new Error(
           errorData.message ||
             errorData.error ||
-            `Failed to generate PDF: ${response.statusText}`
+            `Failed to generate PDF: ${response.statusText}`,
         );
       }
 
       // Check if response is PDF (content-type should be application/pdf)
       const contentType = response.headers.get("content-type");
-      if (contentType && typeof contentType === "string" && contentType.includes("application/pdf")) {
+      if (
+        contentType &&
+        typeof contentType === "string" &&
+        contentType.includes("application/pdf")
+      ) {
         // Get the blob from the streaming response
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -177,7 +202,9 @@ const LinkedinReport = () => {
         // Response is not a PDF, might be an error JSON
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-          errorData.message || errorData.error || "Invalid response from server"
+          errorData.message ||
+            errorData.error ||
+            "Invalid response from server",
         );
       }
     } catch (error) {
@@ -226,15 +253,26 @@ const LinkedinReport = () => {
                   <li key={tab.id}>
                     <button
                       onClick={() => {
+                        // Check if section is locked
+                        if (!isPaid && lockedSections.includes(tab.id)) {
+                          // Don't allow navigation to locked sections
+                          return;
+                        }
                         setActiveTab(tab.id);
                       }}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center ${
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between ${
                         activeTab === tab.id
                           ? "bg-primary text-primary-foreground shadow-sm hover:shadow-md"
-                          : "text-foreground hover:bg-accent/50 hover:border-primary/30 border border-transparent"
+                          : !isPaid && lockedSections.includes(tab.id)
+                            ? "text-muted-foreground cursor-not-allowed opacity-60"
+                            : "text-foreground hover:bg-accent/50 hover:border-primary/30 border border-transparent"
                       }`}
+                      disabled={!isPaid && lockedSections.includes(tab.id)}
                     >
                       <span className="capitalize">{tab.label}</span>
+                      {!isPaid && lockedSections.includes(tab.id) && (
+                        <Lock className="w-4 h-4" />
+                      )}
                     </button>
                   </li>
                 ))}
@@ -313,18 +351,29 @@ const LinkedinReport = () => {
                     <li key={tab.id}>
                       <button
                         onClick={() => {
+                          // Check if section is locked
+                          if (!isPaid && lockedSections.includes(tab.id)) {
+                            // Don't allow navigation to locked sections
+                            return;
+                          }
                           setActiveTab(tab.id);
                           document
                             .getElementById("mobile-sidebar")
                             .classList.toggle("hidden");
                         }}
-                        className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center ${
+                        className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between ${
                           activeTab === tab.id
                             ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-foreground hover:bg-accent"
+                            : !isPaid && lockedSections.includes(tab.id)
+                              ? "text-muted-foreground cursor-not-allowed opacity-60"
+                              : "text-foreground hover:bg-accent"
                         }`}
+                        disabled={!isPaid && lockedSections.includes(tab.id)}
                       >
                         <span className="capitalize">{tab.label}</span>
+                        {!isPaid && lockedSections.includes(tab.id) && (
+                          <Lock className="w-4 h-4" />
+                        )}
                       </button>
                     </li>
                   ))}
@@ -350,11 +399,35 @@ const LinkedinReport = () => {
                   {isGeneratingPdf ? "Generating PDF..." : "Download PDF"}
                 </LoadingButton>
               </div>
-              {tabs.find((tab) => tab.id === activeTab)?.component}
+
+              {/* Render active tab content with locked section overlay if needed */}
+              {!isPaid && lockedSections.includes(activeTab) ? (
+                <div className="locked-section-container">
+                  <div className="locked-content">
+                    {tabs.find((tab) => tab.id === activeTab)?.component}
+                  </div>
+                  <LockedSectionOverlay
+                    reportId={id}
+                    onUpgrade={() => {
+                      // Refresh report data after upgrade
+                      getLinkedinReport();
+                    }}
+                  />
+                </div>
+              ) : (
+                tabs.find((tab) => tab.id === activeTab)?.component
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Floating Unlock Tab - Always visible at bottom right */}
+      <FloatingUnlockTab
+        reportId={id}
+        isPaid={isPaid}
+        onUnlockSuccess={() => getLinkedinReport()}
+      />
     </div>
   );
 };

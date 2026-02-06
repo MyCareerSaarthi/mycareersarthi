@@ -655,17 +655,19 @@ export default function Home() {
               transition={{ duration: 0.6 }}
             >
               <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                Where our professionals are placed today
+                Where Our Professionals Are Placed Today
               </p>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5">
-                Real career outcomes delivered with clarity, strategy, and
-                preparation
+                Real Career Outcomes Across Top Companies
               </h2>
+
               <div className="w-24 h-1 bg-primary rounded-full mb-6" />
               <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                Behind each logo is a professional who gained clarity,
-                direction, and confidence through structured mentoring. These
-                are some of the companies they are contributing to today.
+                Behind every logo is a working professional who moved from
+                confusion to clarity, secured more interview shortlists, cracked
+                hiring rounds, and converted their job search into real offers
+                through structured mentoring, job search strategy, and interview
+                preparation.
               </p>
             </motion.div>
 
@@ -687,7 +689,7 @@ export default function Home() {
       {/* Journey Section */}
       <section className="relative py-10 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-background to-muted/10" />
-        <div className="relative container mx-auto px-4 max-w-7xl">
+        <div className="relative container mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-[1.1fr,0.9fr]">
             <motion.div
               className="space-y-6"
@@ -696,27 +698,25 @@ export default function Home() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
             >
-              <Badge
-                variant="secondary"
-                className="px-4 py-2 text-sm font-medium mb-4"
-              >
-                <Rocket className="w-4 h-4 mr-2 inline" />
-                Your Career Transformation Journey
-              </Badge>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                A Proven Career Path to Land Interviews and Job Offers from Top
-                Companies
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                A clear, step-by-step process that combines expert mentoring
-                with our proprietary AI to improve your job positioning,
-                increase recruiter visibility, and help you move closer to the
-                roles and offers you are aiming for.
-              </p>
+              <div className="max-w-7xl mx-auto px-4">
+                <Badge
+                  variant="secondary"
+                  className="px-4 py-2 text-sm font-medium mb-4"
+                >
+                  <Rocket className="w-4 h-4 mr-2 inline" />
+                  Your Career Transformation Journey
+                </Badge>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+                  A Proven Career Path to Interview Calls, Job Offers, and Top
+                  Companies
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  A step-by-step career process combining expert mentoring and
+                  proprietary AI to improve positioning, boost visibility, and
+                  convert job applications into interviews and offers.
+                </p>
+              </div>
               <StepsRoadmap />
-              {/* <div className="grid gap-4 sm:grid-cols-2">
-               
-              </div> */}
             </motion.div>
           </div>
         </div>

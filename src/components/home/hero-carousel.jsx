@@ -6,9 +6,9 @@ import Link from "next/link";
 
 // Consistent typography classes for all slides
 const headingClass =
-  "text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight tracking-tight text-white drop-shadow-lg";
+  "text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold leading-tight tracking-tight text-white drop-shadow-lg";
 const listItemClass =
-  "text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed text-white/95";
+  "text-xs sm:text-sm md:text-base lg:text-base leading-relaxed text-white/95";
 const buttonBaseClass =
   "px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 text-xs sm:text-sm md:text-base font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-0";
 
@@ -57,26 +57,32 @@ const CareerAssessmentSlide = () => {
 
       {/* Left Content Section */}
       <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
-        <h1 className={headingClass}>Career Assessment & Roadmap</h1>
+        <h1 className={headingClass}>
+          Career Assessment & Roadmap to Ace the Indian Job Market
+        </h1>
 
         <ul className="space-y-3 sm:space-y-4">
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
               Get a clear career diagnosis based on your experience, skills, and
-              market reality
+              the current Indian job market
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Understand which roles make sense now and which don't
+              Understand which job roles make sense for you now, which roles to
+              avoid, and where your experience is actually valued by hiring
+              companies.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Walk away with a practical roadmap, not motivational advice
+              Save months (often years) of wrong applications with a clear
+              career roadmap that defines target roles, skill gaps, and next
+              steps focused on real job outcomes.
             </span>
           </li>
         </ul>
@@ -141,27 +147,33 @@ const InterviewPreparationSlide = () => {
 
       {/* Left Content Section */}
       <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
-        <h1 className={headingClass}>Job Search Strategy & Interview Prep</h1>
+        <h1 className={headingClass}>
+          Interview Preparation That Helps You Convert Interviews into Offers
+        </h1>
 
         <ul className="space-y-3 sm:space-y-4">
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Build a job search strategy instead of applying blindly
+              Prepare for interviews with structured answers, role-specific
+              depth, and real work stories so you clearly demonstrate value to
+              hiring managers and interview panels.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Prepare interviews with structured answers, real stories, and
-              role-specific depth
+              Understand what interviewers actually evaluate at mid-level and
+              senior-level roles beyond surface-level questions and rehearsed
+              answers.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
               Practice through expert-led mock interviews that mirror real
-              senior and mid-level hiring panels
+              hiring rounds, helping you improve confidence, clarity, and
+              conversion rate from interview calls to offer letters.
             </span>
           </li>
         </ul>
@@ -180,6 +192,97 @@ const InterviewPreparationSlide = () => {
         <div className="relative w-full max-w-full">
           <video
             src="https://res.cloudinary.com/rohanphulkar/video/upload/v1768904684/interview-preparation_huxamd.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            unselectable="on"
+            className="w-full h-auto object-cover pointer-events-none rounded"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const JobSearchSlide = () => {
+  return (
+    <div className={slideShellClass}>
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-10 right-10 w-56 h-56 bg-gradient-to-br from-yellow-400/50 to-red-400/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-44 h-44 bg-gradient-to-br from-amber-400/40 to-orange-300/40 rounded-full blur-3xl"></div>
+        <svg
+          className="absolute top-1/3 left-1/4 w-24 h-24 opacity-30"
+          viewBox="0 0 100 100"
+        >
+          <path
+            d="M20 50 L50 20 L80 50 L50 80 Z"
+            className="stroke-orange-500"
+            strokeWidth="2"
+            fill="none"
+          />
+          <path
+            d="M30 50 L50 30 L70 50 L50 70 Z"
+            className="stroke-amber-500"
+            strokeWidth="1.5"
+            fill="none"
+          />
+        </svg>
+        <div className="absolute bottom-1/4 right-1/3 grid grid-cols-3 gap-2 opacity-40">
+          <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+        </div>
+      </div>
+
+      {/* Left Content Section */}
+      <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
+        <h1 className={headingClass}>
+          Job Search Strategy Built to 10X Interview Calls
+        </h1>
+
+        <ul className="space-y-3 sm:space-y-4">
+          <li className="flex items-start gap-2 sm:gap-3">
+            <CheckIcon />
+            <span className={listItemClass}>
+              Build a focused job search strategy, so you stop applying blindly
+              and start targeting roles and companies that actually convert into
+              interview calls.
+            </span>
+          </li>
+          <li className="flex items-start gap-2 sm:gap-3">
+            <CheckIcon />
+            <span className={listItemClass}>
+              Learn where to apply, where not to apply, how recruiters shortlist
+              candidates, and how to prioritise roles with higher hiring
+              probability instead of volume-based applications.
+            </span>
+          </li>
+          <li className="flex items-start gap-2 sm:gap-3">
+            <CheckIcon />
+            <span className={listItemClass}>
+              Reduce wasted effort and application fatigue by aligning your job
+              search with recruiter behaviour, role expectations, and how hiring
+              actually works today in India.
+            </span>
+          </li>
+        </ul>
+
+        <Link href="/job-search-strategy" className="pt-1 sm:pt-2">
+          <button
+            className={`${buttonBaseClass} bg-white text-orange-600 hover:bg-orange-50`}
+          >
+            Prepare the right way
+          </button>
+        </Link>
+      </div>
+
+      {/* Right Image Section */}
+      <div className="flex items-center justify-center order-1 lg:order-2 relative z-10">
+        <div className="relative w-full max-w-full">
+          <video
+            src="https://res.cloudinary.com/rohanphulkar/video/upload/v1770353729/job-search_wfidzc.mp4"
             autoPlay
             muted
             loop
@@ -234,28 +337,33 @@ const AIProfileScorerSlide = () => {
 
       {/* Left Content Section */}
       <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
-        <h1 className={headingClass}>AI Profile Scorer</h1>
+        <h1 className={headingClass}>
+          AI-Based LinkedIn & Resume Scoring to 10X Interview Calls
+        </h1>
 
         <ul className="space-y-3 sm:space-y-4">
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              See how your LinkedIn profile or resume performs against your
-              target job role
+              See how your LinkedIn profile or resume matches your target job
+              role and job description, and why recruiters, hiring managers, or
+              ATS systems may be rejecting it today
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Identify the exact gaps recruiters and ATS systems see but never
-              tell you
+              Identify hidden gaps blocking interview calls, including ATS
+              keyword mismatches, role misalignment, and the criteria recruiters
+              use to shortlist candidates.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Get a role-aligned profile score, not generic feedback or
-              templates
+              Increase interview shortlisting potential by up to 5–10× with a
+              role-aligned profile score built for real job search outcomes, not
+              generic feedback or templates.
             </span>
           </li>
         </ul>
@@ -325,6 +433,10 @@ const HeroCarousel = () => {
       component: <InterviewPreparationSlide />,
       bg: "bg-gradient-to-br from-orange-400 to-orange-400 dark:from-orange-600 dark:to-orange-700",
     },
+    {
+      component: <JobSearchSlide />,
+      bg: "bg-gradient-to-br from-rose-400 to-rose-400 dark:from-rose-600 dark:to-rose-700",
+    },
   ];
 
   const nextSlide = useCallback(() => {
@@ -391,7 +503,7 @@ const HeroCarousel = () => {
 
   return (
     <section
-      className={`relative mx-auto w-full overflow-hidden transition-all duration-700 ease-in-out ${slides[activeSlide].bg} ${isDragging ? "cursor-grabbing" : "cursor-grab"} min-h-[550px] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[580px] md:rounded-2xl md:max-w-[95%] lg:max-w-[85rem]`}
+      className={`relative mx-auto w-full overflow-hidden transition-all duration-700 ease-in-out ${slides[activeSlide].bg} ${isDragging ? "cursor-grabbing" : "cursor-grab"} min-h-[90dvh] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[580px]`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleDragStart}
@@ -401,7 +513,7 @@ const HeroCarousel = () => {
       onTouchMove={handleDragMove}
       onTouchEnd={handleDragEnd}
     >
-      <div className="relative mx-auto w-full max-w-7xl h-full px-4 sm:px-6 lg:px-8 select-none min-h-[550px] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[580px] flex flex-col justify-center py-8 sm:py-10 md:py-12 lg:py-14">
+      <div className="relative mx-auto w-full max-w-[95%] h-full px-4 sm:px-6 lg:px-8 select-none min-h-[90dvh] sm:min-h-[480px] md:min-h-[520px] lg:min-h-[580px] flex flex-col justify-center py-8 sm:py-10 md:py-12 lg:py-14">
         {/* Slides Container */}
         <div className="relative flex-1 min-h-0">
           {slides.map((slide, index) => (

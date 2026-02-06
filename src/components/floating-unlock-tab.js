@@ -24,18 +24,13 @@ const FloatingUnlockTab = ({ reportId, isPaid, onUnlockSuccess }) => {
     const fetchPricing = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/pricing`,
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/pricing?serviceType=linkedin`,
         );
         const data = await response.json();
 
-        // Handle both array and object responses
-        const pricingArray = Array.isArray(data) ? data : data.pricing || [];
+        const linkedinPricing = data.pricing;
 
-        // Find LinkedIn analysis pricing
-        const linkedinPricing = pricingArray.find(
-          (p) => p.service_type === "linkedin",
-        );
-        setPricing(linkedinPricing || { price: 499, currency: "INR" });
+        setPricing({ price: linkedinPricing.originalPrice, currency: "INR" });
       } catch (error) {
         console.error("Error fetching pricing:", error);
         // Fallback pricing

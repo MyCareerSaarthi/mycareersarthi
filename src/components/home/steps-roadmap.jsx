@@ -4,30 +4,44 @@ import { motion } from "framer-motion";
 const steps = [
   {
     step: "01",
-    title: "Sign Up and Define Your Goals",
+    title: "Career Diagnostic & Role Fit Assessment",
     description:
-      "Share your experience, career goals, and target roles so we can set the right direction from day one.",
+      "You share your experience, career stage, target roles, and goals, and we assess hard skills, soft skills, role alignment, and market fit to identify why interview calls may be stalled and which roles give you a 2–3× higher shortlisting probability.",
     position: "bottom",
   },
   {
     step: "02",
-    title: "Build Your Profile Inside MCS",
+    title: "Personalised Career Roadmap Creation",
     description:
-      "Create your career profile with key details and achievements for expert review and in-house AI evaluation",
+      "We design a clear career roadmap built at the intersection of your skills, target roles, and current market demand, helping you avoid 6–12 months of wrong applications by defining exact roles, skill gaps, and next milestones.",
     position: "top",
   },
   {
     step: "03",
-    title: "Get Expert + In-House AI Insights",
+    title: "LinkedIn & Resume Alignment to the Roadmap",
     description:
-      "Receive a clear assessment of your LinkedIn, resume, and positioning with role-aligned, actionable guidance.",
+      "Your LinkedIn profile and resume are restructured to match your roadmap, improve ATS keyword alignment, and reflect recruiter expectations, increasing profile relevance and visibility by 3–5× in recruiter searches.",
     position: "bottom",
   },
   {
     step: "04",
-    title: "Implement Changes and Track Progress",
+    title: "Proven Job Search Strategy Implementation",
     description:
-      "Apply improvements and track visibility, profile performance, and recruiter responses over time.",
+      "We implement a focused job search system tailored to your profile, covering where to apply, whom to approach, and how to prioritise roles. Hence, your applications shift from volume-based effort to interview-call–driven outcomes within 30–60 days.",
+    position: "top",
+  },
+  {
+    step: "05",
+    title: "Interview Preparation to Convert Calls into Offers",
+    description:
+      "You prepare for interviews using structured answer frameworks, role-specific stories, and expert-led mock interviews that mirror real hiring rounds, improving interview-to-offer conversion rates by 2× or more.",
+    position: "bottom",
+  },
+  {
+    step: "06",
+    title: "Execute, Track, and Optimise Progress",
+    description:
+      "You apply the strategy, track recruiter responses, interview traction, and outcomes, and refine execution based on real data so your progress compounds instead of resetting with every job switch attempt.",
     position: "top",
   },
 ];
@@ -35,22 +49,23 @@ const steps = [
 const StepsRoadmap = () => {
   return (
     <div className="w-full py-20 px-4 md:px-8 overflow-hidden ">
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-full mx-auto relative">
         {/* Desktop View (Horizontal Snake) */}
         <div className="hidden lg:block relative h-[500px]">
           {/* Background Waves */}
           <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 flex items-center h-40">
             {/* Wave Container */}
             <div className="absolute inset-0 w-full h-full pointer-events-none opacity-90">
-              {/* Segment 1: Left Edge to 12.5% */}
+              {/* Segment 1: 0% to 8.33% (half of first column) */}
+
+              {/* Segment 2: 8.33% to 25% */}
               <svg
-                className="absolute left-0 top-0 h-full w-[12.5%] overflow-visible"
+                className="absolute left-[8.33%] top-0 h-full w-[16.67%] overflow-visible"
                 preserveAspectRatio="none"
                 viewBox="0 0 100 100"
               >
-                {/* Arch Down (Top half of sine) */}
                 <path
-                  d="M -50 100 Q 50 0 100 50"
+                  d="M 0 50 Q 50 120 100 50"
                   fill="none"
                   stroke="#dcdafa"
                   strokeWidth="50"
@@ -58,65 +73,61 @@ const StepsRoadmap = () => {
                 />
               </svg>
 
-              {/* Segment 2: 12.5% to 37.5% */}
+              {/* Segment 3: 25% to 41.67% */}
               <svg
-                className="absolute left-[12.5%] top-0 h-full w-[25%] overflow-visible"
+                className="absolute left-[25%] top-0 h-full w-[16.67%] overflow-visible"
                 preserveAspectRatio="none"
                 viewBox="0 0 100 100"
               >
-                {/* Bowl (Bottom) */}
-                <path
-                  d="M 0 50 Q 50 120 100 50"
-                  fill="none"
-                  stroke="#b9b5f5"
-                  strokeWidth="50"
-                  vectorEffect="non-scaling-stroke"
-                />
-              </svg>
-
-              {/* Segment 3: 37.5% to 62.5% */}
-              <svg
-                className="absolute left-[37.5%] top-0 h-full w-[25%] overflow-visible"
-                preserveAspectRatio="none"
-                viewBox="0 0 100 100"
-              >
-                {/* Arch (Top) */}
                 <path
                   d="M 0 50 Q 50 -20 100 50"
                   fill="none"
-                  stroke="#9590ef"
+                  stroke="#c5c1f7"
                   strokeWidth="50"
                   vectorEffect="non-scaling-stroke"
                 />
               </svg>
 
-              {/* Segment 4: 62.5% to 87.5% */}
+              {/* Segment 4: 41.67% to 58.33% */}
               <svg
-                className="absolute left-[62.5%] top-0 h-full w-[25%] overflow-visible"
+                className="absolute left-[41.67%] top-0 h-full w-[16.67%] overflow-visible"
                 preserveAspectRatio="none"
                 viewBox="0 0 100 100"
               >
-                {/* Bowl (Bottom) */}
                 <path
                   d="M 0 50 Q 50 120 100 50"
                   fill="none"
-                  stroke="#726bea"
+                  stroke="#a9a3f2"
                   strokeWidth="50"
                   vectorEffect="non-scaling-stroke"
                 />
               </svg>
 
-              {/* Segment 5: 87.5% to 100% */}
+              {/* Segment 5: 58.33% to 75% */}
               <svg
-                className="absolute left-[87.5%] top-0 h-full w-[12.5%] overflow-visible"
+                className="absolute left-[58.33%] top-0 h-full w-[16.67%] overflow-visible"
                 preserveAspectRatio="none"
                 viewBox="0 0 100 100"
               >
-                {/* Arch (Top) */}
                 <path
-                  d="M 0 50 Q 50 -20 150 100"
+                  d="M 0 50 Q 50 -20 100 50"
                   fill="none"
-                  stroke="#4f46e5"
+                  stroke="#8d85ed"
+                  strokeWidth="50"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+
+              {/* Segment 6: 75% to 91.67% */}
+              <svg
+                className="absolute left-[75%] top-0 h-full w-[16.67%] overflow-visible"
+                preserveAspectRatio="none"
+                viewBox="0 0 100 100"
+              >
+                <path
+                  d="M 0 50 Q 50 120 100 50"
+                  fill="none"
+                  stroke="#7167e8"
                   strokeWidth="50"
                   vectorEffect="non-scaling-stroke"
                 />
@@ -126,46 +137,46 @@ const StepsRoadmap = () => {
 
           {/* Steps Overlay */}
           <div className="absolute inset-0 w-full h-full">
-            <div className="grid grid-cols-4 h-full">
+            <div className="grid grid-cols-6 h-full w-full">
               {steps.map((step, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.2, duration: 0.5 }}
+                  transition={{ delay: index * 0.15, duration: 0.5 }}
                   className="relative flex flex-col justify-center items-center h-full"
                 >
                   {/* Circle */}
-                  <div className="z-10 bg-gray-50 rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-lg border-4 border-white relative group transition-transform hover:scale-105 duration-300">
-                    <span className="text-gray-500 font-bold text-lg leading-none mb-1">
+                  <div className="z-10 bg-gray-50 rounded-full w-16 h-16 lg:w-20 lg:h-20 flex flex-col items-center justify-center shadow-lg border-4 border-white relative group transition-transform hover:scale-105 duration-300">
+                    <span className="text-gray-500 font-bold text-xs lg:text-sm leading-none mb-0.5">
                       Step
                     </span>
-                    <span className="text-[#3E2723] font-bold text-3xl leading-none">
+                    <span className="text-[#3E2723] font-bold text-base lg:text-lg leading-none">
                       {step.step}
                     </span>
                   </div>
 
                   {/* Connector Line */}
                   <div
-                    className={`absolute w-0.5 bg-gray-400 h-16 ${
+                    className={`absolute w-0.5 bg-gray-400 h-12 lg:h-14 ${
                       step.position === "top"
-                        ? "bottom-[calc(50%+4rem)]"
-                        : "top-[calc(50%+4rem)]"
+                        ? "bottom-[calc(50%+2.5rem)] lg:bottom-[calc(50%+3rem)]"
+                        : "top-[calc(50%+2.5rem)] lg:top-[calc(50%+3rem)]"
                     }`}
                   ></div>
 
                   {/* Content */}
                   <div
-                    className={`absolute w-72 text-center ${
+                    className={`absolute w-48 lg:w-84 text-center ${
                       step.position === "top"
-                        ? "bottom-[calc(50%+9rem)]"
-                        : "top-[calc(50%+9rem)]"
+                        ? "bottom-[calc(50%+6rem)] lg:bottom-[calc(50%+7rem)]"
+                        : "top-[calc(50%+6rem)] lg:top-[calc(50%+7rem)]"
                     }`}
                   >
-                    <h3 className="text-[#3E2723] dark:text-primary-foreground font-bold text-xl mb-3 leading-tight">
+                    <h3 className="text-[#3E2723] dark:text-primary-foreground font-bold text-sm lg:text-base mb-2 leading-tight">
                       {step.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                    <p className="text-gray-600 dark:text-gray-300 text-xs lg:text-sm leading-relaxed">
                       {step.description}
                     </p>
                   </div>

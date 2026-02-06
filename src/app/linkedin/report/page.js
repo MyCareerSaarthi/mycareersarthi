@@ -62,7 +62,18 @@ const LinkedinReport = () => {
     {
       id: "overview",
       label: "Overview",
-      component: <Overview data={linkedinReport} />,
+      component: (
+        <Overview
+          data={linkedinReport}
+          onNavigate={(tabId) => {
+            // Check if section is locked
+            if (!isPaid && lockedSections.includes(tabId)) {
+              return;
+            }
+            setActiveTab(tabId);
+          }}
+        />
+      ),
     },
     {
       id: "profile-info",

@@ -12,7 +12,6 @@ import RoleSelector from "@/components/ui/role-selector";
 import JobDescriptionInput from "@/components/ui/job-description-input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { api } from "@/components/api/api";
-import { handlePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
 import SimpleLoader from "@/components/simple-loader";
 import { useRouter } from "next/navigation";
@@ -20,10 +19,8 @@ import {
   Linkedin,
   FileText,
   Briefcase,
-  CreditCard,
   ArrowRight,
   Upload,
-  CheckCircle2,
   Sparkles,
 } from "lucide-react";
 
@@ -40,16 +37,6 @@ const LinkedinAnalyze = () => {
   const [formData, setFormData] = useState(null);
   const fileInputRef = useRef(null);
 
-  const [couponCode, setCouponCode] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
-  const [pricing, setPricing] = useState({
-    originalPrice: 199,
-    finalPrice: 199,
-    discount: 0,
-  });
-  const [isLoadingPricing, setIsLoadingPricing] = useState(true);
-
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processData, setProcessData] = useState({
     title: "Starting Analysis",
@@ -63,44 +50,16 @@ const LinkedinAnalyze = () => {
   const { getToken, isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
 
-  // Tab definitions
+  // Tab definitions - Only Profile and Requirements for freemium model
   const tabs = [
     { id: "profile", label: "Profile", icon: Linkedin },
     { id: "requirements", label: "Job Requirements", icon: Briefcase },
-    { id: "payment", label: "Payment", icon: CreditCard },
   ];
-
-  // Remove getRoles function as it's now handled by RoleSelector component
-
-  const getPricing = async () => {
-    try {
-      const response = await api.get("/api/pricing?serviceType=linkedin");
-      if (response.data.success) {
-        const pricingData = response.data.pricing;
-        setPricing({
-          originalPrice: pricingData.originalPrice,
-          finalPrice: pricingData.originalPrice,
-          discount: 0,
-        });
-      }
-    } catch (error) {
-      console.error("Failed to fetch pricing:", error);
-    } finally {
-      setIsLoadingPricing(false);
-    }
-  };
 
   // Check authentication - must be before early return
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       window.location.href = "/login?redirect=/linkedin/analyze";
-    }
-  }, [isLoaded, isSignedIn]);
-
-  // Get pricing - must be before early return
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      getPricing();
     }
   }, [isLoaded, isSignedIn]);
 
@@ -116,67 +75,6 @@ const LinkedinAnalyze = () => {
     );
   }
 
-  const applyCoupon = async () => {
-    if (!couponCode.trim()) {
-      setErrors((prev) => ({ ...prev, coupon: "Please enter a coupon code" }));
-      return;
-    }
-
-    setIsApplyingCoupon(true);
-    try {
-      const token = await getToken();
-      const response = await api.post(
-        "/api/pricing/apply-coupon",
-        {
-          code: couponCode.trim(),
-          userId: user?.id,
-          orderAmount: pricing.originalPrice,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.success) {
-        setAppliedCoupon({
-          code: couponCode.trim(),
-          discount: response.data.discount,
-        });
-        setPricing((prev) => ({
-          ...prev,
-          finalPrice: response.data.finalAmount,
-          discount: response.data.discount,
-        }));
-        setErrors((prev) => ({ ...prev, coupon: null }));
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to apply coupon";
-      setErrors((prev) => ({ ...prev, coupon: errorMessage }));
-      setAppliedCoupon(null);
-      setPricing((prev) => ({
-        ...prev,
-        finalPrice: prev.originalPrice,
-        discount: 0,
-      }));
-    } finally {
-      setIsApplyingCoupon(false);
-    }
-  };
-
-  const removeCoupon = () => {
-    setCouponCode("");
-    setAppliedCoupon(null);
-    setPricing((prev) => ({
-      ...prev,
-      finalPrice: prev.originalPrice,
-      discount: 0,
-    }));
-    setErrors((prev) => ({ ...prev, coupon: null }));
-  };
-
   const validateStep = (step) => {
     const newErrors = {};
 
@@ -190,7 +88,7 @@ const LinkedinAnalyze = () => {
       if (
         linkedinUrl &&
         !linkedinUrl.match(
-          /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_.]+\/?$/
+          /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_.]+\/?$/,
         )
       ) {
         newErrors.linkedinUrl = "Please enter a valid LinkedIn profile URL";
@@ -222,21 +120,6 @@ const LinkedinAnalyze = () => {
       setErrors({ profile: "Please add your LinkedIn profile first" });
       return;
     }
-    if (tabId === "payment") {
-      if (!linkedinUrl && !pdfFile) {
-        setErrors({ profile: "Please add your LinkedIn profile first" });
-        setActiveTab("profile");
-        return;
-      }
-      if (
-        (inputMode === "role" && !selectedRole) ||
-        (inputMode === "jobDescription" && !jobDescription.trim())
-      ) {
-        setErrors({ role: "Please select a role or add job description" });
-        setActiveTab("requirements");
-        return;
-      }
-    }
     setErrors({});
     setActiveTab(tabId);
   };
@@ -245,6 +128,15 @@ const LinkedinAnalyze = () => {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
+    setIsAnalyzing(true);
+    setProcessData({
+      title: "Starting Analysis",
+      subtitle: "Initializing LinkedIn profile analysis",
+      currentStep: 1,
+      totalSteps: 12,
+      percentage: 0,
+    });
+
     try {
       const token = await getToken();
       const formData = new FormData();
@@ -256,9 +148,7 @@ const LinkedinAnalyze = () => {
         formData.append("file", pdfFile);
       }
       if (inputMode === "role" && selectedRole) {
-        // Job descriptions are independent - only handle role selection
         if (selectedRole.type === "existing") {
-          // User selected an existing role - analysis will be against role + experience level
           formData.append("roleId", selectedRole.roleId);
           formData.append("roleName", selectedRole.roleName);
           if (selectedRole.experienceLevel) {
@@ -266,52 +156,36 @@ const LinkedinAnalyze = () => {
           }
         } else if (selectedRole.type === "custom") {
           formData.append("roleName", selectedRole.roleName);
-          // Default experience level if not provided
           formData.append("experienceLevel", "Mid-level");
         }
       }
-      // Handle job description - manual input only
       if (inputMode === "jobDescription" && jobDescription) {
         formData.append("jobDescription", jobDescription);
       }
-      if (appliedCoupon) {
-        formData.append("couponCode", appliedCoupon.code);
-        formData.append("discountAmount", appliedCoupon.discount);
-      }
 
-      // Start the analysis process
-      setIsAnalyzing(true);
-      setProcessData({
-        title: "Starting Analysis",
-        subtitle: "Initializing LinkedIn profile analysis",
-        currentStep: 1,
-        totalSteps: 12,
-        percentage: 0,
+      // Call analysis API directly (free analysis for freemium model)
+      const response = await api.post("/api/linkedin/analyze", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
 
-      await handlePayment(
-        "linkedin",
-        token,
-        user,
-        formData,
-        setIsSubmitting,
-        (errorMsg) => {
-          setIsAnalyzing(false);
-          setErrors({ general: errorMsg });
-          setActiveTab("payment");
-        },
-        getToken
-      );
+      if (response.data.success) {
+        const reportId = response.data.reportId;
+        // Redirect to report page
+        router.push(`/linkedin/report?id=${reportId}`);
+      } else {
+        throw new Error(response.data.message || "Analysis failed");
+      }
     } catch (error) {
       console.error("Form submission failed:", error);
       setIsAnalyzing(false);
       const errorMessage =
         error?.response?.data?.message ||
         error?.message ||
-        "Payment initiation failed. Please try again.";
+        "Analysis failed. Please try again.";
       setErrors({ general: errorMessage });
-      // Stay on payment tab so user can see the error
-      setActiveTab("payment");
     } finally {
       setIsSubmitting(false);
     }
@@ -445,8 +319,8 @@ const LinkedinAnalyze = () => {
                   isDragging
                     ? "border-primary bg-primary/10"
                     : errors.profile
-                    ? "border-destructive bg-destructive/5"
-                    : "border-border hover:border-primary/50 hover:bg-primary/5"
+                      ? "border-destructive bg-destructive/5"
+                      : "border-border hover:border-primary/50 hover:bg-primary/5"
                 }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -493,19 +367,19 @@ const LinkedinAnalyze = () => {
                     </LoadingButton>
                   </div>
                 ) : (
-                    <div className="space-y-2">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto">
-                        <Upload className="w-6 h-6 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium">
-                          Click to upload or drag and drop
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          LinkedIn profile PDF only (max 10MB)
-                        </p>
-                      </div>
+                  <div className="space-y-2">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto">
+                      <Upload className="w-6 h-6 text-primary" />
                     </div>
+                    <div>
+                      <p className="text-xs font-medium">
+                        Click to upload or drag and drop
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        LinkedIn profile PDF only (max 10MB)
+                      </p>
+                    </div>
+                  </div>
                 )}
               </div>
               {errors.profile && (
@@ -546,7 +420,9 @@ const LinkedinAnalyze = () => {
                 </Button>
                 <Button
                   type="button"
-                  variant={inputMode === "jobDescription" ? "default" : "outline"}
+                  variant={
+                    inputMode === "jobDescription" ? "default" : "outline"
+                  }
                   onClick={() => setInputMode("jobDescription")}
                   className={`rounded-xl transition-all duration-300 ${
                     inputMode === "jobDescription"
@@ -577,133 +453,12 @@ const LinkedinAnalyze = () => {
           </div>
         );
 
-      case "payment":
-        return (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
-                <CreditCard className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">Payment & Review</h3>
-                <p className="text-xs text-muted-foreground">
-                  Review your order and complete payment
-                </p>
-              </div>
-            </div>
-
-            <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 rounded-xl">
-              <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-                Order Summary
-              </h4>
-
-              {/* Pricing */}
-              <div className="bg-muted/30 rounded-xl p-4 space-y-3 border border-border">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">LinkedIn Analysis</span>
-                  <span className="font-semibold text-foreground">
-                    {isLoadingPricing
-                      ? "Loading..."
-                      : `₹${pricing.originalPrice}`}
-                  </span>
-                </div>
-
-                {appliedCoupon && (
-                  <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
-                    <span className="text-sm font-medium flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4" />
-                      Coupon ({appliedCoupon.code})
-                    </span>
-                    <span className="text-sm font-semibold">
-                      -₹{appliedCoupon.discount}
-                    </span>
-                  </div>
-                )}
-
-                <div className="border-t-2 border-border pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-base font-semibold">Total</span>
-                    <div className="text-right">
-                      {pricing.discount > 0 && (
-                        <div className="text-xs text-muted-foreground line-through mb-1">
-                          ₹{pricing.originalPrice}
-                        </div>
-                      )}
-                      <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                        {isLoadingPricing
-                          ? "Loading..."
-                          : `₹${pricing.finalPrice}`}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Coupon Code */}
-              <div className="space-y-2 mt-4">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  Coupon Code (Optional)
-                </Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Enter coupon code"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    className={`flex-1 rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${
-                      errors.coupon ? "border-destructive" : ""
-                    }`}
-                    disabled={isApplyingCoupon || !!appliedCoupon}
-                  />
-                  {appliedCoupon ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={removeCoupon}
-                      disabled={isApplyingCoupon}
-                      className="rounded-lg"
-                    >
-                      Remove
-                    </Button>
-                  ) : (
-                    <LoadingButton
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={applyCoupon}
-                      isLoading={isApplyingCoupon}
-                      loadingText="Applying..."
-                      disabled={!couponCode.trim()}
-                      className="rounded-lg"
-                    >
-                      Apply
-                    </LoadingButton>
-                  )}
-                </div>
-                {errors.coupon && (
-                  <p className="text-sm text-destructive">{errors.coupon}</p>
-                )}
-                {appliedCoupon && (
-                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>
-                      Coupon applied! You saved ₹{appliedCoupon.discount}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div>
-        );
-
       default:
         return null;
     }
   };
 
-  const canProceedToPayment = () => {
+  const canSubmit = () => {
     return (
       (linkedinUrl || pdfFile) &&
       ((inputMode === "role" && selectedRole) ||
@@ -738,7 +493,8 @@ const LinkedinAnalyze = () => {
               LinkedIn Profile Analysis
             </h1>
             <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-              Get AI-powered insights to optimize your LinkedIn profile
+              Analyze your LinkedIn profile for FREE! Get AI-powered insights
+              with limited access, or upgrade for full analysis.
             </p>
           </motion.div>
         </div>
@@ -805,8 +561,6 @@ const LinkedinAnalyze = () => {
               onClick={() => {
                 if (activeTab === "requirements") {
                   setActiveTab("profile");
-                } else if (activeTab === "payment") {
-                  setActiveTab("requirements");
                 }
               }}
               disabled={activeTab === "profile"}
@@ -814,13 +568,13 @@ const LinkedinAnalyze = () => {
             >
               Previous
             </Button>
-            {activeTab === "payment" ? (
+            {activeTab === "requirements" ? (
               <Button
                 onClick={handleStepSubmit}
-                disabled={isSubmitting || !canProceedToPayment()}
+                disabled={isSubmitting || !canSubmit()}
                 className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
               >
-                {isSubmitting ? "Processing..." : "Start Analysis"}
+                {isSubmitting ? "Analyzing..." : "Analyze for Free"}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             ) : (
@@ -830,17 +584,8 @@ const LinkedinAnalyze = () => {
                     if (linkedinUrl || pdfFile) {
                       setActiveTab("requirements");
                     } else {
-                      setErrors({ profile: "Please add your LinkedIn profile" });
-                    }
-                  } else if (activeTab === "requirements") {
-                    if (
-                      (inputMode === "role" && selectedRole) ||
-                      (inputMode === "jobDescription" && jobDescription.trim())
-                    ) {
-                      setActiveTab("payment");
-                    } else {
                       setErrors({
-                        role: "Please select a role or add job description",
+                        profile: "Please add your LinkedIn profile",
                       });
                     }
                   }

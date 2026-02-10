@@ -65,24 +65,23 @@ const CareerAssessmentSlide = () => {
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Get a clear career diagnosis based on your experience, skills, and
-              the current Indian job market
+              Get a clear career diagnostic based on your experience, skills,
+              and the current Indian job market
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Understand which job roles make sense for you now, which roles to
-              avoid, and where your experience is actually valued by hiring
-              companies.
+              Understand which roles fit you now, which to avoid, and where your
+              experience truly matters.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Save months (often years) of wrong applications with a clear
-              career roadmap that defines target roles, skill gaps, and next
-              steps focused on real job outcomes.
+              Get a clear, tailored career roadmap aligned to your target roles,
+              expertise, and interests with next steps focused on real job
+              outcomes.
             </span>
           </li>
         </ul>
@@ -155,25 +154,22 @@ const InterviewPreparationSlide = () => {
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Prepare for interviews with structured answers, role-specific
-              depth, and real work stories so you clearly demonstrate value to
-              hiring managers and interview panels.
+              Prepare for interview using proven interview script that has
+              helped candidates land their dream jobs.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Understand what interviewers actually evaluate at mid-level and
-              senior-level roles beyond surface-level questions and rehearsed
-              answers.
+              Learn why interviewers ask what they ask—and answer in a way that
+              truly stands out.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
               Practice through expert-led mock interviews that mirror real
-              hiring rounds, helping you improve confidence, clarity, and
-              conversion rate from interview calls to offer letters.
+              hiring rounds.
             </span>
           </li>
         </ul>
@@ -246,25 +242,22 @@ const JobSearchSlide = () => {
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Build a focused job search strategy, so you stop applying blindly
-              and start targeting roles and companies that actually convert into
-              interview calls.
+              Build a focused job search strategy that helps you get interview
+              calls for your target roles and companies
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Learn where to apply, where not to apply, how recruiters shortlist
-              candidates, and how to prioritise roles with higher hiring
-              probability instead of volume-based applications.
+              Learn how to build a strong network that helps you get interview
+              calls
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Reduce wasted effort and application fatigue by aligning your job
-              search with recruiter behaviour, role expectations, and how hiring
-              actually works today in India.
+              Reduce application fatigue by aligning your job search with how
+              hiring actually works today in India.
             </span>
           </li>
         </ul>
@@ -346,23 +339,20 @@ const AIProfileScorerSlide = () => {
             <CheckIcon />
             <span className={listItemClass}>
               See how your LinkedIn profile or resume matches your target job
-              role and job description, and why recruiters, hiring managers, or
-              ATS systems may be rejecting it today
+              role and job description.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
               Identify hidden gaps blocking interview calls, including ATS
-              keyword mismatches, role misalignment, and the criteria recruiters
-              use to shortlist candidates.
+              keyword mismatches.
             </span>
           </li>
           <li className="flex items-start gap-2 sm:gap-3">
             <CheckIcon />
             <span className={listItemClass}>
-              Increase interview shortlisting potential by up to 5–10× with a
-              role-aligned profile score built for real job search outcomes, not
+              Increase interview shortlisting potential by up to 5-10X and not
               generic feedback or templates.
             </span>
           </li>

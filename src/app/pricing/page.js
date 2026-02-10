@@ -29,7 +29,7 @@ import {
 const pricingCategories = [
   {
     id: "profile-optimization",
-    name: "Profile Optimization & Re-Design",
+    name: "Profile Optimization",
     description:
       "Transform your professional presence with optimized LinkedIn and resume profiles that get noticed by recruiters.",
     icon: Linkedin,
@@ -184,7 +184,6 @@ const Pricing = () => {
         onOpenChange={setBookingModalOpen}
         defaultServiceType={selectedServiceType}
       />
-
       <section className="relative pt-12 pb-6">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-primary/10" />
 
@@ -199,176 +198,218 @@ const Pricing = () => {
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
               Simple, Transparent Pricing
             </h1>
-            <p className="text-muted-foreground">
-              Individual services or bundles – choose what works for you.
-            </p>
           </motion.div>
+        </div>
+      </section>
 
-          {/* Tab Navigation */}
+      {/* Mobile Tab Navigation - horizontal scroll */}
+      <div className="lg:hidden container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="flex gap-2 overflow-x-auto pb-4 mb-2"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {pricingCategories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setActiveCategory(category.id)}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap ${
+                activeCategory === category.id
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                  : "bg-card hover:bg-primary/10 border border-border hover:border-primary/30"
+              }`}
+            >
+              <category.icon className="w-4 h-4 shrink-0" />
+              {category.name}
+            </button>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Desktop: Sidebar + Content Layout */}
+      <div className="container mx-auto px-4 max-w-7xl">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left Sidebar Tab Navigation - desktop only */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="flex flex-wrap justify-center gap-2 mb-8"
+            className="hidden lg:flex flex-col gap-2 lg:w-64 shrink-0 sticky top-24 self-start"
           >
             {pricingCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`flex items-center gap-3 px-5 py-3.5 rounded-xl text-sm font-medium transition-all duration-300 text-left ${
                   activeCategory === category.id
                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
                     : "bg-card hover:bg-primary/10 border border-border hover:border-primary/30"
                 }`}
               >
-                <category.icon className="w-4 h-4" />
+                <category.icon className="w-4 h-4 shrink-0" />
                 {category.name}
               </button>
             ))}
           </motion.div>
-        </div>
-      </section>
 
-      {/* Pricing Cards Section */}
-      <section className="relative py-8 pb-16">
-        <div className="container mx-auto px-4 max-w-7xl">
-          {pricingCategories.map((category) => (
-            <motion.div
-              key={category.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{
-                opacity: activeCategory === category.id ? 1 : 0,
-                y: activeCategory === category.id ? 0 : 30,
-                display: activeCategory === category.id ? "block" : "none",
-              }}
-              transition={{ duration: 0.4 }}
-            >
-              {/* Category Header */}
-              <div className="text-center mb-10">
-                <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                  {category.name}
-                </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                  {category.description}
-                </p>
-              </div>
+          {/* Pricing Cards Section */}
+          <div className="flex-1 min-w-0 py-2 pb-16">
+            {pricingCategories.map((category) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{
+                  opacity: activeCategory === category.id ? 1 : 0,
+                  y: activeCategory === category.id ? 0 : 30,
+                  display: activeCategory === category.id ? "block" : "none",
+                }}
+                transition={{ duration: 0.4 }}
+              >
+                {/* Category Header */}
+                {/* <div className="mb-8">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                    {category.name}
+                  </h2>
+                  <p className="text-muted-foreground text-sm">
+                    {category.description}
+                  </p>
+                </div> */}
 
-              <div className={``}>
-                {/* Individual Services Column */}
-                <div className="space-y-4">
-                  <div
-                    className={`grid gap-8 lg:grid-cols-${category.services.length} ${category.services.length === 1 ? "max-w-xl mx-auto" : ""}`}
-                  >
-                    {category.services.map((service, idx) => (
-                      <motion.div
-                        key={service.name}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, delay: idx * 0.1 }}
-                      >
-                        <Card className="p-6 bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
-                          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                            <div className="">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="text-lg font-semibold">
-                                  {service.name}
-                                </h4>
-                                {service.isPromo && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="bg-green-500/10 text-green-600 border-green-500/20"
-                                  >
-                                    <Star className="w-3 h-3 mr-1" />
-                                    Special Offer
-                                  </Badge>
-                                )}
-                              </div>
-                              {service.priceBreakdown && (
-                                <p className="text-xs text-muted-foreground mb-2">
-                                  {service.priceBreakdown}
-                                </p>
+                {/* Service Cards Grid */}
+                <div
+                  className={`grid gap-6 grid-cols-1 ${
+                    category.services.length >= 3
+                      ? "md:grid-cols-3"
+                      : category.bundlePrice
+                        ? category.services.length === 2
+                          ? "md:grid-cols-3"
+                          : "md:grid-cols-2"
+                        : category.services.length === 2
+                          ? "md:grid-cols-2"
+                          : "md:grid-cols-1 max-w-lg"
+                  }`}
+                >
+                  {category.services.map((service, idx) => (
+                    <motion.div
+                      key={service.name}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: idx * 0.1 }}
+                    >
+                      <Card className="group relative overflow-hidden hover:shadow-md transition-all duration-300 h-full flex flex-col">
+                        <div className="p-6 flex flex-col flex-1">
+                          {/* Service name + badge */}
+                          <div className="mb-4">
+                            <div className="flex items-start justify-between gap-2 mb-1">
+                              <h4 className="text-lg font-semibold leading-tight text-foreground">
+                                {service.name}
+                              </h4>
+                              {service.isPromo && (
+                                <Badge
+                                  variant="secondary"
+                                  className="text-xs shrink-0"
+                                >
+                                  <Zap className="w-3 h-3 mr-1" />
+                                  Offer
+                                </Badge>
                               )}
                             </div>
-                            <div className="text-right">
-                              <div className="text-2xl font-bold text-foreground">
-                                ₹{formatPrice(service.price)}
-                              </div>
-                              {service.bundlePrice && (
-                                <div className="text-sm text-green-600 font-medium">
-                                  Bundle: ₹{formatPrice(service.bundlePrice)}
-                                </div>
-                              )}
-                            </div>
+                            {service.priceBreakdown && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {service.priceBreakdown}
+                              </p>
+                            )}
                           </div>
 
-                          <ul className="space-y-2 mb-4">
+                          {/* Price block */}
+                          <div className="mb-5 pb-4 border-b border-border">
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-sm text-muted-foreground font-medium">
+                                ₹
+                              </span>
+                              <span className="text-3xl font-bold tracking-tight text-foreground">
+                                {formatPrice(service.price)}
+                              </span>
+                            </div>
+                            {service.bundlePrice && (
+                              <div className="mt-2 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                                <Sparkles className="w-3 h-3" />
+                                In Bundle: ₹{formatPrice(service.bundlePrice)}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Features list */}
+                          <ul className="space-y-2.5 mb-6 flex-1">
                             {service.details.map((detail, i) => (
                               <li
                                 key={i}
                                 className="flex items-start gap-2 text-sm text-muted-foreground"
                               >
-                                <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                                {detail}
+                                <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                                <span className="leading-snug">{detail}</span>
                               </li>
                             ))}
                           </ul>
 
+                          {/* CTA Button */}
                           <Button
                             variant="outline"
-                            className="w-full rounded-full border-primary/30 hover:bg-primary/10 hover:border-primary transition-all duration-300"
+                            className="w-full font-medium h-10 hover:bg-primary hover:text-primary-foreground transition-colors"
                             onClick={() => handleBookingClick(service.name)}
                           >
                             Get Started
-                            <ChevronRight className="w-4 h-4 ml-1" />
+                            <ArrowRight className="w-4 h-4 ml-2" />
                           </Button>
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-                {category.bundlePrice && (
-                  <div className="col-span-3 mt-8">
-                    <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                      <Package className="w-5 h-5 text-primary" />
-                      Save with Bundle
-                    </h3>
-
-                    <motion.div
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: 0.2 }}
-                    >
-                      <Card
-                        className={`relative p-8 bg-${category.color} border-0 shadow-2xl overflow-hidden`}
-                      >
-                        <div className="absolute inset-0 opacity-10">
-                          <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2" />
-                          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2" />
                         </div>
+                      </Card>
+                    </motion.div>
+                  ))}
 
-                        <div className="relative z-10">
-                          <div className="flex items-center justify-between mb-6">
-                            <Badge className="bg-white/20 text-white border-0 backdrop-blur-sm">
-                              <Award className="w-4 h-4 mr-1" />
-                              Best Value
+                  {/* Bundle Card - inline for ≤2 services */}
+                  {category.bundlePrice && category.services.length <= 2 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.4,
+                        delay: category.services.length * 0.1,
+                      }}
+                    >
+                      <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 h-full flex flex-col bg-gradient-to-br from-primary to-primary/90 text-primary-foreground">
+                        <div className="p-6 flex flex-col flex-1">
+                          {/* Header badges */}
+                          <div className="flex items-center justify-between mb-4">
+                            <Badge className="bg-background/20 text-white border-white/20 hover:bg-background/30 font-medium backdrop-blur-sm">
+                              <Package className="w-3.5 h-3.5 mr-1" />
+                              Bundle & Save
                             </Badge>
                             {calculateSavings(category) > 0 && (
-                              <Badge className="bg-white text-green-600 border-0 font-bold">
+                              <Badge className="bg-white text-primary hover:bg-white/90 border-0 font-bold shadow-sm">
                                 Save ₹{formatPrice(calculateSavings(category))}
                               </Badge>
                             )}
                           </div>
 
-                          <h4 className="text-2xl font-bold text-white mb-2">
+                          {/* Bundle title */}
+                          <h4 className="text-xl font-bold text-white mb-3">
                             {category.bundleName}
                           </h4>
 
-                          <div className="flex items-baseline gap-2 mb-6">
-                            <span className="text-5xl font-bold text-white">
-                              ₹{formatPrice(category.bundlePrice)}
-                            </span>
+                          {/* Price block */}
+                          <div className="mb-5 pb-4 border-b border-white/20">
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-sm text-white/80 font-medium">
+                                ₹
+                              </span>
+                              <span className="text-3xl font-extrabold tracking-tight text-white">
+                                {formatPrice(category.bundlePrice)}
+                              </span>
+                            </div>
                             {calculateSavings(category) > 0 && (
-                              <span className="text-lg text-white/60 line-through">
+                              <span className="text-sm text-white/60 line-through ml-1">
                                 ₹
                                 {formatPrice(
                                   category.services.reduce(
@@ -380,18 +421,19 @@ const Pricing = () => {
                             )}
                           </div>
 
-                          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-6">
-                            <p className="text-white/90 font-medium mb-3">
-                              Everything included:
+                          {/* Included services */}
+                          <div className="bg-background/10 rounded-lg p-4 mb-5 flex-1 backdrop-blur-sm border border-white/10">
+                            <p className="text-white/80 font-medium mb-3 text-xs uppercase tracking-wider">
+                              Everything included
                             </p>
-                            <ul className="space-y-2">
+                            <ul className="space-y-2.5">
                               {category.services.map((service, i) => (
                                 <li
                                   key={i}
-                                  className="flex items-center gap-2 text-white/90"
+                                  className="flex items-center gap-2 text-white"
                                 >
-                                  <CheckCircle2 className="w-5 h-5 text-white shrink-0" />
-                                  <span className="text-sm">
+                                  <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
+                                  <span className="text-sm font-medium">
                                     {service.name}
                                   </span>
                                 </li>
@@ -399,9 +441,111 @@ const Pricing = () => {
                             </ul>
                           </div>
 
+                          {/* CTA */}
                           <Button
                             size="lg"
-                            className="w-full rounded-full bg-white text-foreground hover:bg-white/90 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+                            variant="secondary"
+                            className="w-full font-bold h-11 text-primary hover:bg-white active:scale95 transition-all"
+                            onClick={() =>
+                              handleBookingClick(category.bundleName)
+                            }
+                          >
+                            Get the Bundle
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
+
+                          {category.mockInterviewBundle && (
+                            <div className="mt-3 p-2.5 bg-background/10 rounded-lg border border-white/10">
+                              <p className="text-white/80 text-sm text-center">
+                                Mock Interview Only:{" "}
+                                <strong className="text-white">
+                                  ₹{formatPrice(category.mockInterviewBundle)}
+                                </strong>
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Bundle Card - below with full width for 3+ services */}
+                {category.bundlePrice && category.services.length >= 3 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
+                    className="mt-6"
+                  >
+                    <Card className="relative overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-primary to-primary/90 text-primary-foreground">
+                      <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
+                        <div className="flex-1">
+                          {/* Header */}
+                          <div className="flex items-center gap-3 mb-3">
+                            <Badge className="bg-background/20 text-white border-white/20 hover:bg-background/30 font-medium backdrop-blur-sm">
+                              <Package className="w-3.5 h-3.5 mr-1" />
+                              Bundle & Save
+                            </Badge>
+                            {calculateSavings(category) > 0 && (
+                              <Badge className="bg-white text-primary hover:bg-white/90 border-0 font-bold shadow-sm">
+                                Save ₹{formatPrice(calculateSavings(category))}
+                              </Badge>
+                            )}
+                          </div>
+
+                          <h4 className="text-2xl font-bold text-white mb-3">
+                            {category.bundleName}
+                          </h4>
+
+                          {/* Price */}
+                          <div className="flex items-baseline gap-2 mb-5">
+                            <span className="text-sm text-white/80 font-medium">
+                              ₹
+                            </span>
+                            <span className="text-4xl font-extrabold tracking-tight text-white">
+                              {formatPrice(category.bundlePrice)}
+                            </span>
+                            {calculateSavings(category) > 0 && (
+                              <span className="text-lg text-white/60 line-through ml-1">
+                                ₹
+                                {formatPrice(
+                                  category.services.reduce(
+                                    (sum, s) => sum + s.price,
+                                    0,
+                                  ),
+                                )}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Included items */}
+                          <div className="bg-background/10 rounded-lg p-4 backdrop-blur-sm border border-white/10">
+                            <p className="text-white/80 font-medium mb-3 text-xs uppercase tracking-wider">
+                              Everything included
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {category.services.map((service, i) => (
+                                <div
+                                  key={i}
+                                  className="flex items-center gap-2 text-white"
+                                >
+                                  <CheckCircle2 className="w-4 h-4 text-white shrink-0" />
+                                  <span className="text-sm font-medium">
+                                    {service.name}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* CTA column */}
+                        <div className="md:w-64 shrink-0 flex flex-col gap-3">
+                          <Button
+                            size="lg"
+                            variant="secondary"
+                            className="w-full font-bold h-12 text-base text-primary hover:bg-white active:scale95 transition-all"
                             onClick={() =>
                               handleBookingClick(category.bundleName)
                             }
@@ -411,25 +555,25 @@ const Pricing = () => {
                           </Button>
 
                           {category.mockInterviewBundle && (
-                            <div className="mt-4 p-3 bg-white/10 backdrop-blur-sm rounded-lg">
-                              <p className="text-white/90 text-sm text-center">
-                                Or get Mock Interview Only:{" "}
-                                <strong>
+                            <div className="p-3 bg-background/10 rounded-lg border border-white/10">
+                              <p className="text-white/80 text-sm text-center">
+                                Mock Interview Only:{" "}
+                                <strong className="text-white">
                                   ₹{formatPrice(category.mockInterviewBundle)}
                                 </strong>
                               </p>
                             </div>
                           )}
                         </div>
-                      </Card>
-                    </motion.div>
-                  </div>
+                      </div>
+                    </Card>
+                  </motion.div>
                 )}
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* Why Choose Section */}
       <section className="relative py-16 overflow-hidden">

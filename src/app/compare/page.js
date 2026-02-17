@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useAnalysisSession } from "@/hooks/useAnalysisSession";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
@@ -61,6 +62,8 @@ export default function ComparePage() {
   const { user } = useUser();
   const { getToken, isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
+  const { activeSession, saveSession, clearSession } =
+    useAnalysisSession("comparison");
 
   // Tab definitions
   const tabs = [
@@ -98,6 +101,77 @@ export default function ComparePage() {
       window.location.href = "/login?redirect=/compare";
     }
   }, [isLoaded, isSignedIn]);
+
+  // Resume an active session on page load / refresh
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !activeSession) return;
+
+    const resume = async () => {
+      setIsComparing(true);
+      setProcessData({
+        title: "Resuming...",
+        subtitle: "Reconnecting to your in-progress comparison...",
+        currentStep: 2,
+        totalSteps: 12,
+        percentage: 15,
+      });
+
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const analysisRequestId = activeSession.analysisRequestId;
+      let pollCount = 0;
+      const MAX_POLLS = 450; // 15 min at 2s intervals
+
+      const poll = async () => {
+        if (pollCount >= MAX_POLLS) {
+          clearSession();
+          setIsComparing(false);
+          setErrors({
+            general:
+              "Comparison timed out. Please check your dashboard or try again.",
+          });
+          return;
+        }
+        pollCount++;
+        try {
+          // const currentToken = await getToken();
+          const resp = await fetch(
+            `${baseUrl}/api/rag/status/${analysisRequestId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const data = await resp.json();
+
+          if (data.status === "completed" && data.result_report_id) {
+            clearSession();
+            window.location.href = `/compare/report?id=${data.result_report_id}`;
+            return;
+          }
+          if (data.status === "failed") {
+            clearSession();
+            setIsComparing(false);
+            setErrors({
+              general: data.message || "Comparison failed. Please try again.",
+            });
+            return;
+          }
+          // Still running — poll again
+          setTimeout(poll, 2000);
+        } catch (err) {
+          console.warn("[Compare session resume] poll error:", err);
+          setTimeout(poll, 4000); // back off on error
+        }
+      };
+
+      poll();
+    };
+
+    resume();
+  }, [isLoaded, isSignedIn, activeSession]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Get pricing - must be before early return
   useEffect(() => {
@@ -138,7 +212,7 @@ export default function ComparePage() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.data.success) {
@@ -190,7 +264,7 @@ export default function ComparePage() {
       if (
         linkedinUrl &&
         !linkedinUrl.match(
-          /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_.]+\/?$/
+          /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_.]+\/?$/,
         )
       ) {
         newErrors.linkedinUrl = "Please enter a valid LinkedIn profile URL";
@@ -265,11 +339,13 @@ export default function ComparePage() {
         formData,
         setIsSubmitting,
         (errorMsg) => {
+          clearSession();
           setIsComparing(false);
           setErrors({ general: errorMsg });
           setActiveTab("payment");
         },
-        getToken
+        getToken,
+        (analysisRequestId) => saveSession(analysisRequestId),
       );
     } catch (error) {
       console.error("Form submission failed:", error);
@@ -465,8 +541,8 @@ export default function ComparePage() {
                     isDragging
                       ? "border-primary bg-primary/10"
                       : errors.linkedin
-                      ? "border-destructive bg-destructive/5"
-                      : "border-border hover:border-primary/50 hover:bg-primary/5"
+                        ? "border-destructive bg-destructive/5"
+                        : "border-border hover:border-primary/50 hover:bg-primary/5"
                   }`}
                   onDragOver={handleLinkedinDragOver}
                   onDragLeave={handleLinkedinDragLeave}
@@ -549,8 +625,8 @@ export default function ComparePage() {
                     isDraggingResume
                       ? "border-primary bg-primary/10"
                       : errors.resume
-                      ? "border-destructive bg-destructive/5"
-                      : "border-border hover:border-primary/50 hover:bg-primary/5"
+                        ? "border-destructive bg-destructive/5"
+                        : "border-border hover:border-primary/50 hover:bg-primary/5"
                   }`}
                   onDragOver={handleResumeDragOver}
                   onDragLeave={handleResumeDragLeave}
@@ -754,10 +830,18 @@ export default function ComparePage() {
     return (linkedinUrl || linkedinPdf) && resumePdf;
   };
 
+  const handleCancelAnalysis = () => {
+    clearSession();
+    setIsComparing(false);
+  };
+
   return (
     <div className="min-h-screen bg-background relative">
       {isComparing && (
-        <SimpleLoader message="Comparing your LinkedIn profile and resume... This may take a while." />
+        <SimpleLoader
+          message="Comparing your LinkedIn profile and resume... This may take a while."
+          onCancel={handleCancelAnalysis}
+        />
       )}
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-6 pb-4">

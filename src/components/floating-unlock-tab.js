@@ -135,7 +135,6 @@ const FloatingUnlockTab = ({ reportId, isPaid, onUnlockSuccess }) => {
     if (onUnlockSuccess) {
       onUnlockSuccess();
     }
-    window.location.reload();
   };
 
   // Don't show if already paid, unless we need to show the success modal

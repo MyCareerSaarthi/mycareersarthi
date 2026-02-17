@@ -51,12 +51,19 @@ const slideKeyframes = `
 }
 `;
 
-export default function SimpleLoader({ message = "Loading...", className }) {
+export default function SimpleLoader({
+  message = "Loading...",
+  className,
+  onCancel,
+}) {
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [show, setShow] = React.useState(true);
 
   // Select correct message set
-  const isComparison = message && typeof message === 'string' && message.toLowerCase().includes("compar");
+  const isComparison =
+    message &&
+    typeof message === "string" &&
+    message.toLowerCase().includes("compar");
   const messages = isComparison ? COMPARISON_MESSAGES : ANALYSIS_MESSAGES;
 
   React.useEffect(() => {
@@ -79,7 +86,7 @@ export default function SimpleLoader({ message = "Loading...", className }) {
       className={cn(
         "fixed inset-0 z-[9999] flex flex-col items-center justify-center px-6",
         "bg-background/95 backdrop-blur-sm",
-        className
+        className,
       )}
     >
       <style>{slideKeyframes}</style>
@@ -90,7 +97,7 @@ export default function SimpleLoader({ message = "Loading...", className }) {
             "text-xl md:text-2xl lg:text-3xl font-medium",
             // Neutral, gentle color for soft contrast in both themes
             "text-neutral-500 dark:text-neutral-300",
-            "text-center px-8 absolute inset-0 flex items-center justify-center select-none tracking-tight leading-[1.22]"
+            "text-center px-8 absolute inset-0 flex items-center justify-center select-none tracking-tight leading-[1.22]",
           )}
           style={{
             animation: show
@@ -108,6 +115,22 @@ export default function SimpleLoader({ message = "Loading...", className }) {
           {messages[currentIndex]}
         </p>
       </div>
+
+      {onCancel && (
+        <button
+          onClick={onCancel}
+          className={cn(
+            "mt-12 px-6 py-2.5 rounded-lg text-sm font-medium",
+            "text-muted-foreground hover:text-foreground",
+            "bg-muted/50 hover:bg-muted",
+            "border border-border/50 hover:border-border",
+            "transition-all duration-200 ease-in-out",
+            "cursor-pointer select-none",
+          )}
+        >
+          End Analysis Session
+        </button>
+      )}
     </div>
   );
 }

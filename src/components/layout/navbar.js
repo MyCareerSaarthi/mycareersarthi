@@ -36,7 +36,6 @@ export const Navbar = () => {
         <div className="h-16 md:h-20 flex items-center justify-between">
           {/* Logo */}
           <motion.div
-            whileHover={{ y: -2 }}
             transition={{ duration: 0.2 }}
             className="flex items-center gap-3 group"
           >

@@ -79,9 +79,9 @@ export default function SignUpPage() {
                 M
               </span>
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               MyCareerSarthi
-            </h1>
+            </div>
           </div>
 
           <SignUp.Root>

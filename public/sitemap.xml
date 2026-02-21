@@ -1,82 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mycareersarthi.com/</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.mycareersarthi.com</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://mycareersarthi.com/about-us</loc>
-    <lastmod>2024-01-01</lastmod>
+    <loc>https://www.mycareersarthi.com/about-us</loc>
+    <lastmod>2025-02-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mycareersarthi.com/ai-powered-profile-scoring</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://mycareersarthi.com/career-mentoring</loc>
-    <lastmod>2024-01-01</lastmod>
+    <loc>https://www.mycareersarthi.com/contact-us</loc>
+    <lastmod>2025-02-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mycareersarthi.com/interview-preparation</loc>
-    <lastmod>2024-01-01</lastmod>
+    <loc>https://www.mycareersarthi.com/pricing</loc>
+    <lastmod>2025-02-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mycareersarthi.com/blog</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://mycareersarthi.com/contact-us</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mycareersarthi.com/privacy-policy</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://mycareersarthi.com/terms-and-conditions</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://mycareersarthi.com/process-demo</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mycareersarthi.com/services/resume-optimization</loc>
-    <lastmod>2024-01-01</lastmod>
+    <loc>https://www.mycareersarthi.com/ai-powered-profile-scoring</loc>
+    <lastmod>2025-02-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mycareersarthi.com/services/linkedin-optimization</loc>
-    <lastmod>2024-01-01</lastmod>
+    <loc>https://www.mycareersarthi.com/privacy-policy</loc>
+    <lastmod>2025-02-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mycareersarthi.com/services/alignment</loc>
-    <lastmod>2024-01-01</lastmod>
+    <loc>https://www.mycareersarthi.com/terms-and-conditions</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mycareersarthi.com/blog</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mycareersarthi.com/services/career-assessment</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mycareersarthi.com/services/interview-preparation</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mycareersarthi.com/services/job-search</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mycareersarthi.com/services/linkedin-optimization</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mycareersarthi.com/services/resume-optimization</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mycareersarthi.com/services/personal-branding</loc>
+    <lastmod>2025-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.mycareersarthi.com/services/alignment</loc>
+    <lastmod>2025-02-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 </urlset>
-

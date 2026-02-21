@@ -18,14 +18,14 @@ const steps = [
   },
   {
     step: "03",
-    title: "LinkedIn & Resume Alignment to the Roadmap",
+    title: "LinkedIn & Resume Alignment to the Career Roadmap",
     description:
       "Your LinkedIn profile and resume are restructured to match your roadmap, improve ATS keyword alignment, and reflect recruiter expectations, increasing profile relevance and visibility by 3–5× in recruiter searches.",
     position: "bottom",
   },
   {
     step: "04",
-    title: "Proven Job Search Strategy Implementation",
+    title: "Proven Job Search System and Strategy implementation",
     description:
       "We implement a focused job search system tailored to your profile, covering where to apply, whom to approach, and how to prioritise roles. Hence, your applications shift from volume-based effort to interview-call–driven outcomes within 30–60 days.",
     position: "top",
@@ -49,7 +49,7 @@ const steps = [
 const StepsRoadmap = () => {
   return (
     <div className="w-full py-20 px-4 md:px-8 overflow-hidden ">
-      <div className="max-w-full mx-auto relative">
+      <div className="max-w-[90%] mx-auto relative">
         {/* Desktop View (Horizontal Snake) */}
         <div className="hidden lg:block relative h-[500px]">
           {/* Background Waves */}
@@ -176,9 +176,9 @@ const StepsRoadmap = () => {
                     <h3 className="text-[#3E2723] dark:text-primary-foreground font-bold text-sm lg:text-base mb-2 leading-tight">
                       {step.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-xs lg:text-sm leading-relaxed">
+                    {/* <p className="text-gray-600 dark:text-gray-300 text-xs lg:text-sm leading-relaxed">
                       {step.description}
-                    </p>
+                    </p> */}
                   </div>
                 </motion.div>
               ))}

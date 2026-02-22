@@ -42,11 +42,11 @@ const socialLinks = [
 
 export const Footer = () => {
   return (
-    <footer className="relative overflow-hidden bg-gradient-to-br from-muted/30 via-background to-muted/20 border-t border-border/50">
+    <footer className="relative overflow-hidden bg-linear-to-br from-muted/30 via-background to-muted/20 border-t border-border/50">
       {/* Decorative background elements */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-50" />
-      <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-primary/10 to-transparent rounded-full blur-3xl" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[4rem_4rem] opacity-50" />
+      <div className="absolute top-0 left-0 w-96 h-96 bg-linear-to-br from-primary/10 to-transparent rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-linear-to-tl from-primary/10 to-transparent rounded-full blur-3xl" />
 
       <div className="relative container mx-auto px-4 max-w-7xl">
         {/* Main footer content */}
@@ -140,6 +140,7 @@ export const Footer = () => {
                     key={social.label}
                     href={social.href}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 rounded-xl bg-muted/50 hover:bg-primary/10 border border-border/50 hover:border-primary/50 flex items-center justify-center transition-all duration-300 group"
                     aria-label={social.label}
                   >

@@ -46,6 +46,34 @@ const nextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: "/(.*).(jpg|jpeg|png|webp|svg|gif|mp4|webm)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/(.*).(woff|woff2|ttf|otf)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
+  },
+  allowedDevOrigins: [
+    "local-origin.dev",
+    "*.local-origin.dev",
+    "mycareersarthi.com",
+    "*.mycareersarthi.com",
+  ],
 };
 
 export default nextConfig;

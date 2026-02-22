@@ -28,7 +28,7 @@ const AboutGallery = () => {
       title: "Technology Stack",
     },
     {
-      src: "/founder-img.jpg",
+      src: "/founder-img.webp",
       alt: "Founder",
       title: "Leadership",
     },

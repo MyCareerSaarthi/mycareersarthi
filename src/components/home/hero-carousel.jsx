@@ -28,8 +28,8 @@ const CareerAssessmentSlide = () => {
     <div className={slideShellClass}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 left-10 w-56 h-56 bg-gradient-to-br from-purple-300/50 to-pink-300/50 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-64 h-64 bg-gradient-to-br from-rose-300/40 to-fuchsia-300/40 rounded-full blur-3xl"></div>
+        <div className="absolute top-10 left-10 w-56 h-56 bg-linear-to-br from-purple-300/50 to-pink-300/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-64 h-64 bg-linear-to-br from-rose-300/40 to-fuchsia-300/40 rounded-full blur-3xl"></div>
         <svg
           className="absolute top-1/4 right-1/4 w-32 h-32 opacity-30"
           viewBox="0 0 100 100"
@@ -100,11 +100,12 @@ const CareerAssessmentSlide = () => {
         <div className="relative w-full max-w-full">
           <video
             src="https://res.cloudinary.com/rohanphulkar/video/upload/v1768917721/career-assessment_k7tema.mp4"
+            poster="https://res.cloudinary.com/rohanphulkar/video/upload/so_0/v1768917721/career-assessment_k7tema.jpg"
             autoPlay
             muted
             loop
             playsInline
-            unselectable="on"
+            preload="metadata"
             className="w-full h-auto object-cover pointer-events-none rounded"
           />
         </div>
@@ -118,8 +119,8 @@ const InterviewPreparationSlide = () => {
     <div className={slideShellClass}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 right-10 w-56 h-56 bg-gradient-to-br from-yellow-400/50 to-red-400/50 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 left-10 w-44 h-44 bg-gradient-to-br from-amber-400/40 to-orange-300/40 rounded-full blur-3xl"></div>
+        <div className="absolute top-10 right-10 w-56 h-56 bg-linear-to-br from-yellow-400/50 to-red-400/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-44 h-44 bg-linear-to-br from-amber-400/40 to-orange-300/40 rounded-full blur-3xl"></div>
         <svg
           className="absolute top-1/3 left-1/4 w-24 h-24 opacity-30"
           viewBox="0 0 100 100"
@@ -188,11 +189,12 @@ const InterviewPreparationSlide = () => {
         <div className="relative w-full max-w-full">
           <video
             src="https://res.cloudinary.com/rohanphulkar/video/upload/v1768904684/interview-preparation_huxamd.mp4"
+            poster="https://res.cloudinary.com/rohanphulkar/video/upload/so_0/v1768904684/interview-preparation_huxamd.jpg"
             autoPlay
             muted
             loop
             playsInline
-            unselectable="on"
+            preload="metadata"
             className="w-full h-auto object-cover pointer-events-none rounded"
           />
         </div>
@@ -206,8 +208,8 @@ const JobSearchSlide = () => {
     <div className={slideShellClass}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 right-10 w-56 h-56 bg-gradient-to-br from-yellow-400/50 to-red-400/50 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 left-10 w-44 h-44 bg-gradient-to-br from-amber-400/40 to-orange-300/40 rounded-full blur-3xl"></div>
+        <div className="absolute top-10 right-10 w-56 h-56 bg-linear-to-br from-yellow-400/50 to-red-400/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 left-10 w-44 h-44 bg-linear-to-br from-amber-400/40 to-orange-300/40 rounded-full blur-3xl"></div>
         <svg
           className="absolute top-1/3 left-1/4 w-24 h-24 opacity-30"
           viewBox="0 0 100 100"
@@ -276,11 +278,12 @@ const JobSearchSlide = () => {
         <div className="relative w-full max-w-full">
           <video
             src="https://res.cloudinary.com/rohanphulkar/video/upload/v1770353729/job-search_wfidzc.mp4"
+            poster="https://res.cloudinary.com/rohanphulkar/video/upload/so_0/v1770353729/job-search_wfidzc.jpg"
             autoPlay
             muted
             loop
             playsInline
-            unselectable="on"
+            preload="metadata"
             className="w-full h-auto object-cover pointer-events-none rounded"
           />
         </div>
@@ -294,8 +297,8 @@ const AIProfileScorerSlide = () => {
     <div className={slideShellClass}>
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 left-10 w-52 h-52 bg-gradient-to-br from-blue-300/50 to-cyan-300/50 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-60 h-60 bg-gradient-to-br from-cyan-300/40 to-blue-400/40 rounded-full blur-3xl"></div>
+        <div className="absolute top-10 left-10 w-52 h-52 bg-linear-to-br from-blue-300/50 to-cyan-300/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-60 h-60 bg-linear-to-br from-cyan-300/40 to-blue-400/40 rounded-full blur-3xl"></div>
         <svg
           className="absolute top-1/4 right-1/3 w-28 h-28 opacity-30"
           viewBox="0 0 100 100"
@@ -373,7 +376,7 @@ const AIProfileScorerSlide = () => {
           {/* MacBook Pro Container */}
           <div className="relative">
             {/* Screen Lid */}
-            <div className="relative bg-gradient-to-b from-[#06080d] via-[#010101] to-[#000000] rounded-t-[12px] sm:rounded-t-[16px] p-[6px] sm:p-2 shadow-xl">
+            <div className="relative bg-linear-to-b from-[#06080d] via-[#010101] to-[#000000] rounded-t-[12px] sm:rounded-t-[16px] p-[6px] sm:p-2 shadow-xl">
               {/* Inner Black Bezel */}
               <div className="relative bg-black rounded-t-[10px] sm:rounded-t-[14px] overflow-hidden">
                 {/* Notch with Camera */}
@@ -384,20 +387,22 @@ const AIProfileScorerSlide = () => {
                 {/* Video Content - fills the screen */}
                 <video
                   src="https://res.cloudinary.com/rohanphulkar/video/upload/v1768918507/profile-scoring.mp4"
+                  poster="https://res.cloudinary.com/rohanphulkar/video/upload/so_0/v1768918507/profile-scoring.jpg"
+                  fetchPriority="high"
                   autoPlay
                   muted
                   loop
                   playsInline
-                  unselectable="on"
+                  preload="metadata"
                   className="w-full h-auto object-cover pointer-events-none"
                 />
               </div>
             </div>
 
             {/* Laptop Base - thin strip */}
-            <div className="relative h-[6px] sm:h-[8px] bg-gradient-to-b from-[#c8c9cb] via-[#d8d9db] to-[#e8e9eb] rounded-b-[6px] sm:rounded-b-[8px] shadow-lg">
+            <div className="relative h-[6px] sm:h-[8px] bg-linear-to-b from-[#c8c9cb] via-[#d8d9db] to-[#e8e9eb] rounded-b-[6px] sm:rounded-b-[8px] shadow-lg">
               {/* Center notch/indent */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40px] sm:w-[60px] h-[2px] sm:h-[3px] bg-gradient-to-b from-[#b0b1b3] to-[#c0c1c3] rounded-b-full"></div>
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40px] sm:w-[60px] h-[2px] sm:h-[3px] bg-linear-to-b from-[#b0b1b3] to-[#c0c1c3] rounded-b-full"></div>
             </div>
           </div>
         </div>
@@ -416,16 +421,16 @@ const HeroCarousel = () => {
   const slides = [
     {
       component: <AIProfileScorerSlide />,
-      bg: "bg-gradient-to-br from-[#0A66C2] via-[#0077B5] to-[#004182] dark:from-[#004182] dark:via-[#003366] dark:to-[#002244]",
+      bg: "bg-linear-to-br from-[#0A66C2] via-[#0077B5] to-[#004182] dark:from-[#004182] dark:via-[#003366] dark:to-[#002244]",
     },
     { component: <CareerAssessmentSlide />, bg: "bg-primary dark:bg-primary" },
     {
       component: <InterviewPreparationSlide />,
-      bg: "bg-gradient-to-br from-orange-400 to-orange-400 dark:from-orange-600 dark:to-orange-700",
+      bg: "bg-linear-to-br from-orange-400 to-orange-400 dark:from-orange-600 dark:to-orange-700",
     },
     {
       component: <JobSearchSlide />,
-      bg: "bg-gradient-to-br from-rose-400 to-rose-400 dark:from-rose-600 dark:to-rose-700",
+      bg: "bg-linear-to-br from-rose-400 to-rose-400 dark:from-rose-600 dark:to-rose-700",
     },
   ];
 

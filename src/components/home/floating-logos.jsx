@@ -6,10 +6,10 @@ import Image from "next/image";
 
 const alumniThriveLogos = [
   { src: "/home/alumni-logo/godaddy.svg", alt: "GoDaddy" },
-  { src: "/home/alumni-logo/acro.png", alt: "Acro" },
+  { src: "/home/alumni-logo/acro.webp", alt: "Acro" },
   { src: "/home/alumni-logo/citibank.svg", alt: "CitiBank" },
   { src: "/home/alumni-logo/coforge.svg", alt: "Coforge" },
-  { src: "/home/alumni-logo/epikdoc.png", alt: "Epikdoc" },
+  { src: "/home/alumni-logo/epikdoc.webp", alt: "Epikdoc" },
   { src: "/home/alumni-logo/nagarro.svg", alt: "Nagarro" },
   { src: "/home/alumni-logo/tata-power.svg", alt: "Tata Power" },
 ];
@@ -20,11 +20,11 @@ const hexagonClipPath =
 const FloatingLogos = () => {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 24 }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6, delay: 0.1 }}
-      className="relative"
+      transition={{ duration: 0.8 }}
+      className="relative transition-opacity duration-1000"
     >
       <div className="absolute inset-0 bg-primary/5 dark:bg-primary/10 blur-3xl rounded-full" />
 
@@ -42,18 +42,15 @@ const FloatingLogos = () => {
             ][idx];
 
             return (
-              <motion.div
+              <div
                 key={logo.alt}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.5, delay: idx * 0.08 }}
-                className={`${placement} flex items-center justify-center`}
+                className={`${placement} flex items-center justify-center opacity-0 animate-fade-in`}
+                style={{
+                  animationDelay: `${idx * 100}ms`,
+                  animationFillMode: "forwards",
+                }}
               >
-                <motion.div
-                  transition={{ type: "spring", stiffness: 220, damping: 18 }}
-                  className="group relative w-full aspect-[1/0.92]"
-                >
+                <div className="group relative w-full aspect-[1/0.92] transition-transform duration-300 hover:scale-105">
                   {/* Soft shadow */}
                   <div
                     className="absolute inset-0 translate-y-2"
@@ -125,11 +122,11 @@ const FloatingLogos = () => {
                       alt={logo.alt}
                       width={160}
                       height={80}
-                      className="object-contain w-[85%] h-[85%] opacity-80 group-hover:opacity-100 transition-all duration-300 dark:brightness-110 dark:contrast-110"
+                      className="object-contain w-[85%] h-[85%] opacity-80 group-hover:opacity-100 transition-all duration-300 dark:brightness-110 dark:contrast-110 "
                     />
                   </div>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             );
           })}
         </div>

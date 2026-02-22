@@ -13,7 +13,7 @@ const FounderImage = () => {
       <div className="relative">
         <div className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden shadow-xl border-4 border-primary/30">
           <img
-            src="/saurabh-sharma.jpeg"
+            src="/saurabh-sharma.webp"
             alt="Saurabh Sharma - Founder of MyCareerSarthi"
             className="w-full h-full object-cover"
           />

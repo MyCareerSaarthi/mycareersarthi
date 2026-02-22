@@ -133,7 +133,7 @@ const LinkedinOptimizationPage = () => {
               >
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50">
                   <Image
-                    src="/scoring/linkedin_report.png"
+                    src="/scoring/linkedin_report.webp"
                     alt="LinkedIn Profile Analysis Report"
                     width={600}
                     height={450}

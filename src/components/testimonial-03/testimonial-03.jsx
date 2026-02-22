@@ -8,7 +8,7 @@ const testimonials = [
     company: "TechCorp",
     testimonial:
       "This product has completely transformed the way we work. The efficiency and ease of use are unmatched!",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+    avatar: "https://randomuser.me/api/portraits/men/1.webp",
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const testimonials = [
     company: "InsightTech",
     testimonial:
       "This tool has saved me hours of work! The analytics and reporting features are incredibly powerful.",
-    avatar: "https://randomuser.me/api/portraits/women/6.jpg",
+    avatar: "https://randomuser.me/api/portraits/women/6.webp",
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const testimonials = [
     testimonial:
       "An amazing tool that simplifies complex tasks. Highly recommended for professionals in the industry. " +
       "The intuitive interface makes it easy to onboard new team members, and the automation features save us countless hours every week. ",
-    avatar: "https://randomuser.me/api/portraits/men/3.jpg",
+    avatar: "https://randomuser.me/api/portraits/men/3.webp",
   },
   {
     id: 4,
@@ -36,7 +36,7 @@ const testimonials = [
     company: "BrandBoost",
     testimonial:
       "I've seen a significant improvement in our team's productivity since we started using this service.",
-    avatar: "https://randomuser.me/api/portraits/women/4.jpg",
+    avatar: "https://randomuser.me/api/portraits/women/4.webp",
   },
   {
     id: 5,
@@ -45,7 +45,7 @@ const testimonials = [
     company: "CodeCrafters",
     testimonial:
       "The best investment we've made! The support team is also super responsive and helpful.",
-    avatar: "https://randomuser.me/api/portraits/men/5.jpg",
+    avatar: "https://randomuser.me/api/portraits/men/5.webp",
   },
   {
     id: 6,
@@ -54,7 +54,7 @@ const testimonials = [
     company: "InnovateX",
     testimonial:
       "The user experience is top-notch! The interface is clean, intuitive, and easy to navigate.",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
+    avatar: "https://randomuser.me/api/portraits/women/2.webp",
   },
 ];
 

@@ -359,8 +359,6 @@ const LinkedinAnalyze = () => {
       }
 
       const analysisRequestId = response.data.analysisRequestId;
-      console.log("[SSE] Analysis request created:", analysisRequestId);
-
       // Persist session so a refresh can resume
       saveSession(analysisRequestId);
 
@@ -608,7 +606,7 @@ const LinkedinAnalyze = () => {
                   onClick={() => setInputMode("role")}
                   className={`rounded-xl transition-all duration-300 ${
                     inputMode === "role"
-                      ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
                       : ""
                   }`}
                 >
@@ -622,7 +620,7 @@ const LinkedinAnalyze = () => {
                   onClick={() => setInputMode("jobDescription")}
                   className={`rounded-xl transition-all duration-300 ${
                     inputMode === "jobDescription"
-                      ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
                       : ""
                   }`}
                 >
@@ -684,12 +682,7 @@ const LinkedinAnalyze = () => {
         <div className="absolute inset-0 bg-linear-to-br from-background via-muted/20 to-background" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
         <div className="relative container mx-auto px-4 max-w-5xl z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center space-y-2"
-          >
+          <div className="text-center space-y-2 animate-fade-in">
             <Badge
               variant="secondary"
               className="px-3 py-1 text-xs font-medium mb-2"
@@ -704,22 +697,18 @@ const LinkedinAnalyze = () => {
               Analyze your LinkedIn profile for FREE! Get AI-powered insights
               with limited access, or upgrade for full analysis.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Main Content */}
       <div className="relative container mx-auto px-4 max-w-5xl pb-8">
         {errors.general && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm"
-          >
+          <div className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm animate-fade-in">
             <p className="text-sm text-destructive font-medium">
               {errors.general}
             </p>
-          </motion.div>
+          </div>
         )}
 
         <Card className="p-4 md:p-5 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl">
@@ -751,13 +740,7 @@ const LinkedinAnalyze = () => {
 
             {tabs.map((tab) => (
               <TabsContent key={tab.id} value={tab.id} className="mt-0">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {renderTabContent()}
-                </motion.div>
+                <div className="animate-fade-in">{renderTabContent()}</div>
               </TabsContent>
             ))}
           </Tabs>
@@ -780,7 +763,7 @@ const LinkedinAnalyze = () => {
               <Button
                 onClick={handleStepSubmit}
                 disabled={isSubmitting || !canSubmit()}
-                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+                className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
               >
                 {isSubmitting ? "Analyzing..." : "Analyze for Free"}
                 <ArrowRight className="w-4 h-4 ml-2" />

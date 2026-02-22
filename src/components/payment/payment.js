@@ -214,9 +214,7 @@ const handleVerifyPayment = async (
               storageKey,
               JSON.stringify(verifyResponse.data.comparisonResult),
             );
-          } catch (e) {
-            console.error("Error storing in localStorage:", e);
-          }
+          } catch (e) {}
         }
         setTimeout(() => {
           try {
@@ -512,7 +510,6 @@ const handleVerifyPayment = async (
 
             // Continue polling - poll every 2 seconds
             if (pollCount >= MAX_POLL_ATTEMPTS) {
-              console.error("Max poll attempts reached");
               onLoadingChange?.(false);
               onErrorChange?.(
                 "Analysis is taking longer than expected. Please refresh the page or contact support.",

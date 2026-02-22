@@ -38,7 +38,7 @@ const sections = [
         ],
         closingText:
           "You receive a score along with actionable steps to strengthen it.",
-        image: "/scoring/linkedin_report.png",
+        image: "/scoring/linkedin_report.webp",
         showImage: true,
       },
       {
@@ -86,7 +86,7 @@ const sections = [
           "Formatting effectiveness",
         ],
         closingText: "You see exactly what needs improvement and why.",
-        image: "/scoring/resume_report.png",
+        image: "/scoring/resume_report.webp",
         showImage: true,
       },
       {
@@ -429,7 +429,7 @@ export default function ScoringServices() {
                                               {point}
                                             </motion.span>
                                           </motion.li>
-                                        )
+                                        ),
                                       )}
                                     </ul>
                                   </div>
@@ -654,7 +654,7 @@ export default function ScoringServices() {
                                               {point}
                                             </span>
                                           </motion.li>
-                                        )
+                                        ),
                                       )}
                                     </ul>
                                   </div>
@@ -680,16 +680,20 @@ export default function ScoringServices() {
                                     viewport={{ once: true }}
                                     className="pt-4"
                                   >
-                                    {service.title === "Custom LinkedIn Banner Design" ? (
+                                    {service.title ===
+                                    "Custom LinkedIn Banner Design" ? (
                                       <Button
                                         size="lg"
                                         className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
-                                        onClick={() => setBookingModalOpen(true)}
+                                        onClick={() =>
+                                          setBookingModalOpen(true)
+                                        }
                                       >
                                         {service.cta}
                                         <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                                       </Button>
-                                    ) : service.title === "LinkedIn Profile Scoring" ? (
+                                    ) : service.title ===
+                                      "LinkedIn Profile Scoring" ? (
                                       <Link href="/linkedin/analyze">
                                         <Button
                                           size="lg"
@@ -699,7 +703,8 @@ export default function ScoringServices() {
                                           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                                         </Button>
                                       </Link>
-                                    ) : service.title === "Resume Optimization Support" ? (
+                                    ) : service.title ===
+                                      "Resume Optimization Support" ? (
                                       <Link href="/resume/analyze">
                                         <Button
                                           size="lg"
@@ -713,7 +718,9 @@ export default function ScoringServices() {
                                       <Button
                                         size="lg"
                                         className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl group"
-                                        onClick={() => setBookingModalOpen(true)}
+                                        onClick={() =>
+                                          setBookingModalOpen(true)
+                                        }
                                       >
                                         {service.cta}
                                         <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />

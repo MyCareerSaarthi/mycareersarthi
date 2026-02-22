@@ -133,7 +133,7 @@ const ResumeOptimizationPage = () => {
               >
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50">
                   <Image
-                    src="/scoring/resume_report.png"
+                    src="/scoring/resume_report.webp"
                     alt="Resume Analysis Report"
                     width={600}
                     height={450}

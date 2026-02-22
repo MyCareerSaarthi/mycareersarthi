@@ -12,8 +12,18 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import TestimonialCarousel from "@/components/TestimonialCarousel";
-import { BookingModal } from "@/components/booking/booking-modal";
+import dynamic from "next/dynamic";
+const TestimonialCarousel = dynamic(
+  () => import("@/components/TestimonialCarousel"),
+  { ssr: false },
+);
+const BookingModal = dynamic(
+  () =>
+    import("@/components/booking/booking-modal").then(
+      (mod) => mod.BookingModal,
+    ),
+  { ssr: false },
+);
 import {
   Sparkles,
   Target,
@@ -33,9 +43,14 @@ import {
   ChevronRight,
 } from "lucide-react";
 import HeroCarousel from "@/components/home/hero-carousel";
-import FloatingLogos from "@/components/home/floating-logos";
 import Image from "next/image";
-import StepsRoadmap from "@/components/home/steps-roadmap";
+const StepsRoadmap = dynamic(() => import("@/components/home/steps-roadmap"), {
+  ssr: false,
+});
+const FloatingLogos = dynamic(
+  () => import("@/components/home/floating-logos"),
+  { ssr: false },
+);
 
 const heroGlanceCards = [
   {
@@ -90,32 +105,32 @@ const serviceStrip = [
 
 const featuredInLogos = [
   {
-    src: "/newspaper-logo/economic-times.png",
+    src: "/newspaper-logo/economic-times.webp",
     alt: "Economic Times",
     bg: false,
   },
   {
-    src: "/newspaper-logo/express-computer.png",
+    src: "/newspaper-logo/express-computer.webp",
     alt: "Express Computer",
     bg: false,
   },
   {
-    src: "/newspaper-logo/hans-india.png",
+    src: "/newspaper-logo/hans-india.webp",
     alt: "Hans India",
     bg: false,
   },
   {
-    src: "/newspaper-logo/daily-gaurdian.png",
+    src: "/newspaper-logo/daily-gaurdian.webp",
     alt: "The Daily Guardian",
     bg: false,
   },
   {
-    src: "/newspaper-logo/people-matters.png",
+    src: "/newspaper-logo/people-matters.webp",
     alt: "People Matters",
     bg: true,
   },
   {
-    src: "/newspaper-logo/startup-talky.png",
+    src: "/newspaper-logo/startup-talky.webp",
     alt: "Startup Talky",
     bg: false,
   },
@@ -443,32 +458,26 @@ export default function Home({ h1Text }) {
         onOpenChange={setBookingModalOpen}
         defaultServiceType={selectedServiceType}
       />
-      {/* Hidden H1 for SEO optimization */}
-      <h1 className="sr-only">{h1Text}</h1>
-      {/* Hero Section */}
       <HeroCarousel />
 
       {/* Featured In Section */}
       <section className="py-10 max-w-7xl mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center"
+        <div
+          className="text-center animate-fade-in opacity-0"
+          style={{ animationFillMode: "forwards" }}
         >
           <p className="text-base font-semibold uppercase tracking-wider text-muted-foreground mb-8">
             Featured In
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 items-center justify-items-center">
             {featuredInLogos.map((logo, idx) => (
-              <motion.div
+              <div
                 key={idx}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.1 }}
-                className={`hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100 ${idx - 1 ? "grid-cols-2 mx-auto" : ""} ${logo.bg ? "bg-black rounded-sm px-2 py-1" : ""}`}
+                className={`hover:grayscale-0 transition-all duration-300 opacity-0 hover:opacity-100 animate-fade-in ${idx - 1 ? "grid-cols-2 mx-auto" : ""} ${logo.bg ? "bg-black rounded-sm px-2 py-1" : ""}`}
+                style={{
+                  animationDelay: `${idx * 100}ms`,
+                  animationFillMode: "forwards",
+                }}
               >
                 <Image
                   src={logo.src}
@@ -477,43 +486,41 @@ export default function Home({ h1Text }) {
                   height={60}
                   className="object-contain h-12 w-auto dark:invert "
                 />
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* <section className="relative py-16 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-background via-primary/5 to-background" />
         <div className="relative max-w-7xl mx-auto px-4">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-120px" }}
-              transition={{ duration: 0.6 }}
-            >
-              <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                Watch and learn
-              </p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5">
-                Video highlights from your career growth journey
-              </h2>
-              <div className="w-24 h-1 bg-primary rounded-full mb-6" />
-              <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
-                See how MyCareerSarthi helps you get role clarity, improve your profile positioning, and prepare for interviews with structured guidance backed by AI insights.
-              </p>
-            </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-120px" }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+              Watch and learn
+            </p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-5">
+              Video highlights from your career growth journey
+            </h2>
+            <div className="w-24 h-1 bg-primary rounded-full mb-6" />
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl">
+              See how MyCareerSarthi helps you get role clarity, improve your profile positioning, and prepare for interviews with structured guidance backed by AI insights.
+            </p>
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-120px" }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <VideoCarousel items={videoShowcase} />
-            </motion.div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-120px" }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <VideoCarousel items={videoShowcase} />
+          </motion.div>
         </div>
       </section> */}
 
@@ -521,12 +528,9 @@ export default function Home({ h1Text }) {
       {/* <section className="relative py-16 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-muted/10 to-background" />
         <div className="relative container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="mb-16"
+          <div
+            className="mb-16 opacity-0 animate-fade-in"
+            style={{ animationFillMode: "forwards" }}
           >
             <Badge
               variant="secondary"
@@ -547,16 +551,14 @@ export default function Home({ h1Text }) {
               MyCareerSarthi supports you through this entire journey so you are
               not guessing, applying blindly, or feeling stuck.
             </p>
-          </motion.div>
+          </div>
 
           <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6 }}
+            <div
+              className="opacity-0 animate-fade-in"
+              style={{ animationFillMode: "forwards" }}
             >
-              <Card className="relative p-10 md:p-12 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent backdrop-blur-sm border-2 border-primary/40 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden group">
+              <Card className="relative p-10 md:p-12 bg-linear-to-br from-primary/10 via-primary/5 to-transparent backdrop-blur-sm border-2 border-primary/40 shadow-2xl hover:shadow-3xl transition-all duration-500 overflow-hidden group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
 
                 <div className="relative flex flex-col md:flex-row gap-8 items-start">
@@ -588,20 +590,17 @@ export default function Home({ h1Text }) {
                   </div>
                 </div>
               </Card>
-            </motion.div>
+            </div>
 
             <div className="grid md:grid-cols-3 gap-6">
               {whyChoose.slice(1).map((item, idx) => (
-                <motion.div
+                <div
                   key={item.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.6, delay: (idx + 1) * 0.15 }}
-                  className="h-full"
+                  className="h-full opacity-0 animate-fade-in"
+                  style={{ animationDelay: `${(idx + 1) * 150}ms`, animationFillMode: "forwards" }}
                 >
                   <Card className="relative h-full p-8 bg-card/50 backdrop-blur-sm border-2 border-border hover:border-primary/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     <div className="relative flex flex-col h-full">
                       <div className="flex items-start justify-between mb-6">
@@ -635,7 +634,7 @@ export default function Home({ h1Text }) {
                       </Link>
                     </div>
                   </Card>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -650,12 +649,7 @@ export default function Home({ h1Text }) {
 
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="grid items-center gap-12 lg:grid-cols-2">
-            <motion.div
-              initial={{ opacity: 0, x: -24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6 }}
-            >
+            <div className="animate-fade-in">
               <p className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
                 Where Our Professionals Are Placed Today
               </p>
@@ -671,19 +665,13 @@ export default function Home({ h1Text }) {
                 through structured mentoring, job search strategy, and interview
                 preparation.
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="relative"
-            >
+            <div className="relative animate-fade-in">
               {/* Static subtle background */}
               <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full" />
               <FloatingLogos />
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -693,13 +681,7 @@ export default function Home({ h1Text }) {
         <div className="absolute inset-0 bg-linear-to-b from-background to-muted/10" />
         <div className="relative container mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-[1.1fr,0.9fr]">
-            <motion.div
-              className="space-y-6"
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6 }}
-            >
+            <div className="space-y-6 animate-fade-in">
               <div className="max-w-7xl mx-auto px-4">
                 <Badge
                   variant="secondary"
@@ -719,7 +701,7 @@ export default function Home({ h1Text }) {
                 </p>
               </div>
               <StepsRoadmap />
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -728,13 +710,7 @@ export default function Home({ h1Text }) {
       <section className="relative py-10 bg-muted/30 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
         <div className="relative container mx-auto px-4 max-w-7xl z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-12"
-          >
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-12 animate-fade-in">
             <div>
               <Badge
                 variant="secondary"
@@ -747,17 +723,13 @@ export default function Home({ h1Text }) {
                 Real Results from Real Professionals
               </h2>
             </div>
-          </motion.div>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-3">
             {successStories.map((story, idx) => (
-              <motion.div
+              <div
                 key={story.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                whileHover={{ y: -8 }}
+                className="hover:translate-y-[-8px] transition-transform duration-300"
               >
                 <Card className="p-8 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300 h-full">
                   <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -765,7 +737,7 @@ export default function Home({ h1Text }) {
                   </p>
                   <p className="text-sm font-semibold">{story.name}</p>
                 </Card>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -775,13 +747,7 @@ export default function Home({ h1Text }) {
       <section className="relative py-10 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-muted/10 to-background" />
         <div className="relative container mx-auto px-4 max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
+          <div className="text-center mb-12 animate-fade-in">
             <Badge
               variant="secondary"
               className="px-4 py-2 text-sm font-medium mb-6"
@@ -797,14 +763,9 @@ export default function Home({ h1Text }) {
               Everything you need to know before getting started with
               MyCareerSarthi.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5 }}
-          >
+          <div className="animate-fade-in">
             <Accordion type="single" collapsible className="w-full space-y-4">
               {faqs.map((item, idx) => (
                 <AccordionItem
@@ -821,19 +782,13 @@ export default function Home({ h1Text }) {
                 </AccordionItem>
               ))}
             </Accordion>
-          </motion.div>
+          </div>
         </div>
       </section>
       <section className="relative py-10 bg-muted/30 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-b from-background via-muted/20 to-background" />
         <div className="relative container mx-auto px-4 max-w-7xl z-10">
-          <motion.div
-            className="relative my-16"
-            initial={{ opacity: 0, scale: 0.96, y: 30 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7 }}
-          >
+          <div className="relative my-16 animate-fade-in">
             <div className="rounded-3xl border-2 border-primary/30 bg-gradient-to-tr from-primary/5 via-card to-background shadow-2xl overflow-hidden flex flex-col md:flex-row items-stretch gap-0 relative">
               {/* Left: Visual + Motivation */}
               <div className="md:w-1/2 flex flex-col items-center justify-center relative p-8 bg-gradient-to-tr from-primary/10 via-card to-background">
@@ -923,7 +878,7 @@ export default function Home({ h1Text }) {
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

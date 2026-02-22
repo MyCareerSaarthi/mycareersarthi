@@ -9,7 +9,7 @@ const AboutUsPage = () => {
     {
       name: "Saurabh Sharma",
       role: "Founder & CEO",
-      image: "/saurabh-sharma.jpeg",
+      image: "/saurabh-sharma.webp",
       description:
         "Saurabh leads MyCareerSarthi with a vision to transform how professionals approach job search in India. With deep expertise in career strategy and hiring dynamics, he ensures every service is grounded in real-world outcomes.",
     },
@@ -24,7 +24,7 @@ const AboutUsPage = () => {
     {
       name: "Rohan Phulkar",
       role: "Technical Lead",
-      image: "/rohan-phulkar.png",
+      image: "/rohan-phulkar.webp",
       description:
         "Rohan drives the technology behind MyCareerSarthi. From AI-powered tools to seamless user experiences, he ensures the platform delivers practical, reliable solutions for job seekers.",
     },

@@ -51,7 +51,7 @@ const organizationSchema = {
   "@type": "Organization",
   name: "MyCareerSarthi",
   url: "https://www.mycareersarthi.com",
-  logo: "https://www.mycareersarthi.com/logo.png",
+  logo: "https://www.mycareersarthi.com/logo.webp",
   contactPoint: {
     "@type": "ContactPoint",
     telephone: "", // Add if available
@@ -84,9 +84,18 @@ export default function RootLayout({ children }) {
     >
       <html lang="en" suppressHydrationWarning>
         <head>
+          <link rel="preconnect" href="https://res.cloudinary.com" />
+          <link rel="preconnect" href="https://clerk.mycareersarthi.com" />
+          <link rel="preconnect" href="https://checkout.razorpay.com" />
+          <link
+            rel="preload"
+            as="image"
+            href="https://res.cloudinary.com/rohanphulkar/video/upload/so_0/v1768918507/profile-scoring.jpg"
+            fetchPriority="high"
+          />
           <Script
             src="https://checkout.razorpay.com/v1/checkout.js"
-            strategy="afterInteractive"
+            strategy="lazyOnload"
           />
           <JsonLd data={organizationSchema} />
           <JsonLd data={websiteSchema} />

@@ -28,7 +28,7 @@ const Projects = ({ data }) => {
   };
 
   const projectsData = data.section_scores?.find(
-    (section) => section.name === "Projects"
+    (section) => section.name === "Projects",
   );
 
   if (!projectsData) return <div>No projects data available</div>;
@@ -49,7 +49,7 @@ const Projects = ({ data }) => {
         <div className="relative">
           <div className="relative flex items-center justify-center">
             <div className="text-4xl md:text-6xl font-bold tracking-wider">
-              <span className="bg-gradient-to-r from-primary to-accent-foreground bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-primary to-accent-foreground bg-clip-text text-transparent">
                 {projectsData.score}
               </span>
               <span className="text-lg md:text-2xl text-muted-foreground align-top">

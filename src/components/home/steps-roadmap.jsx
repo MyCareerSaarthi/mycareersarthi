@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 
 const steps = [
   {
@@ -139,12 +138,13 @@ const StepsRoadmap = () => {
           <div className="absolute inset-0 w-full h-full">
             <div className="grid grid-cols-6 h-full w-full">
               {steps.map((step, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.15, duration: 0.5 }}
-                  className="relative flex flex-col justify-center items-center h-full"
+                  className="relative flex flex-col justify-center items-center h-full opacity-0 animate-fade-in"
+                  style={{
+                    animationDelay: `${index * 150}ms`,
+                    animationFillMode: "forwards",
+                  }}
                 >
                   {/* Circle */}
                   <div className="z-10 bg-gray-50 rounded-full w-16 h-16 lg:w-20 lg:h-20 flex flex-col items-center justify-center shadow-lg border-4 border-white relative group transition-transform hover:scale-105 duration-300">
@@ -180,7 +180,7 @@ const StepsRoadmap = () => {
                       {step.description}
                     </p> */}
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -188,14 +188,15 @@ const StepsRoadmap = () => {
 
         {/* Mobile View (Vertical) */}
         <div className="lg:hidden flex flex-col space-y-12 relative py-8">
-          <div className="absolute left-8 top-0 bottom-0 w-2 rounded-full bg-gradient-to-b from-[#F6E6D9] via-[#E5989B] to-[#D66F58] opacity-50"></div>
+          <div className="absolute left-8 top-0 bottom-0 w-2 rounded-full bg-linear-to-b from-[#F6E6D9] via-[#E5989B] to-[#D66F58] opacity-50"></div>
           {steps.map((step, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.2 }}
-              className="relative flex items-start pl-20 pr-4"
+              className="relative flex items-start pl-20 pr-4 opacity-0 animate-fade-in"
+              style={{
+                animationDelay: `${index * 200}ms`,
+                animationFillMode: "forwards",
+              }}
             >
               <div className="absolute left-0 top-0 w-16 h-16 bg-white rounded-full border-4 border-[#FBC4AB] flex flex-col items-center justify-center z-10 shadow-md">
                 <span className="text-xs text-gray-500 font-bold">Step</span>
@@ -209,7 +210,7 @@ const StepsRoadmap = () => {
                 </h3>
                 <p className="text-gray-600 text-sm">{step.description}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

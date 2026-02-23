@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useAnalysisSession } from "@/hooks/useAnalysisSession";
 import { motion } from "framer-motion";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Input } from "@/components/ui/input";
@@ -61,6 +62,8 @@ const ResumeAnalyze = () => {
   const { user } = useUser();
   const { getToken, isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
+  const { activeSession, saveSession, clearSession } =
+    useAnalysisSession("resume");
 
   // Tab definitions
   const tabs = [
@@ -95,6 +98,79 @@ const ResumeAnalyze = () => {
       window.location.href = "/login?redirect=/resume/analyze";
     }
   }, [isLoaded, isSignedIn]);
+
+  // Resume an active session on page load / refresh
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !activeSession) return;
+
+    const resume = async () => {
+      setIsAnalyzing(true);
+      setProcessData({
+        title: "Resuming...",
+        subtitle: "Reconnecting to your in-progress analysis...",
+        currentStep: 2,
+        totalSteps: 5,
+        percentage: 15,
+      });
+
+      // Start polling using the same logic as handlePayment's verify flow
+      const token = await getToken();
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const analysisRequestId = activeSession.analysisRequestId;
+      let pollCount = 0;
+      const MAX_POLLS = 450; // 15 min at 2s intervals
+
+      const poll = async () => {
+        if (pollCount >= MAX_POLLS) {
+          clearSession();
+          setIsAnalyzing(false);
+          setErrors({
+            general:
+              "Analysis timed out. Please check your dashboard or try again.",
+          });
+          return;
+        }
+        pollCount++;
+        try {
+          // const currentToken = await getToken();
+          const resp = await fetch(
+            `${baseUrl}/api/rag/status/${analysisRequestId}`,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const data = await resp.json();
+
+          if (data.status === "completed" && data.result_report_id) {
+            clearSession();
+            window.location.href = `/resume/report?id=${data.result_report_id}`;
+            return;
+          }
+          if (data.status === "failed") {
+            clearSession();
+            setIsAnalyzing(false);
+            setErrors({
+              general: data.message || "Analysis failed. Please try again.",
+            });
+            return;
+          }
+          // Still running — poll again
+          setTimeout(poll, 2000);
+        } catch (err) {
+          console.warn("[Resume session resume] poll error:", err);
+          setTimeout(poll, 4000); // back off on error
+        }
+      };
+
+      poll();
+    };
+
+    resume();
+  }, [isLoaded, isSignedIn, activeSession]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Get pricing - must be before early return
   useEffect(() => {
@@ -135,7 +211,7 @@ const ResumeAnalyze = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (response.data.success) {
@@ -281,11 +357,13 @@ const ResumeAnalyze = () => {
         formData,
         setIsSubmitting,
         (errorMsg) => {
+          clearSession();
           setIsAnalyzing(false);
           setErrors({ general: errorMsg });
           setActiveTab("payment");
         },
-        getToken
+        getToken,
+        (analysisRequestId) => saveSession(analysisRequestId),
       );
     } catch (error) {
       console.error("Form submission failed:", error);
@@ -405,8 +483,8 @@ const ResumeAnalyze = () => {
                   isDragging
                     ? "border-primary bg-primary/10"
                     : errors.resume
-                    ? "border-destructive bg-destructive/5"
-                    : "border-border hover:border-primary/50 hover:bg-primary/5"
+                      ? "border-destructive bg-destructive/5"
+                      : "border-border hover:border-primary/50 hover:bg-primary/5"
                 }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -516,7 +594,9 @@ const ResumeAnalyze = () => {
                 </Button>
                 <Button
                   type="button"
-                  variant={inputMode === "jobDescription" ? "default" : "outline"}
+                  variant={
+                    inputMode === "jobDescription" ? "default" : "outline"
+                  }
                   onClick={() => setInputMode("jobDescription")}
                   className={`rounded-xl transition-all duration-300 ${
                     inputMode === "jobDescription"
@@ -681,10 +761,18 @@ const ResumeAnalyze = () => {
     );
   };
 
+  const handleCancelAnalysis = () => {
+    clearSession();
+    setIsAnalyzing(false);
+  };
+
   return (
     <div className="min-h-screen bg-background relative">
       {isAnalyzing && (
-        <SimpleLoader message="Analyzing your resume... This may take a while." />
+        <SimpleLoader
+          message="Analyzing your resume... This may take a while."
+          onCancel={handleCancelAnalysis}
+        />
       )}
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-6 pb-4">

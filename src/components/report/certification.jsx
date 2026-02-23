@@ -30,7 +30,7 @@ const Certification = ({ data }) => {
   const certifications = data.profile?.certifications;
 
   const certificationData = data.section_scores?.find(
-    (section) => section.name === "Certifications"
+    (section) => section.name === "Certifications",
   );
 
   if (!certificationData) return <div>No certification data available</div>;
@@ -49,7 +49,7 @@ const Certification = ({ data }) => {
         <div className="relative">
           <div className="relative flex items-center justify-center">
             <div className="text-4xl md:text-6xl font-bold tracking-wider">
-              <span className="bg-gradient-to-r from-primary to-accent-foreground bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-primary to-accent-foreground bg-clip-text text-transparent">
                 {certificationData.score}
               </span>
               <span className="text-lg md:text-2xl text-muted-foreground align-top">
@@ -87,9 +87,9 @@ const Certification = ({ data }) => {
               return (
                 <li
                   key={index}
-                  className="flex items-start gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors bg-background/30"
+                  className="flex items-start gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors bg-background/30 group"
                 >
-                  <span className="text-green-600 dark:text-green-400 mt-1 flex-shrink-0">
+                  <span className="text-green-600 dark:text-green-400 mt-1 shrink-0">
                     <svg
                       className="w-5 h-5"
                       fill="currentColor"
@@ -115,7 +115,7 @@ const Certification = ({ data }) => {
                     )}
                     <div className="flex flex-wrap gap-2">
                       {certification.issue_date && (
-                        <div className="text-muted-foreground text-xs bg-primary/5 px-2 py-0.5 rounded inline-block flex items-center gap-1">
+                        <div className="text-muted-foreground text-xs bg-primary/5 px-2 py-0.5 rounded flex items-center gap-1">
                           <svg
                             className="w-3 h-3"
                             fill="none"
@@ -133,7 +133,7 @@ const Certification = ({ data }) => {
                         </div>
                       )}
                       {certification.expiration_date && (
-                        <div className="text-muted-foreground text-xs bg-orange-500/10 px-2 py-0.5 rounded inline-block flex items-center gap-1">
+                        <div className="text-muted-foreground text-xs bg-orange-500/10 px-2 py-0.5 rounded flex items-center gap-1">
                           <svg
                             className="w-3 h-3"
                             fill="none"
@@ -158,7 +158,6 @@ const Certification = ({ data }) => {
                     </div>
                     {certification.credential_url && (
                       <a
-                        href={certification.credential_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-primary text-xs hover:underline flex items-center gap-1 mt-2"

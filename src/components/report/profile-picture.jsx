@@ -19,7 +19,7 @@ const ProfilePicture = ({ data }) => {
   const [imageError, setImageError] = useState(false);
 
   const profileData = data?.section_scores?.find(
-    (section) => section.name === "profile-picture"
+    (section) => section.name === "Profile Picture"
   );
 
   const profilePicUrl = data?.profile?.profile_pic;

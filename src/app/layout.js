@@ -10,6 +10,7 @@ import SyncAuth from "@/components/auth/AuthSync";
 import { Suspense } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark, shadcn } from "@clerk/themes";
+import { JsonLd } from "@/components/seo/json-ld";
 const poppins = Poppins({
   variable: "--font-poppins ",
   display: "swap",
@@ -18,8 +19,57 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "MyCareerSarthi",
-  description: "Career mentoring platform",
+  metadataBase: new URL("https://www.mycareersarthi.com"),
+  title: {
+    default: "MyCareerSarthi - Career Mentoring & AI Profile Scoring",
+    template: "%s | MyCareerSarthi",
+  },
+  description:
+    "Transform your career with MyCareerSarthi. AI-powered profile scoring, career mentoring, and interview preparation for professionals in India.",
+  keywords: [
+    "career mentoring",
+    "AI profile scoring",
+    "resume optimization",
+    "interview preparation",
+    "LinkedIn optimization",
+    "job search strategy",
+  ],
+  authors: [{ name: "Saurabh Sharma" }],
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://www.mycareersarthi.com/",
+    siteName: "MyCareerSarthi",
+    title: "MyCareerSarthi - Career Mentoring & AI Profile Scoring",
+    description:
+      "AI-powered career growth platform helping professionals navigate the job market with confidence.",
+  },
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "MyCareerSarthi",
+  url: "https://www.mycareersarthi.com",
+  logo: "https://www.mycareersarthi.com/logo.webp",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "", // Add if available
+    contactType: "customer service",
+  },
+  sameAs: ["https://www.linkedin.com/company/mycareersarthi"],
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "MyCareerSarthi",
+  url: "https://mycareersarthi.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://www.mycareersarthi.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
 };
 
 const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -34,10 +84,21 @@ export default function RootLayout({ children }) {
     >
       <html lang="en" suppressHydrationWarning>
         <head>
+          <link rel="preconnect" href="https://res.cloudinary.com" />
+          <link rel="preconnect" href="https://clerk.mycareersarthi.com" />
+          <link rel="preconnect" href="https://checkout.razorpay.com" />
+          <link
+            rel="preload"
+            as="image"
+            href="https://res.cloudinary.com/rohanphulkar/video/upload/so_0/v1768918507/profile-scoring.jpg"
+            fetchPriority="high"
+          />
           <Script
             src="https://checkout.razorpay.com/v1/checkout.js"
-            strategy="afterInteractive"
+            strategy="lazyOnload"
           />
+          <JsonLd data={organizationSchema} />
+          <JsonLd data={websiteSchema} />
         </head>
         <body className={`${poppins.className} antialiased`}>
           <SignedIn>

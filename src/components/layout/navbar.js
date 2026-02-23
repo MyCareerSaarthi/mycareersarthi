@@ -8,38 +8,32 @@ import { HardLink } from "@/components/ui/hard-link";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { UserDropdown } from "@/components/user/user-dropdown";
 import { ModeToggle } from "../theme-toggle";
-import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const { scrollY } = useScroll();
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setIsScrolled(latest > 50);
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
+    <nav
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-background/80 backdrop-blur-xl shadow-lg border-b border-border/50"
-          : "bg-background/60 backdrop-blur-md"
+          ? "bg-background/80 backdrop-blur-xl shadow-lg border-b border-border/50 translate-y-0"
+          : "bg-background/60 backdrop-blur-md translate-y-0"
       }`}
     >
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="h-16 md:h-20 flex items-center justify-between">
           {/* Logo */}
-          <motion.div
-            whileHover={{ y: -2 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center gap-3 group"
-          >
+          <div className="flex items-center gap-3 group transition-transform duration-200">
             <HardLink href="/" className="flex items-center gap-3">
               <div className="">
                 <Image
@@ -51,7 +45,7 @@ export const Navbar = () => {
                 />
               </div>
             </HardLink>
-          </motion.div>
+          </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:block">
@@ -72,7 +66,7 @@ export const Navbar = () => {
                 </Button>
               </HardLink>
               <HardLink href={"/signup"}>
-                <Button className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl">
+                <Button className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl">
                   Get Started
                 </Button>
               </HardLink>
@@ -99,15 +93,12 @@ export const Navbar = () => {
       </div>
 
       {/* Bottom border gradient */}
-      {isScrolled && (
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: 0.3 }}
-          className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
-        />
-      )}
-    </motion.nav>
+      <div
+        className={`absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/50 to-transparent transition-transform duration-300 origin-center ${
+          isScrolled ? "scale-x-100" : "scale-x-0"
+        }`}
+      />
+    </nav>
   );
 };
 

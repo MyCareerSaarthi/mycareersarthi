@@ -1,16 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard/
+Disallow: /profile/
+Disallow: /reports/
+Disallow: /payment/
 
-# Disallow private/protected routes
-Disallow: /dashboard
-Disallow: /profile
-Disallow: /reports
-Disallow: /payment
-Disallow: /linkedin/analyze
-Disallow: /resume/analyze
-Disallow: /compare
-Disallow: /api/
-
-# Sitemap location
-Sitemap: https://mycareersarthi.com/sitemap.xml
-
+Sitemap: https://www.mycareersarthi.com/sitemap.xml

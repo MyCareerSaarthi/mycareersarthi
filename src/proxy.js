@@ -32,6 +32,8 @@ const isPublicRoute = createRouteMatcher([
   "/404",
   "/not-found",
   "/loading",
+  "/sitemap.xml",
+  "/robots.txt",
 ]);
 
 // Static assets matcher – bypass auth always

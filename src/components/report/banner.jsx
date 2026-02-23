@@ -19,7 +19,7 @@ const Banner = ({ data }) => {
   const [imageError, setImageError] = useState(false);
 
   const bannerData = data?.section_scores?.find(
-    (section) => section.name === "banner"
+    (section) => section.name === "Banner"
   );
 
   const bannerUrl = data?.profile?.banner;

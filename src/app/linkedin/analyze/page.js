@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useAnalysisSession } from "@/hooks/useAnalysisSession";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
@@ -49,6 +50,9 @@ const LinkedinAnalyze = () => {
   const { user } = useUser();
   const { getToken, isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
+  const { activeSession, saveSession, clearSession } =
+    useAnalysisSession("linkedin");
+  const eventSourceRef = useRef(null);
 
   // Tab definitions - Only Profile and Requirements for freemium model
   const tabs = [
@@ -56,12 +60,191 @@ const LinkedinAnalyze = () => {
     { id: "requirements", label: "Job Requirements", icon: Briefcase },
   ];
 
+  // ── SSE status config (shared between submit and session-resume) ──
+  const statusConfig = {
+    pending: {
+      title: "Preparing",
+      subtitle: "Your request is being prepared...",
+      currentStep: 1,
+      percentage: 10,
+    },
+    queued: {
+      title: "In Queue",
+      subtitle: "Your request is in the queue...",
+      currentStep: 2,
+      percentage: 20,
+    },
+    scraping: {
+      title: "Fetching Profile",
+      subtitle: "Fetching your LinkedIn profile data...",
+      currentStep: 3,
+      percentage: 40,
+    },
+    analyzing: {
+      title: "AI Analysis",
+      subtitle: "Running AI analysis on your profile...",
+      currentStep: 4,
+      percentage: 60,
+    },
+    generating_report: {
+      title: "Generating Report",
+      subtitle: "Creating your detailed report...",
+      currentStep: 5,
+      percentage: 80,
+    },
+    completed: {
+      title: "Complete!",
+      subtitle: "Your analysis is ready!",
+      currentStep: 6,
+      percentage: 100,
+    },
+  };
+
+  // ── connectSSE: opens an EventSource with auto-reconnect ──
+  const connectSSE = useCallback(
+    (analysisRequestId, token) => {
+      // Close any previous connection
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+
+      const baseUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      let retryCount = 0;
+      const MAX_RETRIES = 5;
+      let hasCompleted = false;
+
+      const open = async () => {
+        // Get a fresh token for each reconnect attempt
+        const currentToken = retryCount === 0 ? token : await getToken();
+        if (!currentToken) {
+          console.warn("[SSE] No token available, cannot reconnect.");
+          setIsAnalyzing(false);
+          clearSession();
+          setErrors({
+            general:
+              "Authentication expired. Please refresh the page and try again.",
+          });
+          return;
+        }
+
+        const es = new EventSource(
+          `${baseUrl}/api/jobs/${analysisRequestId}/stream?token=${encodeURIComponent(currentToken)}`,
+        );
+        eventSourceRef.current = es;
+
+        es.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            // Reset retries on every successful message
+            retryCount = 0;
+
+            const config =
+              data.status === "failed"
+                ? {
+                    title: "Failed",
+                    subtitle:
+                      data.message || "Analysis failed. Please try again.",
+                    currentStep: 6,
+                    percentage: 0,
+                  }
+                : statusConfig[data.status] || statusConfig.pending;
+
+            setProcessData({ ...config, totalSteps: 6 });
+
+            if (data.status === "completed" && data.result_report_id) {
+              hasCompleted = true;
+              es.close();
+              clearSession();
+              setTimeout(() => {
+                router.push(`/linkedin/report?id=${data.result_report_id}`);
+              }, 1000);
+            } else if (data.status === "failed") {
+              hasCompleted = true;
+              es.close();
+              clearSession();
+              setIsAnalyzing(false);
+              setErrors({
+                general: data.message || "Analysis failed. Please try again.",
+              });
+            }
+          } catch (parseError) {
+            console.error("[SSE] Parse error:", parseError);
+          }
+        };
+
+        es.onerror = () => {
+          es.close();
+          eventSourceRef.current = null;
+
+          // Wait briefly — the server may have just sent the last event
+          setTimeout(() => {
+            if (hasCompleted) return;
+
+            retryCount++;
+            if (retryCount <= MAX_RETRIES) {
+              const delay = Math.min(2000 * Math.pow(2, retryCount - 1), 30000);
+              console.warn(
+                `[SSE] Connection lost, reconnecting in ${delay / 1000}s (attempt ${retryCount}/${MAX_RETRIES})`,
+              );
+              setTimeout(() => {
+                if (!hasCompleted) open();
+              }, delay);
+            } else {
+              console.error("[SSE] Max reconnect attempts reached, giving up.");
+              hasCompleted = true;
+              clearSession();
+              setIsAnalyzing(false);
+              setErrors({
+                general:
+                  "Lost connection to the server. Please check your analysis status in the dashboard.",
+              });
+            }
+          }, 1000);
+        };
+      };
+
+      open();
+    },
+    [getToken, router, clearSession],
+  );
+
   // Check authentication - must be before early return
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
       window.location.href = "/login?redirect=/linkedin/analyze";
     }
   }, [isLoaded, isSignedIn]);
+
+  // ── Resume an active session on page load / refresh ──
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !activeSession) return;
+
+    const resume = async () => {
+      setIsAnalyzing(true);
+      setProcessData({
+        title: "Resuming...",
+        subtitle: "Reconnecting to your in-progress analysis...",
+        currentStep: 2,
+        totalSteps: 6,
+        percentage: 15,
+      });
+
+      const token = await getToken();
+      connectSSE(activeSession.analysisRequestId, token);
+    };
+
+    resume();
+
+    // Cleanup on unmount
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+        eventSourceRef.current = null;
+      }
+    };
+  }, [isLoaded, isSignedIn, activeSession]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Show loading state while checking auth - AFTER all hooks
   if (!isLoaded || !isSignedIn) {
@@ -130,11 +313,11 @@ const LinkedinAnalyze = () => {
     setIsSubmitting(true);
     setIsAnalyzing(true);
     setProcessData({
-      title: "Starting Analysis",
-      subtitle: "Initializing LinkedIn profile analysis",
+      title: "Queuing Analysis",
+      subtitle: "Submitting your LinkedIn profile for analysis",
       currentStep: 1,
-      totalSteps: 12,
-      percentage: 0,
+      totalSteps: 6,
+      percentage: 5,
     });
 
     try {
@@ -163,7 +346,7 @@ const LinkedinAnalyze = () => {
         formData.append("jobDescription", jobDescription);
       }
 
-      // Call analysis API directly (free analysis for freemium model)
+      // Submit analysis request (returns immediately with analysisRequestId)
       const response = await api.post("/api/linkedin/analyze", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -171,13 +354,24 @@ const LinkedinAnalyze = () => {
         },
       });
 
-      if (response.data.success) {
-        const reportId = response.data.reportId;
-        // Redirect to report page
-        router.push(`/linkedin/report?id=${reportId}`);
-      } else {
-        throw new Error(response.data.message || "Analysis failed");
+      if (!response.data.success || !response.data.analysisRequestId) {
+        throw new Error(response.data.message || "Failed to submit analysis");
       }
+
+      const analysisRequestId = response.data.analysisRequestId;
+      // Persist session so a refresh can resume
+      saveSession(analysisRequestId);
+
+      setProcessData({
+        title: "In Queue",
+        subtitle: "Your request has been queued for processing...",
+        currentStep: 2,
+        totalSteps: 6,
+        percentage: 15,
+      });
+
+      // Open SSE connection with auto-reconnect
+      connectSSE(analysisRequestId, token);
     } catch (error) {
       console.error("Form submission failed:", error);
       setIsAnalyzing(false);
@@ -412,7 +606,7 @@ const LinkedinAnalyze = () => {
                   onClick={() => setInputMode("role")}
                   className={`rounded-xl transition-all duration-300 ${
                     inputMode === "role"
-                      ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
                       : ""
                   }`}
                 >
@@ -426,7 +620,7 @@ const LinkedinAnalyze = () => {
                   onClick={() => setInputMode("jobDescription")}
                   className={`rounded-xl transition-all duration-300 ${
                     inputMode === "jobDescription"
-                      ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
                       : ""
                   }`}
                 >
@@ -466,22 +660,29 @@ const LinkedinAnalyze = () => {
     );
   };
 
+  const handleCancelAnalysis = () => {
+    if (eventSourceRef.current) {
+      eventSourceRef.current.close();
+      eventSourceRef.current = null;
+    }
+    clearSession();
+    setIsAnalyzing(false);
+  };
+
   return (
     <div className="min-h-screen bg-background relative">
       {isAnalyzing && (
-        <SimpleLoader message="Analyzing your LinkedIn profile... This may take a while." />
+        <SimpleLoader
+          message="Analyzing your LinkedIn profile... This may take a while."
+          onCancel={handleCancelAnalysis}
+        />
       )}
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-6 pb-4">
         <div className="absolute inset-0 bg-linear-to-br from-background via-muted/20 to-background" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
         <div className="relative container mx-auto px-4 max-w-5xl z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center space-y-2"
-          >
+          <div className="text-center space-y-2 animate-fade-in">
             <Badge
               variant="secondary"
               className="px-3 py-1 text-xs font-medium mb-2"
@@ -496,22 +697,18 @@ const LinkedinAnalyze = () => {
               Analyze your LinkedIn profile for FREE! Get AI-powered insights
               with limited access, or upgrade for full analysis.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Main Content */}
       <div className="relative container mx-auto px-4 max-w-5xl pb-8">
         {errors.general && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm"
-          >
+          <div className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm animate-fade-in">
             <p className="text-sm text-destructive font-medium">
               {errors.general}
             </p>
-          </motion.div>
+          </div>
         )}
 
         <Card className="p-4 md:p-5 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl">
@@ -520,7 +717,7 @@ const LinkedinAnalyze = () => {
             onValueChange={handleTabChange}
             className="w-full"
           >
-            <TabsList className="grid w-full grid-cols-3 mb-4 bg-muted/50 rounded-xl p-1">
+            <TabsList className="grid w-full grid-cols-2 mb-4 bg-muted/50 rounded-xl p-1">
               {tabs.map((tab) => {
                 const IconComponent = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -543,13 +740,7 @@ const LinkedinAnalyze = () => {
 
             {tabs.map((tab) => (
               <TabsContent key={tab.id} value={tab.id} className="mt-0">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {renderTabContent()}
-                </motion.div>
+                <div className="animate-fade-in">{renderTabContent()}</div>
               </TabsContent>
             ))}
           </Tabs>
@@ -572,7 +763,7 @@ const LinkedinAnalyze = () => {
               <Button
                 onClick={handleStepSubmit}
                 disabled={isSubmitting || !canSubmit()}
-                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+                className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
               >
                 {isSubmitting ? "Analyzing..." : "Analyze for Free"}
                 <ArrowRight className="w-4 h-4 ml-2" />

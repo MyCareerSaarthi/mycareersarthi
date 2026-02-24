@@ -436,7 +436,17 @@ const handleVerifyPayment = async (
           }
 
           // Check for invalid status values
-          const validStatuses = ["pending", "running", "completed", "failed"];
+          // Must include all worker intermediate states: queued, scraping, analyzing, generating_report
+          const validStatuses = [
+            "pending",
+            "queued",
+            "running",
+            "scraping",
+            "analyzing",
+            "generating_report",
+            "completed",
+            "failed",
+          ];
           const responseStatus = statusResp?.data?.status;
 
           if (!validStatuses.includes(responseStatus)) {
@@ -480,8 +490,14 @@ const handleVerifyPayment = async (
             );
             return;
           } else if (
-            responseStatus === "running" ||
-            responseStatus === "pending"
+            [
+              "running",
+              "pending",
+              "queued",
+              "scraping",
+              "analyzing",
+              "generating_report",
+            ].includes(responseStatus)
           ) {
             // Still processing (running or pending)
             // Check if we've been polling for too long (more than 15 minutes)
@@ -845,7 +861,17 @@ const handleVerifyPayment = async (
           }
 
           // Check for invalid status values
-          const validStatuses = ["pending", "running", "completed", "failed"];
+          // Must include all worker intermediate states: queued, scraping, analyzing, generating_report
+          const validStatuses = [
+            "pending",
+            "queued",
+            "running",
+            "scraping",
+            "analyzing",
+            "generating_report",
+            "completed",
+            "failed",
+          ];
           const responseStatus = statusResp?.data?.status;
 
           if (!validStatuses.includes(responseStatus)) {
@@ -894,8 +920,14 @@ const handleVerifyPayment = async (
             );
             return;
           } else if (
-            responseStatus === "running" ||
-            responseStatus === "pending"
+            [
+              "running",
+              "pending",
+              "queued",
+              "scraping",
+              "analyzing",
+              "generating_report",
+            ].includes(responseStatus)
           ) {
             // Still processing (running or pending)
             // Check if we've been polling for too long (more than 15 minutes)

@@ -2,9 +2,9 @@ import Content from "./content";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata = {
-  title: "Role Alignment",
+  title: "LinkedIn vs Resume Alignment",
   description:
-    "Ensure your profile and experience align with your target roles. We help you identify gaps and adjust your positioning for higher hiring probability.",
+    "Compare your LinkedIn profile and resume to identify gaps, contradictions, and alignment opportunities. Get AI-powered insights and actionable recommendations.",
   alternates: {
     canonical: "https://www.mycareersarthi.com/services/alignment",
   },
@@ -29,7 +29,7 @@ const breadcrumbSchema = {
     {
       "@type": "ListItem",
       position: 3,
-      name: "Role Alignment",
+      name: "LinkedIn vs Resume Alignment",
       item: "https://mycareersarthi.com/services/alignment",
     },
   ],

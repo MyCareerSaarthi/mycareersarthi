@@ -14,21 +14,21 @@ const Overview = ({ data, onNavigate }) => {
   // Determine color based on score - improved for light mode
   const getScoreColor = (score) => {
     if (score >= 8) return "text-green-600 dark:text-green-400";
-    if (score >= 4) return "text-yellow-600 dark:text-yellow-400";
+    if (score > 3.5) return "text-yellow-600 dark:text-yellow-400";
     return "text-red-600 dark:text-red-400";
   };
 
   // Get background color based on score - improved for light mode
   const getScoreBgColor = (score) => {
     if (score >= 8) return "bg-green-50 dark:bg-green-900/30";
-    if (score >= 4) return "bg-yellow-50 dark:bg-yellow-900/30";
+    if (score > 3.5) return "bg-yellow-50 dark:bg-yellow-900/30";
     return "bg-red-50 dark:bg-red-900/30";
   };
 
   // Get section card colors based on score
   const getSectionCardColor = (score) => {
     if (score >= 8) return "text-green-700 dark:text-green-400";
-    if (score >= 4) return "text-yellow-700 dark:text-yellow-400";
+    if (score > 3.5) return "text-yellow-700 dark:text-yellow-400";
     return "text-red-700 dark:text-red-400";
   };
 
@@ -61,9 +61,9 @@ const Overview = ({ data, onNavigate }) => {
 
   // Get emoji based on score
   const getScoreEmoji = (score) => {
-    if (score >= 7) return "🏆"; // excellent
+    if (score >= 8) return "🏆"; // excellent
     if (score >= 6) return "👍"; // good
-    if (score >= 4) return "🤔"; // needs improvement
+    if (score > 3.5) return "🤔"; // needs improvement
     return "⚠️"; // significant improvement needed (1-3)
   };
 

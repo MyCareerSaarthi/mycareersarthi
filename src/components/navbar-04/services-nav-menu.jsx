@@ -14,6 +14,7 @@ import {
   Compass,
   Search,
   MessageSquare,
+  ArrowLeftRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -69,6 +70,16 @@ const services = [
     bgColor: "bg-rose-50 dark:bg-rose-950/20",
   },
 ];
+
+const featuredService = {
+  icon: ArrowLeftRight,
+  title: "LinkedIn vs Resume Alignment",
+  description: "Detect gaps & contradictions between your profiles",
+  href: "/services/alignment",
+  color: "text-teal-500",
+  bgColor:
+    "bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/20 dark:to-cyan-950/20",
+};
 
 const ServiceItem = React.forwardRef(
   (
@@ -134,8 +145,36 @@ export const ServicesMenuItem = () => {
             ))}
           </ul>
 
+          {/* Featured Service */}
+          <div className="mt-3 pt-3 border-t">
+            <Link
+              href={featuredService.href}
+              className="group flex items-center gap-3 rounded-xl p-3 transition-all hover:bg-accent hover:text-accent-foreground"
+            >
+              <div
+                className={cn(
+                  "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
+                  featuredService.bgColor,
+                )}
+              >
+                <featuredService.icon
+                  className={cn("w-5 h-5", featuredService.color)}
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium leading-none mb-1 group-hover:text-primary transition-colors">
+                  {featuredService.title}
+                </div>
+                <p className="text-xs leading-snug text-muted-foreground line-clamp-1">
+                  {featuredService.description}
+                </p>
+              </div>
+              <ChevronRightIcon className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </Link>
+          </div>
+
           {/* Bottom CTA */}
-          <div className="mt-4 pt-4 border-t">
+          <div className="mt-2 pt-3 border-t">
             <Link
               href="/contact-us"
               className="flex items-center justify-between p-3 rounded-xl bg-linear-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-all"

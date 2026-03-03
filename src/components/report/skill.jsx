@@ -22,12 +22,13 @@ const Skill = ({ data }) => {
   }
 
   const skillData = data.section_scores?.find(
-    (section) => section.name === "Skills"
+    (section) => section.name === "Skills",
   );
 
   if (!skillData) return <div>No skills data available</div>;
 
   const skills = data.profile?.skills || [];
+  const hasProfile = !!data.profile;
 
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
@@ -54,87 +55,89 @@ const Skill = ({ data }) => {
         </div>
       </div>
 
-      {/* Profile Data */}
-      <div className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm mb-6 overflow-hidden transition-all duration-300 ease-in-out">
-        <button
-          onClick={() => setIsProfileDataExpanded(!isProfileDataExpanded)}
-          className="w-full flex items-center justify-between p-6 hover:bg-accent/50 transition-colors"
-        >
-          <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-              />
-            </svg>
-            Skills & Competencies
-          </h3>
-          <ChevronDown
-            className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${
-              isProfileDataExpanded ? "rotate-180" : ""
-            }`}
-          />
-        </button>
+      {/* Profile Skills Data - Only shown for LinkedIn reports that have profile data */}
+      {hasProfile && (
+        <div className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm mb-6 overflow-hidden transition-all duration-300 ease-in-out">
+          <button
+            onClick={() => setIsProfileDataExpanded(!isProfileDataExpanded)}
+            className="w-full flex items-center justify-between p-6 hover:bg-accent/50 transition-colors"
+          >
+            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                />
+              </svg>
+              Skills & Competencies
+            </h3>
+            <ChevronDown
+              className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${
+                isProfileDataExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </button>
 
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            isProfileDataExpanded
-              ? "max-h-[1000px] opacity-100"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <div className="px-6 pb-6 pt-0">
-            {skills && skills.length > 0 ? (
-              <div className="transition-all duration-300 ease-in-out">
-                <div
-                  className={`flex flex-wrap gap-2.5 ${
-                    !isExpanded ? "max-h-24 overflow-hidden" : ""
-                  }`}
-                >
-                  {skills.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-sm font-medium border border-primary/20 transition-all duration-200 hover:-translate-y-0.5"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-                {skills.length > 6 && (
-                  <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="mt-3 text-primary hover:text-primary/80 text-sm font-medium transition-colors flex items-center gap-1"
+          <div
+            className={`transition-all duration-300 ease-in-out overflow-hidden ${
+              isProfileDataExpanded
+                ? "max-h-[1000px] opacity-100"
+                : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="px-6 pb-6 pt-0">
+              {skills && skills.length > 0 ? (
+                <div className="transition-all duration-300 ease-in-out">
+                  <div
+                    className={`flex flex-wrap gap-2.5 ${
+                      !isExpanded ? "max-h-24 overflow-hidden" : ""
+                    }`}
                   >
-                    {isExpanded ? "Show less" : "Show more"}
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform duration-200 ${
-                        isExpanded ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="text-center py-6 border border-dashed border-destructive/30 rounded-lg bg-destructive/5">
-                <p className="text-destructive font-medium mb-1 flex items-center justify-center gap-2">
-                  <AlertTriangle className="h-4 w-4" />
-                  No skills listed
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Skills are essential for demonstrating your capabilities
-                </p>
-              </div>
-            )}
+                    {skills.map((skill, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-sm font-medium border border-primary/20 transition-all duration-200 hover:-translate-y-0.5"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                  {skills.length > 6 && (
+                    <button
+                      onClick={() => setIsExpanded(!isExpanded)}
+                      className="mt-3 text-primary hover:text-primary/80 text-sm font-medium transition-colors flex items-center gap-1"
+                    >
+                      {isExpanded ? "Show less" : "Show more"}
+                      <ChevronDown
+                        className={`h-4 w-4 transition-transform duration-200 ${
+                          isExpanded ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-6 border border-dashed border-destructive/30 rounded-lg bg-destructive/5">
+                  <p className="text-destructive font-medium mb-1 flex items-center justify-center gap-2">
+                    <AlertTriangle className="h-4 w-4" />
+                    No skills listed
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Skills are essential for demonstrating your capabilities
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Summary */}
       <div className="mb-6 w-full">

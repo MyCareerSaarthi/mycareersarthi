@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /dashboard/
-Disallow: /profile/
-Disallow: /reports/
-Disallow: /payment/
-
-Sitemap: https://www.mycareersarthi.com/sitemap.xml

@@ -35,6 +35,8 @@ const ResumeOverview = ({ data, onNavigate }) => {
   // Map section names to tab IDs for resume
   const getSectionTabId = (sectionName) => {
     const sectionMap = {
+      "Executive Summary": "executive-summary",
+      "Key Achievements": "key-achievements",
       Education: "education",
       Experience: "experience",
       Skills: "skill",
@@ -61,7 +63,8 @@ const ResumeOverview = ({ data, onNavigate }) => {
   };
 
   const order = [
-    "profile-picture",
+    "executive summary",
+    "key achievements",
     "skills",
     "experience",
     "education",
@@ -72,7 +75,7 @@ const ResumeOverview = ({ data, onNavigate }) => {
     .sort(
       (a, b) =>
         order.indexOf(a.name.toLowerCase()) -
-        order.indexOf(b.name.toLowerCase())
+        order.indexOf(b.name.toLowerCase()),
     );
 
   return (
@@ -110,17 +113,17 @@ const ResumeOverview = ({ data, onNavigate }) => {
 
               <div
                 className={`inline-block px-3 py-1.5 md:px-4 md:py-2 rounded-full text-lg md:text-xl font-semibold ${getScoreBgColor(
-                  overall_score
+                  overall_score,
                 )} ${getScoreColor(overall_score)}`}
               >
                 {getScoreEmoji(overall_score)}{" "}
                 {overall_score >= 7
                   ? "Excellent"
                   : overall_score >= 6
-                  ? "Good"
-                  : overall_score >= 4
-                  ? "Needs Improvement"
-                  : "Significant Improvement Needed"}
+                    ? "Good"
+                    : overall_score >= 4
+                      ? "Needs Improvement"
+                      : "Significant Improvement Needed"}
               </div>
             </div>
 
@@ -187,7 +190,7 @@ const ResumeOverview = ({ data, onNavigate }) => {
                 <span className="capitalize">{section.name}</span>
                 <span
                   className={`text-lg font-bold ${getSectionCardColor(
-                    section.score
+                    section.score,
                   )}`}
                 >
                   {section.score}/10
@@ -222,20 +225,22 @@ const ResumeOverview = ({ data, onNavigate }) => {
       </div>
 
       {/* Summary Section */}
-      <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center text-base md:text-lg">
-            📝 Analysis Summary
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="prose max-w-none">
-            <p className="text-foreground leading-relaxed text-xs md:text-sm">
-              {overall_summary}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {overall_summary ? (
+        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center text-base md:text-lg">
+              📝 Analysis Summary
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="prose max-w-none">
+              <p className="text-foreground leading-relaxed text-xs md:text-sm">
+                {overall_summary}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 };

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import ResumeOverview from "@/components/report/resume-overview";
+import ResumeSectionDetail from "@/components/report/resume-section-detail";
 import Skill from "@/components/report/skill";
 import Experience from "@/components/report/experience";
 import Education from "@/components/report/education";
@@ -40,6 +41,30 @@ const ResumeReport = () => {
       label: "Overview",
       component: (
         <ResumeOverview data={resumeReport} onNavigate={setActiveTab} />
+      ),
+    },
+    {
+      id: "executive-summary",
+      label: "Executive Summary",
+      component: (
+        <ResumeSectionDetail
+          data={resumeReport}
+          sectionName="Executive Summary"
+          title="Executive Summary"
+          subtitle="Overall evaluation of your resume's executive summary"
+        />
+      ),
+    },
+    {
+      id: "key-achievements",
+      label: "Key Achievements",
+      component: (
+        <ResumeSectionDetail
+          data={resumeReport}
+          sectionName="Key Achievements"
+          title="Key Achievements"
+          subtitle="Evaluation of your documented achievements and accomplishments"
+        />
       ),
     },
     {
@@ -105,7 +130,7 @@ const ResumeReport = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -114,13 +139,17 @@ const ResumeReport = () => {
         throw new Error(
           errorData.message ||
             errorData.error ||
-            `Failed to generate PDF: ${response.statusText}`
+            `Failed to generate PDF: ${response.statusText}`,
         );
       }
 
       // Check if response is PDF (content-type should be application/pdf)
       const contentType = response.headers.get("content-type");
-      if (contentType && typeof contentType === "string" && contentType.includes("application/pdf")) {
+      if (
+        contentType &&
+        typeof contentType === "string" &&
+        contentType.includes("application/pdf")
+      ) {
         // Get the blob from the streaming response
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -149,7 +178,9 @@ const ResumeReport = () => {
         // Response is not a PDF, might be an error JSON
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-          errorData.message || errorData.error || "Invalid response from server"
+          errorData.message ||
+            errorData.error ||
+            "Invalid response from server",
         );
       }
     } catch (error) {

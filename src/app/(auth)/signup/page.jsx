@@ -13,8 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaGoogle } from "react-icons/fa";
+import { useSearchParams } from "next/navigation";
 
 export default function SignUpPage() {
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/";
   return (
     <div className="min-h-screen flex max-w-7xl mx-auto">
       {/* Left side - Visual Preview */}
@@ -84,7 +87,7 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          <SignUp.Root>
+          <SignUp.Root fallbackRedirectUrl={redirectUrl}>
             <SignUp.Step name="start">
               <Card className="border-0 shadow-none bg-transparent">
                 <CardHeader className="px-0 pt-0 pb-6">
@@ -162,7 +165,10 @@ export default function SignUpPage() {
                     <span className="text-muted-foreground">
                       Already have an account?{" "}
                     </span>
-                    <a href="/login" className="text-primary hover:underline">
+                    <a
+                      href={`/login${redirectUrl !== "/" ? `?redirect=${encodeURIComponent(redirectUrl)}` : ""}`}
+                      className="text-primary hover:underline"
+                    >
                       Sign in
                     </a>
                   </div>

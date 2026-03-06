@@ -243,16 +243,6 @@ const Pricing = () => {
               }}
               transition={{ duration: 0.4 }}
             >
-              {/* Category Header */}
-              <div className="text-center mb-10">
-                <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                  {category.name}
-                </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                  {category.description}
-                </p>
-              </div>
-
               <div className={``}>
                 {/* Individual Services Column */}
                 <div className="space-y-4">

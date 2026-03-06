@@ -275,7 +275,7 @@ const LinkedinReport = () => {
                         activeTab === tab.id
                           ? "bg-primary text-primary-foreground shadow-sm hover:shadow-md"
                           : !isPaid && lockedSections.includes(tab.id)
-                            ? "text-muted-foreground cursor-not-allowed opacity-60"
+                            ? "text-muted-foreground/50 cursor-not-allowed opacity-40 grayscale"
                             : "text-foreground hover:bg-accent/50 hover:border-primary/30 border border-transparent"
                       }`}
                       disabled={!isPaid && lockedSections.includes(tab.id)}
@@ -376,7 +376,7 @@ const LinkedinReport = () => {
                           activeTab === tab.id
                             ? "bg-primary text-primary-foreground shadow-sm"
                             : !isPaid && lockedSections.includes(tab.id)
-                              ? "text-muted-foreground cursor-not-allowed opacity-60"
+                              ? "text-muted-foreground/50 cursor-not-allowed opacity-40 grayscale"
                               : "text-foreground hover:bg-accent"
                         }`}
                         disabled={!isPaid && lockedSections.includes(tab.id)}

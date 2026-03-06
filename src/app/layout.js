@@ -84,6 +84,22 @@ export default function RootLayout({ children }) {
     >
       <html lang="en" suppressHydrationWarning>
         <head>
+          <meta
+            name="google-site-verification"
+            content="BmIe4yUKzogJou1FjAbuYOlKrA0t2pK6OF5NzXyZI4Q"
+          />
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-BRSZTEG5MN"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-BRSZTEG5MN');
+            `}
+          </Script>
           <link rel="preconnect" href="https://res.cloudinary.com" />
           <link rel="preconnect" href="https://clerk.mycareersarthi.com" />
           <link rel="preconnect" href="https://checkout.razorpay.com" />

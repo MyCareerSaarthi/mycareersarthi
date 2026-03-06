@@ -95,7 +95,36 @@ const ResumeAnalyze = () => {
   // Check authentication - must be before early return
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
+      // Save form state to sessionStorage before redirecting to login
+      // Note: File objects (pdfFile) cannot be serialized to sessionStorage
+      const formState = {
+        selectedRole,
+        jobDescription,
+        inputMode,
+        activeTab,
+      };
+      sessionStorage.setItem("resume_analyze_form", JSON.stringify(formState));
       window.location.href = "/login?redirect=/resume/analyze";
+    }
+  }, [isLoaded, isSignedIn]);
+
+  // Restore form state from sessionStorage after login redirect
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      try {
+        const saved = sessionStorage.getItem("resume_analyze_form");
+        if (saved) {
+          const formState = JSON.parse(saved);
+          if (formState.selectedRole) setSelectedRole(formState.selectedRole);
+          if (formState.jobDescription)
+            setJobDescription(formState.jobDescription);
+          if (formState.inputMode) setInputMode(formState.inputMode);
+          if (formState.activeTab) setActiveTab(formState.activeTab);
+          sessionStorage.removeItem("resume_analyze_form");
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
     }
   }, [isLoaded, isSignedIn]);
 

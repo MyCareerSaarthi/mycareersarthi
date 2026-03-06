@@ -22,7 +22,7 @@ const Experience = ({ data }) => {
   }
 
   const experienceData = data.section_scores?.find(
-    (section) => section.name === "Experience"
+    (section) => section.name === "Experience",
   );
 
   if (!experienceData) return <div>No experience data available</div>;
@@ -272,6 +272,35 @@ const Experience = ({ data }) => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+
+      {/* Career Gaps */}
+      {experienceData.career_gaps && experienceData.career_gaps.length > 0 && (
+        <Accordion
+          type="single"
+          defaultValue="career-gaps"
+          collapsible
+          className="mb-6 w-full"
+        >
+          <AccordionItem
+            value="career-gaps"
+            className="border border-border/50 bg-card/50 rounded-lg backdrop-blur-sm px-4"
+          >
+            <AccordionTrigger className="py-4 text-base md:text-lg font-medium">
+              <span className="flex items-center gap-2">
+                <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                Career Gaps
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <SectionList
+                items={experienceData.career_gaps}
+                icon="⏱"
+                iconColor="text-orange-600 dark:text-orange-400"
+              />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      )}
 
       {/* Improvement Suggestions */}
       {experienceData.suggestions && experienceData.suggestions.length > 0 && (

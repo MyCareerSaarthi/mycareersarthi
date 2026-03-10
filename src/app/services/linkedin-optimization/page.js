@@ -2,9 +2,18 @@ import Content from "./content";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata = {
-  title: "LinkedIn Optimization",
+  title: {
+    absolute:
+      "LinkedIn Optimization Services India | LinkedIn Profile Makeover & Writing – MyCareerSarthi",
+  },
   description:
-    "Optimize your LinkedIn headline, summary, and experience to attract recruiters. We help you build a role-aligned profile that gets noticed.",
+    "Looking for LinkedIn optimization services in India? MyCareerSarthi offers LinkedIn profile makeover service, LinkedIn profile writing service in India, and complete LinkedIn profile optimization to improve your visibility in recruiter searches. A well-written and structured LinkedIn profile helps you attract hiring managers, recruiters, and better career opportunities.",
+  keywords: [
+    "LinkedIn Optimization Services",
+    "linkedin profile makeover service",
+    "linkedin profile writing service india",
+    "linkedin profile optimization services",
+  ],
   alternates: {
     canonical: "https://www.mycareersarthi.com/services/linkedin-optimization",
   },

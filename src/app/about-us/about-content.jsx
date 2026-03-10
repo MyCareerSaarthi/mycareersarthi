@@ -16,8 +16,7 @@ const AboutUsPage = () => {
     {
       name: "Dr. Ghazala Usmani",
       role: "Chief Brand & Strategy Officer",
-      image:
-        "https://media.licdn.com/dms/image/v2/D4D03AQEW73mjkB7myA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1693067042175?e=1771459200&v=beta&t=KIuE3TlZ7VBkK9IIAiOnCXpbwpjaKBkJTegGWZtWKeI",
+      image: "/ghazala-usmani.webp",
       description:
         "Dr. Ghazala brings strategic vision and brand clarity to MCS. Her expertise in professional positioning helps shape how we communicate and deliver value to job seekers across career stages.",
     },

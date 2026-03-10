@@ -70,26 +70,26 @@ export default async function sitemap() {
   }));
 
   // Tool/analyze pages (public entry points)
-  const toolPages = [
-    {
-      url: `${baseUrl}/linkedin/analyze`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/resume/analyze`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/compare`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-  ];
+  // const toolPages = [
+  //   {
+  //     url: `${baseUrl}/linkedin/analyze`,
+  //     lastModified: new Date(),
+  //     changeFrequency: "weekly",
+  //     priority: 0.7,
+  //   },
+  //   {
+  //     url: `${baseUrl}/resume/analyze`,
+  //     lastModified: new Date(),
+  //     changeFrequency: "weekly",
+  //     priority: 0.7,
+  //   },
+  //   {
+  //     url: `${baseUrl}/compare`,
+  //     lastModified: new Date(),
+  //     changeFrequency: "weekly",
+  //     priority: 0.7,
+  //   },
+  // ];
 
-  return [...staticPages, ...servicePages, ...toolPages];
+  return [...staticPages, ...servicePages];
 }

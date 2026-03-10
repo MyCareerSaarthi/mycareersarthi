@@ -86,7 +86,7 @@ const CareerAssessmentSlide = () => {
           </li>
         </ul>
 
-        <Link href="/career-mentoring" className="pt-1 sm:pt-2">
+        <Link href="/services/career-assessment" className="pt-1 sm:pt-2">
           <button
             className={`${buttonBaseClass} bg-white text-purple-600 hover:bg-purple-50`}
           >
@@ -175,7 +175,7 @@ const InterviewPreparationSlide = () => {
           </li>
         </ul>
 
-        <Link href="/interview-preparation" className="pt-1 sm:pt-2">
+        <Link href="/services/interview-preparation" className="pt-1 sm:pt-2">
           <button
             className={`${buttonBaseClass} bg-white text-orange-600 hover:bg-orange-50`}
           >
@@ -264,7 +264,7 @@ const JobSearchSlide = () => {
           </li>
         </ul>
 
-        <Link href="/job-search-strategy" className="pt-1 sm:pt-2">
+        <Link href="/services/job-search" className="pt-1 sm:pt-2">
           <button
             className={`${buttonBaseClass} bg-white text-orange-600 hover:bg-orange-50`}
           >

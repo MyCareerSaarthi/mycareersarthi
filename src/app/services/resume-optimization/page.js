@@ -2,9 +2,18 @@ import Content from "./content";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata = {
-  title: "Resume Optimization",
+  title: {
+    absolute:
+      "Resume Optimization Services | Professional Resume Writing Service India – MyCareerSarthi",
+  },
   description:
-    "Create an ATS-friendly resume that reflects your achievements. Our optimization service ensures your resume passes filters and grabs recruiter attention.",
+    "Looking for resume optimization services in India? MyCareerSarthi offers professional resume writing service, executive resume writing service, and complete resume optimization to improve ATS compatibility and recruiter visibility. Our experts create clear, structured resumes that help professionals stand out and increase interview opportunities.",
+  keywords: [
+    "Resume Optimization Services",
+    "professional resume writing service",
+    "resume writing services in india",
+    "executive resume writing service",
+  ],
   alternates: {
     canonical: "https://www.mycareersarthi.com/services/resume-optimization",
   },

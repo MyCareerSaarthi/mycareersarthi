@@ -2,9 +2,18 @@ import Content from "./content";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata = {
-  title: "Personal Branding",
+  title: {
+    absolute:
+      "Personal Branding Services India | Personal Branding Consultant for Professionals – MyCareerSarthi",
+  },
   description:
-    "Build a strong personal brand on LinkedIn. We help you establish credibility, voice, and presence through customized content and networking guidance.",
+    "Build a strong professional image with personal branding services from MyCareerSarthi. Work with a personal branding consultant in India to improve your online presence, LinkedIn visibility, and career positioning. Our personal branding experts help job seekers and professionals present their skills, experience, and achievements in a way that attracts recruiters and hiring managers.",
+  keywords: [
+    "Personal Branding Services",
+    "personal branding consultant india",
+    "personal branding expert india",
+    "personal branding for job seekers",
+  ],
   alternates: {
     canonical: "https://www.mycareersarthi.com/services/personal-branding",
   },

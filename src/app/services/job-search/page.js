@@ -2,9 +2,18 @@ import Content from "./content";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata = {
-  title: "Job Search",
+  title: {
+    absolute:
+      "Job Search Services | Executive Job Search Strategy & Mentor India – MyCareerSarthi",
+  },
   description:
-    "Stop applying blindly. Learn how recruiters shortlist candidates and build a focused job search strategy that 10X your interview calls.",
+    "Get structured support with job search services from MyCareerSarthi. Our executive job search service and job search mentor in India help professionals build an effective job search strategy, improve applications, and approach recruiters with confidence. We guide job seekers through targeted job search planning, networking, and interview preparation.",
+  keywords: [
+    "Job Search Services",
+    "executive job search service",
+    "job search mentor india",
+    "job search strategy service",
+  ],
   alternates: {
     canonical: "https://www.mycareersarthi.com/services/job-search",
   },

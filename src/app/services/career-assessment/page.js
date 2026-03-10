@@ -2,9 +2,18 @@ import Content from "./content";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata = {
-  title: "Career Assessment",
+  title: {
+    absolute:
+      "Career Assessment Services | Professional Career Path Assessment – MyCareerSarthi",
+  },
   description:
-    "Get a clear career diagnosis based on your experience and skills. Our career assessment helps you identify target roles and build a path to growth.",
+    "Get clarity about your future with career assessment services from MyCareerSarthi. Our professional career assessment helps you understand your strengths, interests, and suitable career options. Through structured career path assessment and career suitability assessment, we guide students, job seekers, and professionals in choosing the right direction for long-term growth.",
+  keywords: [
+    "Career Assessment Services",
+    "career path assessment",
+    "professional career assessment",
+    "career suitability assessment",
+  ],
   alternates: {
     canonical: "https://www.mycareersarthi.com/services/career-assessment",
   },

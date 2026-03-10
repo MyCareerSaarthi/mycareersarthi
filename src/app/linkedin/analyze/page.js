@@ -213,7 +213,40 @@ const LinkedinAnalyze = () => {
   // Check authentication - must be before early return
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
+      // Save form state to sessionStorage before redirecting to login
+      const formState = {
+        linkedinUrl,
+        selectedRole,
+        jobDescription,
+        inputMode,
+        activeTab,
+      };
+      sessionStorage.setItem(
+        "linkedin_analyze_form",
+        JSON.stringify(formState),
+      );
       window.location.href = "/login?redirect=/linkedin/analyze";
+    }
+  }, [isLoaded, isSignedIn]);
+
+  // Restore form state from sessionStorage after login redirect
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      try {
+        const saved = sessionStorage.getItem("linkedin_analyze_form");
+        if (saved) {
+          const formState = JSON.parse(saved);
+          if (formState.linkedinUrl) setLinkedinUrl(formState.linkedinUrl);
+          if (formState.selectedRole) setSelectedRole(formState.selectedRole);
+          if (formState.jobDescription)
+            setJobDescription(formState.jobDescription);
+          if (formState.inputMode) setInputMode(formState.inputMode);
+          if (formState.activeTab) setActiveTab(formState.activeTab);
+          sessionStorage.removeItem("linkedin_analyze_form");
+        }
+      } catch (e) {
+        // Ignore parse errors
+      }
     }
   }, [isLoaded, isSignedIn]);
 

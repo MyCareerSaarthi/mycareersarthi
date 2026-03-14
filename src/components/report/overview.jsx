@@ -13,22 +13,22 @@ const Overview = ({ data, onNavigate }) => {
 
   // Determine color based on score - improved for light mode
   const getScoreColor = (score) => {
-    if (score >= 8) return "text-green-600 dark:text-green-400";
-    if (score > 3.5) return "text-yellow-600 dark:text-yellow-400";
+    if (score >= 7.5) return "text-green-600 dark:text-green-400";
+    if (score > 5) return "text-yellow-600 dark:text-yellow-400";
     return "text-red-600 dark:text-red-400";
   };
 
   // Get background color based on score - improved for light mode
   const getScoreBgColor = (score) => {
-    if (score >= 8) return "bg-green-50 dark:bg-green-900/30";
-    if (score > 3.5) return "bg-yellow-50 dark:bg-yellow-900/30";
+    if (score >= 7.5) return "bg-green-50 dark:bg-green-900/30";
+    if (score > 5) return "bg-yellow-50 dark:bg-yellow-900/30";
     return "bg-red-50 dark:bg-red-900/30";
   };
 
   // Get section card colors based on score
   const getSectionCardColor = (score) => {
-    if (score >= 8) return "text-green-700 dark:text-green-400";
-    if (score > 3.5) return "text-yellow-700 dark:text-yellow-400";
+    if (score >= 7.5) return "text-green-700 dark:text-green-400";
+    if (score > 5) return "text-yellow-700 dark:text-yellow-400";
     return "text-red-700 dark:text-red-400";
   };
 
@@ -90,7 +90,7 @@ const Overview = ({ data, onNavigate }) => {
     .sort(
       (a, b) =>
         order.indexOf(a.name.toLowerCase()) -
-        order.indexOf(b.name.toLowerCase())
+        order.indexOf(b.name.toLowerCase()),
     );
 
   return (
@@ -128,17 +128,17 @@ const Overview = ({ data, onNavigate }) => {
 
               <div
                 className={`inline-block px-3 py-1.5 md:px-4 md:py-2 rounded-full text-lg md:text-xl font-semibold ${getScoreBgColor(
-                  overall_score
+                  overall_score,
                 )} ${getScoreColor(overall_score)}`}
               >
                 {getScoreEmoji(overall_score)}{" "}
                 {overall_score >= 7
                   ? "Excellent"
                   : overall_score >= 6
-                  ? "Good"
-                  : overall_score >= 4
-                  ? "Needs Improvement"
-                  : "Significant Improvement Needed"}
+                    ? "Good"
+                    : overall_score >= 4
+                      ? "Needs Improvement"
+                      : "Significant Improvement Needed"}
               </div>
             </div>
 
@@ -205,7 +205,7 @@ const Overview = ({ data, onNavigate }) => {
                 <span className="capitalize">{section.name}</span>
                 <span
                   className={`text-lg font-bold ${getSectionCardColor(
-                    section.score.toFixed(1)
+                    section.score.toFixed(1),
                   )}`}
                 >
                   {section.score.toFixed(1)}/10

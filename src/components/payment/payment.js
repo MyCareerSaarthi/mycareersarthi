@@ -1,5 +1,118 @@
 import { api } from "../api/api";
 
+export const resumePayment = async (
+  orderId,
+  amount,
+  analysisRequestId,
+  serviceType,
+  token,
+  user,
+  onLoadingChange,
+  onErrorChange,
+  getToken = null
+) => {
+  try {
+    onLoadingChange?.(true);
+
+    let pollTimer = null;
+    let modalOpen = true;
+    const stopPolling = () => {
+      modalOpen = false;
+      if (pollTimer) clearInterval(pollTimer);
+    };
+
+    var options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: amount,
+      currency: "INR",
+      name: "MyCareerSarthi",
+      order_id: orderId,
+      handler: async function (razorpayResponse) {
+        const currentToken = getToken ? await getToken() : token;
+        handleVerifyPayment(
+          razorpayResponse,
+          currentToken,
+          serviceType,
+          onLoadingChange,
+          onErrorChange,
+          analysisRequestId,
+          getToken,
+        );
+      },
+      prefill: {
+        name: `${user?.firstName} ${user?.lastName}`,
+        email: user?.emailAddresses?.[0]?.emailAddress,
+      },
+      notes: {
+        analysis_request_id: analysisRequestId,
+      },
+      modal: {
+        ondismiss: function () {
+          stopPolling();
+          onErrorChange?.(
+            "Payment cancelled. Please try again if you wish to proceed.",
+            { amount, orderId, analysisRequestId }
+          );
+        },
+      },
+    };
+
+    var rzp1 = new window.Razorpay(options);
+    rzp1.on("payment.failed", function () {
+      stopPolling();
+    });
+
+    if (analysisRequestId) {
+      pollTimer = setInterval(async () => {
+        if (!modalOpen) return;
+        try {
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          const statusUrl = `${baseUrl}/api/rag/status/${analysisRequestId}`;
+
+          const response = await fetch(statusUrl, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            if (response.status === 401 && getToken) {
+              return;
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const statusResp = {
+            data: await response.json(),
+          };
+
+          if (
+            statusResp?.data?.status === "completed" &&
+            statusResp?.data?.result_report_id
+          ) {
+            try {
+              localStorage.setItem(
+                "background_analysis_result_id",
+                statusResp.data.result_report_id,
+              );
+            } catch (e) {}
+            stopPolling();
+          }
+        } catch (err) {}
+      }, 1000);
+    }
+    rzp1.open();
+  } catch (error) {
+    console.error("Payment resumption failed:", error);
+    const errorMessage = error?.message || "Failed to resume payment.";
+    onErrorChange?.(errorMessage);
+    throw error;
+  } finally {
+    onLoadingChange?.(false);
+  }
+};
+
 const handlePayment = async (
   serviceType,
   token,
@@ -26,8 +139,23 @@ const handlePayment = async (
     const amount = response?.data?.amount;
     const analysisRequestId = response?.data?.analysis_request_id;
 
-    if (!orderId || !amount) {
+    if (!orderId || amount === undefined || amount === null) {
       throw new Error("Invalid order response - missing order ID or amount");
+    }
+
+    if (amount === 0) {
+      // It's a free order! Skip Razorpay and verify immediately.
+      const currentToken = getToken ? await getToken() : token;
+      handleVerifyPayment(
+        { razorpay_order_id: orderId, is_free: true },
+        currentToken,
+        serviceType,
+        onLoadingChange,
+        onErrorChange,
+        analysisRequestId,
+        getToken,
+      );
+      return;
     }
 
     // Notify caller of the analysisRequestId for session persistence
@@ -78,6 +206,7 @@ const handlePayment = async (
           stopPolling();
           onErrorChange?.(
             "Payment cancelled. Please try again if you wish to proceed.",
+            { amount, orderId, analysisRequestId }
           );
         },
       },

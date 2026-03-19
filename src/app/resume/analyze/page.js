@@ -175,9 +175,20 @@ const ResumeAnalyze = () => {
           const data = await resp.json();
 
           if (data.status === "completed" && data.result_report_id) {
-            clearSession();
-            window.location.href = `/resume/report?id=${data.result_report_id}`;
-            return;
+            if (data.payment_status === "completed") {
+              clearSession();
+              window.location.href = `/resume/report?id=${data.result_report_id}`;
+              return;
+            } else {
+              clearSession();
+              setIsAnalyzing(false);
+              setErrors({
+                general:
+                  "Please complete your payment to view the report.",
+              });
+              setActiveTab("payment");
+              return;
+            }
           }
           if (data.status === "failed") {
             clearSession();
@@ -430,7 +441,7 @@ const ResumeAnalyze = () => {
         file.type === "application/pdf" ||
         fileName.endsWith(".pdf") ||
         file.type ===
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
         fileName.endsWith(".docx") ||
         file.type === "text/plain" ||
         fileName.endsWith(".txt");
@@ -455,7 +466,7 @@ const ResumeAnalyze = () => {
         file.type === "application/pdf" ||
         fileName.endsWith(".pdf") ||
         file.type ===
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
         fileName.endsWith(".docx") ||
         file.type === "text/plain" ||
         fileName.endsWith(".txt");
@@ -508,13 +519,12 @@ const ResumeAnalyze = () => {
                 Upload Resume
               </Label>
               <div
-                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur-sm ${
-                  isDragging
-                    ? "border-primary bg-primary/10"
-                    : errors.resume
-                      ? "border-destructive bg-destructive/5"
-                      : "border-border hover:border-primary/50 hover:bg-primary/5"
-                }`}
+                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur-sm ${isDragging
+                  ? "border-primary bg-primary/10"
+                  : errors.resume
+                    ? "border-destructive bg-destructive/5"
+                    : "border-border hover:border-primary/50 hover:bg-primary/5"
+                  }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
@@ -613,11 +623,10 @@ const ResumeAnalyze = () => {
                   type="button"
                   variant={inputMode === "role" ? "default" : "outline"}
                   onClick={() => setInputMode("role")}
-                  className={`rounded-xl transition-all duration-300 ${
-                    inputMode === "role"
-                      ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
-                      : ""
-                  }`}
+                  className={`rounded-xl transition-all duration-300 ${inputMode === "role"
+                    ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                    : ""
+                    }`}
                 >
                   Select A Role
                 </Button>
@@ -627,11 +636,10 @@ const ResumeAnalyze = () => {
                     inputMode === "jobDescription" ? "default" : "outline"
                   }
                   onClick={() => setInputMode("jobDescription")}
-                  className={`rounded-xl transition-all duration-300 ${
-                    inputMode === "jobDescription"
-                      ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
-                      : ""
-                  }`}
+                  className={`rounded-xl transition-all duration-300 ${inputMode === "jobDescription"
+                    ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                    : ""
+                    }`}
                 >
                   Paste Job Description
                 </Button>
@@ -684,7 +692,7 @@ const ResumeAnalyze = () => {
                   <span className="font-semibold text-foreground">
                     {isLoadingPricing
                       ? "Loading..."
-                      : `₹${pricing.originalPrice}`}
+                      : `₹${pricing.originalPrice.toFixed(2)}`}
                   </span>
                 </div>
 
@@ -695,7 +703,7 @@ const ResumeAnalyze = () => {
                       Coupon ({appliedCoupon.code})
                     </span>
                     <span className="text-sm font-semibold">
-                      -₹{appliedCoupon.discount}
+                      -₹{appliedCoupon.discount.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -706,13 +714,13 @@ const ResumeAnalyze = () => {
                     <div className="text-right">
                       {pricing.discount > 0 && (
                         <div className="text-xs text-muted-foreground line-through mb-1">
-                          ₹{pricing.originalPrice}
+                          ₹{pricing.originalPrice.toFixed(2)}
                         </div>
                       )}
                       <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                         {isLoadingPricing
                           ? "Loading..."
-                          : `₹${pricing.finalPrice}`}
+                          : `₹${pricing.finalPrice.toFixed(2)}`}
                       </div>
                     </div>
                   </div>
@@ -730,9 +738,8 @@ const ResumeAnalyze = () => {
                     placeholder="Enter coupon code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    className={`flex-1 rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${
-                      errors.coupon ? "border-destructive" : ""
-                    }`}
+                    className={`flex-1 rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${errors.coupon ? "border-destructive" : ""
+                      }`}
                     disabled={isApplyingCoupon || !!appliedCoupon}
                   />
                   {appliedCoupon ? (
@@ -859,11 +866,10 @@ const ResumeAnalyze = () => {
                   <TabsTrigger
                     key={tab.id}
                     value={tab.id}
-                    className={`rounded-lg transition-all duration-300 ${
-                      isActive
-                        ? "bg-background shadow-md text-primary"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`rounded-lg transition-all duration-300 ${isActive
+                      ? "bg-background shadow-md text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     <IconComponent className="w-4 h-4 mr-2" />
                     {tab.label}

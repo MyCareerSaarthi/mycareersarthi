@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { api } from "@/components/api/api";
-import { handlePayment } from "@/components/payment/payment";
+import { handlePayment, resumePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
 import SimpleLoader from "@/components/simple-loader";
 import { useRouter } from "next/navigation";
@@ -32,6 +32,7 @@ export default function ComparePage() {
   const [linkedinPdf, setLinkedinPdf] = useState(null);
   const [resumePdf, setResumePdf] = useState(null);
   const [errors, setErrors] = useState({});
+  const [pendingPaymentDetails, setPendingPaymentDetails] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isDraggingResume, setIsDraggingResume] = useState(false);
@@ -147,9 +148,21 @@ export default function ComparePage() {
           const data = await resp.json();
 
           if (data.status === "completed" && data.result_report_id) {
-            clearSession();
-            window.location.href = `/compare/report?id=${data.result_report_id}`;
-            return;
+            if (data.payment_status === "completed") {
+              clearSession();
+              window.location.href = `/compare/report?id=${data.result_report_id}`;
+              return;
+            } else {
+              clearSession();
+              setIsComparing(false);
+              setPendingPaymentDetails({
+                amount: data.payment_amount,
+                orderId: data.order_id,
+                analysisRequestId: analysisRequestId
+              });
+              setActiveTab("payment");
+              return;
+            }
           }
           if (data.status === "failed") {
             clearSession();
@@ -338,10 +351,15 @@ export default function ComparePage() {
         user,
         formData,
         setIsSubmitting,
-        (errorMsg) => {
+        (errorMsg, details) => {
           clearSession();
           setIsComparing(false);
-          setErrors({ general: errorMsg });
+          if (details && details.analysisRequestId) {
+            setPendingPaymentDetails(details);
+            setErrors({});
+          } else {
+            setErrors({ general: errorMsg });
+          }
           setActiveTab("payment");
         },
         getToken,
@@ -358,6 +376,36 @@ export default function ComparePage() {
       // Stay on payment tab so user can see the error
       setActiveTab("payment");
     } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResumePayment = async () => {
+    setIsSubmitting(true);
+    setErrors({});
+    try {
+      const token = await getToken();
+      await resumePayment(
+        pendingPaymentDetails.orderId,
+        pendingPaymentDetails.amount,
+        pendingPaymentDetails.analysisRequestId,
+        "comparison",
+        token,
+        user,
+        setIsSubmitting,
+        (errorMsg, details) => {
+          if (details && details.analysisRequestId) {
+            setPendingPaymentDetails(details);
+            setErrors({});
+          } else {
+            setErrors({ general: errorMsg });
+          }
+        },
+        getToken
+      );
+    } catch (error) {
+      console.error("Payment resumption failed:", error);
+      setErrors({ general: "Failed to resume payment. Please try again." });
       setIsSubmitting(false);
     }
   };
@@ -728,7 +776,7 @@ export default function ComparePage() {
                   <span className="font-semibold text-foreground">
                     {isLoadingPricing
                       ? "Loading..."
-                      : `₹${pricing.originalPrice}`}
+                      : `₹${pricing.originalPrice.toFixed(2)}`}
                   </span>
                 </div>
 
@@ -739,7 +787,7 @@ export default function ComparePage() {
                       Coupon ({appliedCoupon.code})
                     </span>
                     <span className="text-sm font-semibold">
-                      -₹{appliedCoupon.discount}
+                      -₹{appliedCoupon.discount.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -750,13 +798,13 @@ export default function ComparePage() {
                     <div className="text-right">
                       {pricing.discount > 0 && (
                         <div className="text-xs text-muted-foreground line-through mb-1">
-                          ₹{pricing.originalPrice}
+                          ₹{pricing.originalPrice.toFixed(2)}
                         </div>
                       )}
                       <div className="text-2xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                         {isLoadingPricing
                           ? "Loading..."
-                          : `₹${pricing.finalPrice}`}
+                          : `₹${pricing.finalPrice.toFixed(2)}`}
                       </div>
                     </div>
                   </div>
@@ -937,14 +985,25 @@ export default function ComparePage() {
               Previous
             </Button>
             {activeTab === "payment" ? (
-              <Button
-                onClick={handleStepSubmit}
-                disabled={isSubmitting || !canProceedToPayment()}
-                className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
-              >
-                {isSubmitting ? "Processing..." : "Start Comparison"}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
+              pendingPaymentDetails ? (
+                <Button
+                  onClick={handleResumePayment}
+                  disabled={isSubmitting}
+                  className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+                >
+                  {isSubmitting ? "Processing..." : "Complete Payment"}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleStepSubmit}
+                  disabled={isSubmitting || !canProceedToPayment()}
+                  className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
+                >
+                  {isSubmitting ? "Processing..." : "Start Comparison"}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              )
             ) : (
               <Button
                 onClick={() => {

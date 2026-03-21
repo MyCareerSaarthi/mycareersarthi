@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAnalysisSession } from "@/hooks/useAnalysisSession";
-import { motion } from "framer-motion";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +10,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import RoleSelector from "@/components/ui/role-selector";
 import JobDescriptionInput from "@/components/ui/job-description-input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { api } from "@/components/api/api";
 import { handlePayment } from "@/components/payment/payment";
 import { useAuth, useUser } from "@clerk/nextjs";
@@ -25,18 +23,16 @@ import {
   Upload,
   CheckCircle2,
   Sparkles,
+  X,
 } from "lucide-react";
 
 const ResumeAnalyze = () => {
-  const [activeTab, setActiveTab] = useState("resume");
   const [selectedRole, setSelectedRole] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
-  const [inputMode, setInputMode] = useState("role"); // "role" or "jobDescription"
-  const [isDragging, setIsDragging] = useState(false);
+  const [inputMode, setInputMode] = useState("role");
   const [pdfFile, setPdfFile] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState(null);
   const fileInputRef = useRef(null);
 
   const [couponCode, setCouponCode] = useState("");
@@ -49,7 +45,6 @@ const ResumeAnalyze = () => {
   });
   const [isLoadingPricing, setIsLoadingPricing] = useState(true);
 
-  // Process demo state
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processData, setProcessData] = useState({
     title: "Starting Analysis",
@@ -64,15 +59,6 @@ const ResumeAnalyze = () => {
   const router = useRouter();
   const { activeSession, saveSession, clearSession } =
     useAnalysisSession("resume");
-
-  // Tab definitions
-  const tabs = [
-    { id: "resume", label: "Resume", icon: FileText },
-    { id: "requirements", label: "Job Requirements", icon: Briefcase },
-    { id: "payment", label: "Payment", icon: CreditCard },
-  ];
-
-  // Remove getRoles function as it's now handled by RoleSelector component
 
   const getPricing = async () => {
     try {
@@ -92,16 +78,13 @@ const ResumeAnalyze = () => {
     }
   };
 
-  // Check authentication - must be before early return
+  // Check authentication
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      // Save form state to sessionStorage before redirecting to login
-      // Note: File objects (pdfFile) cannot be serialized to sessionStorage
       const formState = {
         selectedRole,
         jobDescription,
         inputMode,
-        activeTab,
       };
       sessionStorage.setItem("resume_analyze_form", JSON.stringify(formState));
       window.location.href = "/login?redirect=/resume/analyze";
@@ -119,7 +102,6 @@ const ResumeAnalyze = () => {
           if (formState.jobDescription)
             setJobDescription(formState.jobDescription);
           if (formState.inputMode) setInputMode(formState.inputMode);
-          if (formState.activeTab) setActiveTab(formState.activeTab);
           sessionStorage.removeItem("resume_analyze_form");
         }
       } catch (e) {
@@ -142,13 +124,11 @@ const ResumeAnalyze = () => {
         percentage: 15,
       });
 
-      // Start polling using the same logic as handlePayment's verify flow
-      const token = await getToken();
       const baseUrl =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       const analysisRequestId = activeSession.analysisRequestId;
       let pollCount = 0;
-      const MAX_POLLS = 450; // 15 min at 2s intervals
+      const MAX_POLLS = 450;
 
       const poll = async () => {
         if (pollCount >= MAX_POLLS) {
@@ -162,7 +142,6 @@ const ResumeAnalyze = () => {
         }
         pollCount++;
         try {
-          // const currentToken = await getToken();
           const resp = await fetch(
             `${baseUrl}/api/rag/status/${analysisRequestId}`,
             {
@@ -186,7 +165,6 @@ const ResumeAnalyze = () => {
                 general:
                   "Please complete your payment to view the report.",
               });
-              setActiveTab("payment");
               return;
             }
           }
@@ -198,11 +176,10 @@ const ResumeAnalyze = () => {
             });
             return;
           }
-          // Still running — poll again
           setTimeout(poll, 2000);
         } catch (err) {
           console.warn("[Resume session resume] poll error:", err);
-          setTimeout(poll, 4000); // back off on error
+          setTimeout(poll, 4000);
         }
       };
 
@@ -212,14 +189,14 @@ const ResumeAnalyze = () => {
     resume();
   }, [isLoaded, isSignedIn, activeSession]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Get pricing - must be before early return
+  // Get pricing
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       getPricing();
     }
   }, [isLoaded, isSignedIn]);
 
-  // Show loading state while checking auth - AFTER all hooks
+  // Show loading state while checking auth
   if (!isLoaded || !isSignedIn) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -292,58 +269,23 @@ const ResumeAnalyze = () => {
     setErrors((prev) => ({ ...prev, coupon: null }));
   };
 
-  const validateStep = (step) => {
+  const validateForm = () => {
     const newErrors = {};
 
-    if (step === 1) {
-      // Resume upload step validation
-      if (!pdfFile) {
-        newErrors.resume = "Please upload a resume PDF file";
-      }
+    if (!pdfFile) {
+      newErrors.resume = "Please upload a resume PDF file";
     }
 
-    if (step === 2) {
-      // Job requirements step validation
-      if (inputMode === "role" && !selectedRole) {
-        newErrors.role = "Please select a role";
-      }
+    if (inputMode === "role" && !selectedRole) {
+      newErrors.role = "Please select a role";
+    }
 
-      if (inputMode === "jobDescription" && !jobDescription.trim()) {
-        newErrors.jobDescription = "Please enter a job description";
-      }
+    if (inputMode === "jobDescription" && !jobDescription.trim()) {
+      newErrors.jobDescription = "Please enter a job description";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const validateForm = () => {
-    return validateStep(1) && validateStep(2);
-  };
-
-  const handleTabChange = (tabId) => {
-    // Validate before allowing tab change
-    if (tabId === "requirements" && !pdfFile) {
-      setErrors({ resume: "Please upload your resume first" });
-      return;
-    }
-    if (tabId === "payment") {
-      if (!pdfFile) {
-        setErrors({ resume: "Please upload your resume first" });
-        setActiveTab("resume");
-        return;
-      }
-      if (
-        (inputMode === "role" && !selectedRole) ||
-        (inputMode === "jobDescription" && !jobDescription.trim())
-      ) {
-        setErrors({ role: "Please select a role or add job description" });
-        setActiveTab("requirements");
-        return;
-      }
-    }
-    setErrors({});
-    setActiveTab(tabId);
   };
 
   const handleStepSubmit = async () => {
@@ -358,9 +300,7 @@ const ResumeAnalyze = () => {
         formData.append("file", pdfFile);
       }
       if (inputMode === "role" && selectedRole) {
-        // Job descriptions are independent - only handle role selection
         if (selectedRole.type === "existing") {
-          // User selected an existing role - analysis will be against role + experience level
           formData.append("roleId", selectedRole.roleId);
           formData.append("roleName", selectedRole.roleName);
           if (selectedRole.experienceLevel) {
@@ -368,11 +308,9 @@ const ResumeAnalyze = () => {
           }
         } else if (selectedRole.type === "custom") {
           formData.append("roleName", selectedRole.roleName);
-          // Default experience level if not provided
           formData.append("experienceLevel", "Mid-level");
         }
       }
-      // Handle job description - manual input only
       if (inputMode === "jobDescription" && jobDescription) {
         formData.append("jobDescription", jobDescription);
       }
@@ -400,7 +338,6 @@ const ResumeAnalyze = () => {
           clearSession();
           setIsAnalyzing(false);
           setErrors({ general: errorMsg });
-          setActiveTab("payment");
         },
         getToken,
         (analysisRequestId) => saveSession(analysisRequestId),
@@ -413,48 +350,8 @@ const ResumeAnalyze = () => {
         error?.message ||
         "Payment initiation failed. Please try again.";
       setErrors({ general: errorMessage });
-      // Stay on payment tab so user can see the error
-      setActiveTab("payment");
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      const fileName = file.name.toLowerCase();
-      const isValidFile =
-        file.type === "application/pdf" ||
-        fileName.endsWith(".pdf") ||
-        file.type ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-        fileName.endsWith(".docx") ||
-        file.type === "text/plain" ||
-        fileName.endsWith(".txt");
-
-      if (isValidFile) {
-        setPdfFile(file);
-        setErrors((prev) => ({ ...prev, resume: null }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          resume: "Please upload a valid PDF, DOCX, or TXT file",
-        }));
-      }
     }
   };
 
@@ -466,7 +363,7 @@ const ResumeAnalyze = () => {
         file.type === "application/pdf" ||
         fileName.endsWith(".pdf") ||
         file.type ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
         fileName.endsWith(".docx") ||
         file.type === "text/plain" ||
         fileName.endsWith(".txt");
@@ -490,123 +387,125 @@ const ResumeAnalyze = () => {
     }
   };
 
-  // Socket useEffect moved above - removed duplicate
+  const canSubmit = () => {
+    return (
+      pdfFile &&
+      ((inputMode === "role" && selectedRole) ||
+        (inputMode === "jobDescription" && jobDescription.trim()))
+    );
+  };
 
-  // Show simple loading screen during analysis - render as overlay
+  const handleCancelAnalysis = () => {
+    clearSession();
+    setIsAnalyzing(false);
+  };
 
-  // Render tab content
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "resume":
-        return (
+  return (
+    <div className="min-h-screen bg-background relative">
+      {isAnalyzing && (
+        <SimpleLoader
+          message="Analyzing your resume... This may take a while."
+          onCancel={handleCancelAnalysis}
+        />
+      )}
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-6 pb-4">
+        <div className="absolute inset-0 bg-linear-to-br from-background via-muted/20 to-background" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+        <div className="relative container mx-auto px-4 max-w-3xl z-10">
+          <div className="text-center space-y-2 animate-fade-in">
+            <Badge
+              variant="secondary"
+              className="px-3 py-1 text-xs font-medium mb-2"
+            >
+              <Sparkles className="w-3 h-3 mr-1.5 inline" />
+              AI-Powered Analysis
+            </Badge>
+            <h1 className="text-2xl md:text-3xl font-bold leading-tight">
+              Resume Analysis
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+              Get AI-powered insights to optimize your resume
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content — Single Page Form */}
+      <div className="relative container mx-auto px-4 max-w-3xl pb-8">
+        {errors.general && (
+          <div className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm animate-fade-in">
+            <p className="text-sm text-destructive font-medium">
+              {errors.general}
+            </p>
+          </div>
+        )}
+
+        <Card className="p-5 md:p-7 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl space-y-8">
+          {/* ─── Section 1: Resume Upload ─── */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm">
                 <FileText className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold">Resume Upload</h3>
+                <h3 className="text-lg font-semibold">
+                  Resume Upload{" "}
+                  <span className="text-xs font-normal text-muted-foreground">
+                    (required)
+                  </span>
+                </h3>
                 <p className="text-xs text-muted-foreground">
                   Upload your resume (PDF, DOCX, or TXT)
                 </p>
               </div>
             </div>
 
-            {/* PDF Upload */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Upload className="w-4 h-4 text-primary" />
-                Upload Resume
-              </Label>
-              <div
-                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur-sm ${isDragging
-                  ? "border-primary bg-primary/10"
-                  : errors.resume
-                    ? "border-destructive bg-destructive/5"
-                    : "border-border hover:border-primary/50 hover:bg-primary/5"
-                  }`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept=".pdf,.docx,.txt"
-                  onChange={handleFileChange}
-                />
-                {pdfFile ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-center gap-2">
-                      <svg
-                        className="w-5 h-5 text-primary"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <span className="font-medium text-sm">
-                        {pdfFile.name}
-                      </span>
-                    </div>
-                    <LoadingButton
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removePdf();
-                      }}
-                    >
-                      Remove
-                    </LoadingButton>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <svg
-                      className="w-8 h-8 mx-auto text-muted-foreground"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                    <div>
-                      <p className="text-sm font-medium">
-                        Click to upload or drag and drop
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        PDF, DOCX, or TXT files (max 10MB)
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+            {/* Compact File Upload */}
+            <div className="space-y-1.5">
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept=".pdf,.docx,.txt"
+                onChange={handleFileChange}
+              />
+              {pdfFile ? (
+                <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-primary/30 bg-primary/5">
+                  <FileText className="w-4 h-4 text-primary shrink-0" />
+                  <span className="text-sm font-medium truncate flex-1">
+                    {pdfFile.name}
+                  </span>
+                  <button
+                    onClick={removePdf}
+                    className="p-1 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm text-muted-foreground"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>Click to upload (PDF, DOCX, or TXT — max 10MB)</span>
+                </button>
+              )}
               {errors.resume && (
                 <p className="text-sm text-destructive">{errors.resume}</p>
               )}
             </div>
           </div>
-        );
 
-      case "requirements":
-        return (
+          {/* Separator */}
+          <div className="border-t border-border" />
+
+          {/* ─── Section 2: Job Requirements ─── */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm">
                 <Briefcase className="w-5 h-5 text-primary" />
               </div>
               <div>
@@ -623,10 +522,12 @@ const ResumeAnalyze = () => {
                   type="button"
                   variant={inputMode === "role" ? "default" : "outline"}
                   onClick={() => setInputMode("role")}
-                  className={`rounded-xl transition-all duration-300 ${inputMode === "role"
-                    ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
-                    : ""
-                    }`}
+                  size="sm"
+                  className={`rounded-xl transition-all duration-300 ${
+                    inputMode === "role"
+                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      : ""
+                  }`}
                 >
                   Select A Role
                 </Button>
@@ -636,10 +537,12 @@ const ResumeAnalyze = () => {
                     inputMode === "jobDescription" ? "default" : "outline"
                   }
                   onClick={() => setInputMode("jobDescription")}
-                  className={`rounded-xl transition-all duration-300 ${inputMode === "jobDescription"
-                    ? "bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
-                    : ""
-                    }`}
+                  size="sm"
+                  className={`rounded-xl transition-all duration-300 ${
+                    inputMode === "jobDescription"
+                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      : ""
+                  }`}
                 >
                   Paste Job Description
                 </Button>
@@ -662,288 +565,132 @@ const ResumeAnalyze = () => {
               )}
             </div>
           </div>
-        );
 
-      case "payment":
-        return (
+          {/* Separator */}
+          <div className="border-t border-border" />
+
+          {/* ─── Section 3: Payment & Coupon ─── */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm">
                 <CreditCard className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold">Payment & Review</h3>
+                <h3 className="text-lg font-semibold">Payment</h3>
                 <p className="text-xs text-muted-foreground">
-                  Review your order and complete payment
+                  Review pricing and apply coupon code
                 </p>
               </div>
             </div>
 
-            <Card className="p-4 bg-card/50 backdrop-blur-sm border-2 border-primary/20 rounded-xl">
-              <h4 className="text-base font-semibold mb-3 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-                Order Summary
-              </h4>
+            {/* Order Summary */}
+            <div className="bg-muted/30 rounded-xl p-4 space-y-3 border border-border">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">Resume Analysis</span>
+                <span className="font-semibold text-foreground">
+                  {isLoadingPricing
+                    ? "Loading..."
+                    : `₹${pricing.originalPrice.toFixed(2)}`}
+                </span>
+              </div>
 
-              {/* Pricing */}
-              <div className="bg-muted/30 rounded-xl p-4 space-y-3 border border-border">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Resume Analysis</span>
-                  <span className="font-semibold text-foreground">
-                    {isLoadingPricing
-                      ? "Loading..."
-                      : `₹${pricing.originalPrice.toFixed(2)}`}
+              {appliedCoupon && (
+                <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" />
+                    Coupon ({appliedCoupon.code})
+                  </span>
+                  <span className="text-sm font-semibold">
+                    -₹{appliedCoupon.discount.toFixed(2)}
                   </span>
                 </div>
+              )}
 
-                {appliedCoupon && (
-                  <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
-                    <span className="text-sm font-medium flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4" />
-                      Coupon ({appliedCoupon.code})
-                    </span>
-                    <span className="text-sm font-semibold">
-                      -₹{appliedCoupon.discount.toFixed(2)}
-                    </span>
-                  </div>
-                )}
-
-                <div className="border-t-2 border-border pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-base font-semibold">Total</span>
-                    <div className="text-right">
-                      {pricing.discount > 0 && (
-                        <div className="text-xs text-muted-foreground line-through mb-1">
-                          ₹{pricing.originalPrice.toFixed(2)}
-                        </div>
-                      )}
-                      <div className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                        {isLoadingPricing
-                          ? "Loading..."
-                          : `₹${pricing.finalPrice.toFixed(2)}`}
+              <div className="border-t border-border pt-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-base font-semibold">Total</span>
+                  <div className="text-right">
+                    {pricing.discount > 0 && (
+                      <div className="text-xs text-muted-foreground line-through mb-0.5">
+                        ₹{pricing.originalPrice.toFixed(2)}
                       </div>
+                    )}
+                    <div className="text-xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                      {isLoadingPricing
+                        ? "Loading..."
+                        : `₹${pricing.finalPrice.toFixed(2)}`}
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Coupon Code */}
-              <div className="space-y-2 mt-4">
-                <Label className="text-sm font-medium flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                  Coupon Code (Optional)
-                </Label>
-                <div className="flex gap-2">
-                  <Input
-                    placeholder="Enter coupon code"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value)}
-                    className={`flex-1 rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${errors.coupon ? "border-destructive" : ""
-                      }`}
-                    disabled={isApplyingCoupon || !!appliedCoupon}
-                  />
-                  {appliedCoupon ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={removeCoupon}
-                      disabled={isApplyingCoupon}
-                      className="rounded-lg"
-                    >
-                      Remove
-                    </Button>
-                  ) : (
-                    <LoadingButton
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={applyCoupon}
-                      isLoading={isApplyingCoupon}
-                      loadingText="Applying..."
-                      disabled={!couponCode.trim()}
-                      className="rounded-lg"
-                    >
-                      Apply
-                    </LoadingButton>
-                  )}
-                </div>
-                {errors.coupon && (
-                  <p className="text-sm text-destructive">{errors.coupon}</p>
-                )}
-                {appliedCoupon && (
-                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>
-                      Coupon applied! You saved ₹{appliedCoupon.discount}
-                    </span>
-                  </div>
+            {/* Coupon Code */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                Coupon Code (Optional)
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter coupon code"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                  className={`flex-1 rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${
+                    errors.coupon ? "border-destructive" : ""
+                  }`}
+                  disabled={isApplyingCoupon || !!appliedCoupon}
+                />
+                {appliedCoupon ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={removeCoupon}
+                    disabled={isApplyingCoupon}
+                    className="rounded-lg"
+                  >
+                    Remove
+                  </Button>
+                ) : (
+                  <LoadingButton
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={applyCoupon}
+                    isLoading={isApplyingCoupon}
+                    loadingText="Applying..."
+                    disabled={!couponCode.trim()}
+                    className="rounded-lg"
+                  >
+                    Apply
+                  </LoadingButton>
                 )}
               </div>
-            </Card>
+              {errors.coupon && (
+                <p className="text-sm text-destructive">{errors.coupon}</p>
+              )}
+              {appliedCoupon && (
+                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>
+                    Coupon applied! You saved ₹{appliedCoupon.discount}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
-        );
 
-      default:
-        return null;
-    }
-  };
-
-  const canProceedToPayment = () => {
-    return (
-      pdfFile &&
-      ((inputMode === "role" && selectedRole) ||
-        (inputMode === "jobDescription" && jobDescription.trim()))
-    );
-  };
-
-  const handleCancelAnalysis = () => {
-    clearSession();
-    setIsAnalyzing(false);
-  };
-
-  return (
-    <div className="min-h-screen bg-background relative">
-      {isAnalyzing && (
-        <SimpleLoader
-          message="Analyzing your resume... This may take a while."
-          onCancel={handleCancelAnalysis}
-        />
-      )}
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-6 pb-4">
-        <div className="absolute inset-0 bg-linear-to-br from-background via-muted/20 to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
-        <div className="relative container mx-auto px-4 max-w-5xl z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center space-y-2"
-          >
-            <Badge
-              variant="secondary"
-              className="px-3 py-1 text-xs font-medium mb-2"
-            >
-              <Sparkles className="w-3 h-3 mr-1.5 inline" />
-              AI-Powered Analysis
-            </Badge>
-            <h1 className="text-2xl md:text-3xl font-bold leading-tight">
-              Resume Analysis
-            </h1>
-            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-              Get AI-powered insights to optimize your resume
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Main Content */}
-      <div className="relative container mx-auto px-4 max-w-5xl pb-8">
-        {errors.general && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm"
-          >
-            <p className="text-sm text-destructive font-medium">
-              {errors.general}
-            </p>
-          </motion.div>
-        )}
-
-        <Card className="p-4 md:p-5 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl">
-          <Tabs
-            value={activeTab}
-            onValueChange={handleTabChange}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-3 mb-4 bg-muted/50 rounded-xl p-1">
-              {tabs.map((tab) => {
-                const IconComponent = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <TabsTrigger
-                    key={tab.id}
-                    value={tab.id}
-                    className={`rounded-lg transition-all duration-300 ${isActive
-                      ? "bg-background shadow-md text-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                      }`}
-                  >
-                    <IconComponent className="w-4 h-4 mr-2" />
-                    {tab.label}
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
-
-            {tabs.map((tab) => (
-              <TabsContent key={tab.id} value={tab.id} className="mt-0">
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {renderTabContent()}
-                </motion.div>
-              </TabsContent>
-            ))}
-          </Tabs>
-
-          {/* Navigation Footer */}
-          <div className="flex justify-between items-center pt-4 mt-4 border-t border-border">
+          {/* Submit Button */}
+          <div className="pt-2">
             <Button
-              variant="outline"
-              onClick={() => {
-                if (activeTab === "requirements") {
-                  setActiveTab("resume");
-                } else if (activeTab === "payment") {
-                  setActiveTab("requirements");
-                }
-              }}
-              disabled={activeTab === "resume"}
-              className="rounded-xl"
+              onClick={handleStepSubmit}
+              disabled={isSubmitting || !canSubmit()}
+              className="w-full bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl py-5 text-base font-semibold"
             >
-              Previous
+              {isSubmitting ? "Processing..." : "Start Analysis"}
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
-            {activeTab === "payment" ? (
-              <Button
-                onClick={handleStepSubmit}
-                disabled={isSubmitting || !canProceedToPayment()}
-                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
-              >
-                {isSubmitting ? "Processing..." : "Start Analysis"}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  if (activeTab === "resume") {
-                    if (pdfFile) {
-                      setActiveTab("requirements");
-                    } else {
-                      setErrors({ resume: "Please upload your resume" });
-                    }
-                  } else if (activeTab === "requirements") {
-                    if (
-                      (inputMode === "role" && selectedRole) ||
-                      (inputMode === "jobDescription" && jobDescription.trim())
-                    ) {
-                      setActiveTab("payment");
-                    } else {
-                      setErrors({
-                        role: "Please select a role or add job description",
-                      });
-                    }
-                  }
-                }}
-                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
-              >
-                Next
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            )}
           </div>
         </Card>
       </div>

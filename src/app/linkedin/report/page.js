@@ -15,9 +15,6 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/components/api/api";
 import { useAuth } from "@clerk/nextjs";
 import { LoadingButton } from "@/components/ui/loading-button";
-import LockedSectionOverlay from "@/components/locked-section-overlay";
-import FloatingUnlockTab from "@/components/floating-unlock-tab";
-import { Lock } from "lucide-react";
 
 const LinkedinReport = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -28,20 +25,6 @@ const LinkedinReport = () => {
   const [loading, setLoading] = useState(true);
   const { getToken } = useAuth();
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-  const [isPaid, setIsPaid] = useState(false);
-
-  // Define free sections (accessible without payment)
-  const freeSections = ["overview", "profile-info", "headline", "about"];
-
-  // Define locked sections (require payment)
-  const lockedSections = [
-    "profile-picture",
-    "banner",
-    "experience",
-    "skill",
-    "education",
-    "certification",
-  ];
 
   // Check if device is mobile
   useEffect(() => {
@@ -56,22 +39,14 @@ const LinkedinReport = () => {
     };
   }, []);
 
-  // Reordered tabs: FREE sections first, then LOCKED sections
   const tabs = [
-    // FREE SECTIONS (Always accessible)
     {
       id: "overview",
       label: "Overview",
       component: (
         <Overview
           data={linkedinReport}
-          onNavigate={(tabId) => {
-            // Check if section is locked
-            if (!isPaid && lockedSections.includes(tabId)) {
-              return;
-            }
-            setActiveTab(tabId);
-          }}
+          onNavigate={(tabId) => setActiveTab(tabId)}
         />
       ),
     },
@@ -90,7 +65,6 @@ const LinkedinReport = () => {
       label: "About",
       component: <About data={linkedinReport} />,
     },
-    // LOCKED SECTIONS (Require payment)
     {
       id: "experience",
       label: "Experience",
@@ -133,7 +107,6 @@ const LinkedinReport = () => {
         },
       });
       setLinkedinReport(response.data);
-      setIsPaid(response.data.is_paid || false);
     } catch (error) {
       console.error("Error fetching LinkedIn report:", error);
     } finally {
@@ -263,27 +236,14 @@ const LinkedinReport = () => {
                 {tabs.map((tab) => (
                   <li key={tab.id}>
                     <button
-                      onClick={() => {
-                        // Check if section is locked
-                        if (!isPaid && lockedSections.includes(tab.id)) {
-                          // Don't allow navigation to locked sections
-                          return;
-                        }
-                        setActiveTab(tab.id);
-                      }}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between ${
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                         activeTab === tab.id
                           ? "bg-primary text-primary-foreground shadow-sm hover:shadow-md"
-                          : !isPaid && lockedSections.includes(tab.id)
-                            ? "text-muted-foreground/50 cursor-not-allowed opacity-40 grayscale"
-                            : "text-foreground hover:bg-accent/50 hover:border-primary/30 border border-transparent"
+                          : "text-foreground hover:bg-accent/50 hover:border-primary/30 border border-transparent"
                       }`}
-                      disabled={!isPaid && lockedSections.includes(tab.id)}
                     >
                       <span className="capitalize">{tab.label}</span>
-                      {!isPaid && lockedSections.includes(tab.id) && (
-                        <Lock className="w-4 h-4" />
-                      )}
                     </button>
                   </li>
                 ))}
@@ -362,29 +322,18 @@ const LinkedinReport = () => {
                     <li key={tab.id}>
                       <button
                         onClick={() => {
-                          // Check if section is locked
-                          if (!isPaid && lockedSections.includes(tab.id)) {
-                            // Don't allow navigation to locked sections
-                            return;
-                          }
                           setActiveTab(tab.id);
                           document
                             .getElementById("mobile-sidebar")
                             .classList.toggle("hidden");
                         }}
-                        className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between ${
+                        className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
                           activeTab === tab.id
                             ? "bg-primary text-primary-foreground shadow-sm"
-                            : !isPaid && lockedSections.includes(tab.id)
-                              ? "text-muted-foreground/50 cursor-not-allowed opacity-40 grayscale"
-                              : "text-foreground hover:bg-accent"
+                            : "text-foreground hover:bg-accent"
                         }`}
-                        disabled={!isPaid && lockedSections.includes(tab.id)}
                       >
                         <span className="capitalize">{tab.label}</span>
-                        {!isPaid && lockedSections.includes(tab.id) && (
-                          <Lock className="w-4 h-4" />
-                        )}
                       </button>
                     </li>
                   ))}
@@ -411,34 +360,13 @@ const LinkedinReport = () => {
                 </LoadingButton>
               </div>
 
-              {/* Render active tab content with locked section overlay if needed */}
-              {!isPaid && lockedSections.includes(activeTab) ? (
-                <div className="locked-section-container">
-                  <div className="locked-content">
-                    {tabs.find((tab) => tab.id === activeTab)?.component}
-                  </div>
-                  <LockedSectionOverlay
-                    reportId={id}
-                    onUpgrade={() => {
-                      // Refresh report data after upgrade
-                      getLinkedinReport();
-                    }}
-                  />
-                </div>
-              ) : (
-                tabs.find((tab) => tab.id === activeTab)?.component
-              )}
+              {tabs.find((tab) => tab.id === activeTab)?.component}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Unlock Tab - Always visible at bottom right */}
-      <FloatingUnlockTab
-        reportId={id}
-        isPaid={isPaid}
-        onUnlockSuccess={() => getLinkedinReport()}
-      />
+
     </div>
   );
 };

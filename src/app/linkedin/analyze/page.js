@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAnalysisSession } from "@/hooks/useAnalysisSession";
-import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { Label } from "@/components/ui/label";
@@ -11,31 +10,28 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import RoleSelector from "@/components/ui/role-selector";
 import JobDescriptionInput from "@/components/ui/job-description-input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { api } from "@/components/api/api";
 import { useAuth, useUser } from "@clerk/nextjs";
 import SimpleLoader from "@/components/simple-loader";
 import { useRouter } from "next/navigation";
 import {
   Linkedin,
-  FileText,
   Briefcase,
   ArrowRight,
   Upload,
   Sparkles,
+  FileText,
+  X,
 } from "lucide-react";
 
 const LinkedinAnalyze = () => {
-  const [activeTab, setActiveTab] = useState("profile");
   const [linkedinUrl, setLinkedinUrl] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
-  const [inputMode, setInputMode] = useState("role"); // "role" or "jobDescription"
-  const [isDragging, setIsDragging] = useState(false);
+  const [inputMode, setInputMode] = useState("role");
   const [pdfFile, setPdfFile] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState(null);
   const fileInputRef = useRef(null);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -54,13 +50,7 @@ const LinkedinAnalyze = () => {
     useAnalysisSession("linkedin");
   const eventSourceRef = useRef(null);
 
-  // Tab definitions - Only Profile and Requirements for freemium model
-  const tabs = [
-    { id: "profile", label: "Profile", icon: Linkedin },
-    { id: "requirements", label: "Job Requirements", icon: Briefcase },
-  ];
-
-  // ── SSE status config (shared between submit and session-resume) ──
+  // SSE status config
   const statusConfig = {
     pending: {
       title: "Preparing",
@@ -100,10 +90,9 @@ const LinkedinAnalyze = () => {
     },
   };
 
-  // ── connectSSE: opens an EventSource with auto-reconnect ──
+  // connectSSE: opens an EventSource with auto-reconnect
   const connectSSE = useCallback(
     (analysisRequestId, token) => {
-      // Close any previous connection
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
         eventSourceRef.current = null;
@@ -116,10 +105,8 @@ const LinkedinAnalyze = () => {
       let hasCompleted = false;
 
       const open = async () => {
-        // Get a fresh token for each reconnect attempt
         const currentToken = retryCount === 0 ? token : await getToken();
         if (!currentToken) {
-          console.warn("[SSE] No token available, cannot reconnect.");
           setIsAnalyzing(false);
           clearSession();
           setErrors({
@@ -137,7 +124,6 @@ const LinkedinAnalyze = () => {
         es.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            // Reset retries on every successful message
             retryCount = 0;
 
             const config =
@@ -178,21 +164,19 @@ const LinkedinAnalyze = () => {
           es.close();
           eventSourceRef.current = null;
 
-          // Wait briefly — the server may have just sent the last event
           setTimeout(() => {
             if (hasCompleted) return;
 
             retryCount++;
             if (retryCount <= MAX_RETRIES) {
-              const delay = Math.min(2000 * Math.pow(2, retryCount - 1), 30000);
-              console.warn(
-                `[SSE] Connection lost, reconnecting in ${delay / 1000}s (attempt ${retryCount}/${MAX_RETRIES})`,
+              const delay = Math.min(
+                2000 * Math.pow(2, retryCount - 1),
+                30000,
               );
               setTimeout(() => {
                 if (!hasCompleted) open();
               }, delay);
             } else {
-              console.error("[SSE] Max reconnect attempts reached, giving up.");
               hasCompleted = true;
               clearSession();
               setIsAnalyzing(false);
@@ -210,16 +194,14 @@ const LinkedinAnalyze = () => {
     [getToken, router, clearSession],
   );
 
-  // Check authentication - must be before early return
+  // Check authentication
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      // Save form state to sessionStorage before redirecting to login
       const formState = {
         linkedinUrl,
         selectedRole,
         jobDescription,
         inputMode,
-        activeTab,
       };
       sessionStorage.setItem(
         "linkedin_analyze_form",
@@ -241,7 +223,6 @@ const LinkedinAnalyze = () => {
           if (formState.jobDescription)
             setJobDescription(formState.jobDescription);
           if (formState.inputMode) setInputMode(formState.inputMode);
-          if (formState.activeTab) setActiveTab(formState.activeTab);
           sessionStorage.removeItem("linkedin_analyze_form");
         }
       } catch (e) {
@@ -250,7 +231,7 @@ const LinkedinAnalyze = () => {
     }
   }, [isLoaded, isSignedIn]);
 
-  // ── Resume an active session on page load / refresh ──
+  // Resume an active session on page load / refresh
   useEffect(() => {
     if (!isLoaded || !isSignedIn || !activeSession) return;
 
@@ -270,7 +251,6 @@ const LinkedinAnalyze = () => {
 
     resume();
 
-    // Cleanup on unmount
     return () => {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
@@ -279,7 +259,7 @@ const LinkedinAnalyze = () => {
     };
   }, [isLoaded, isSignedIn, activeSession]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Show loading state while checking auth - AFTER all hooks
+  // Show loading state while checking auth
   if (!isLoaded || !isSignedIn) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -291,53 +271,33 @@ const LinkedinAnalyze = () => {
     );
   }
 
-  const validateStep = (step) => {
+  const validateForm = () => {
     const newErrors = {};
 
-    if (step === 1) {
-      // Profile step validation
-      if (!linkedinUrl && !pdfFile) {
-        newErrors.profile =
-          "Please provide either a LinkedIn URL or upload a LinkedIn profile PDF file";
-      }
-
-      if (
-        linkedinUrl &&
-        !linkedinUrl.match(
-          /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_.]+\/?$/,
-        )
-      ) {
-        newErrors.linkedinUrl = "Please enter a valid LinkedIn profile URL";
-      }
+    if (!linkedinUrl && !pdfFile) {
+      newErrors.profile =
+        "Please provide either a LinkedIn URL or upload a LinkedIn profile PDF file";
     }
 
-    if (step === 2) {
-      // Job requirements step validation
-      if (inputMode === "role" && !selectedRole) {
-        newErrors.role = "Please select a role";
-      }
+    if (
+      linkedinUrl &&
+      !linkedinUrl.match(
+        /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_.]+\/?$/,
+      )
+    ) {
+      newErrors.linkedinUrl = "Please enter a valid LinkedIn profile URL";
+    }
 
-      if (inputMode === "jobDescription" && !jobDescription.trim()) {
-        newErrors.jobDescription = "Please enter a job description";
-      }
+    if (inputMode === "role" && !selectedRole) {
+      newErrors.role = "Please select a role";
+    }
+
+    if (inputMode === "jobDescription" && !jobDescription.trim()) {
+      newErrors.jobDescription = "Please enter a job description";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const validateForm = () => {
-    return validateStep(1) && validateStep(2);
-  };
-
-  const handleTabChange = (tabId) => {
-    // Validate before allowing tab change
-    if (tabId === "requirements" && !linkedinUrl && !pdfFile) {
-      setErrors({ profile: "Please add your LinkedIn profile first" });
-      return;
-    }
-    setErrors({});
-    setActiveTab(tabId);
   };
 
   const handleStepSubmit = async () => {
@@ -379,7 +339,6 @@ const LinkedinAnalyze = () => {
         formData.append("jobDescription", jobDescription);
       }
 
-      // Submit analysis request (returns immediately with analysisRequestId)
       const response = await api.post("/api/linkedin/analyze", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -392,7 +351,6 @@ const LinkedinAnalyze = () => {
       }
 
       const analysisRequestId = response.data.analysisRequestId;
-      // Persist session so a refresh can resume
       saveSession(analysisRequestId);
 
       setProcessData({
@@ -403,7 +361,6 @@ const LinkedinAnalyze = () => {
         percentage: 15,
       });
 
-      // Open SSE connection with auto-reconnect
       connectSSE(analysisRequestId, token);
     } catch (error) {
       console.error("Form submission failed:", error);
@@ -418,44 +375,10 @@ const LinkedinAnalyze = () => {
     }
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      const fileName = file.name.toLowerCase();
-      // LinkedIn profile exports are always PDF files
-      const isValidFile =
-        file.type === "application/pdf" || fileName.endsWith(".pdf");
-
-      if (isValidFile) {
-        setPdfFile(file);
-        setErrors((prev) => ({ ...prev, profile: null }));
-      } else {
-        setErrors((prev) => ({
-          ...prev,
-          profile: "Please upload a valid LinkedIn profile PDF file",
-        }));
-      }
-    }
-  };
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const fileName = file.name.toLowerCase();
-      // LinkedIn profile exports are always PDF files
       const isValidFile =
         file.type === "application/pdf" || fileName.endsWith(".pdf");
 
@@ -465,7 +388,7 @@ const LinkedinAnalyze = () => {
       } else {
         setErrors((prev) => ({
           ...prev,
-          profile: "Please upload a valid LinkedIn profile PDF file",
+          profile: "Please upload a valid PDF file",
         }));
       }
     }
@@ -475,213 +398,6 @@ const LinkedinAnalyze = () => {
     setPdfFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
-    }
-  };
-
-  // Socket useEffect moved above - removed duplicate
-
-  // Show process demo screen during analysis - render as overlay
-
-  // Render tab content
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "profile":
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm">
-                <Linkedin className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold">LinkedIn Profile</h3>
-                <p className="text-sm text-muted-foreground">
-                  Add your LinkedIn URL or upload a profile PDF
-                </p>
-              </div>
-            </div>
-
-            {/* LinkedIn URL Input */}
-            <div className="space-y-2">
-              <Label
-                htmlFor="linkedinUrl"
-                className="text-sm font-medium flex items-center gap-2"
-              >
-                <Linkedin className="w-4 h-4 text-primary" />
-                LinkedIn Profile URL
-              </Label>
-              <Input
-                id="linkedinUrl"
-                placeholder="https://www.linkedin.com/in/your-profile"
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                className={`rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${
-                  errors.linkedinUrl ? "border-destructive" : ""
-                }`}
-              />
-              {errors.linkedinUrl && (
-                <p className="text-sm text-destructive">{errors.linkedinUrl}</p>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="relative py-1">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="bg-background px-3 text-muted-foreground">
-                  OR
-                </span>
-              </div>
-            </div>
-
-            {/* PDF Upload */}
-            <div className="space-y-2">
-              <Label className="text-sm font-medium flex items-center gap-2">
-                <Upload className="w-4 h-4 text-primary" />
-                Upload LinkedIn Profile PDF
-              </Label>
-              <div
-                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 bg-card/50 backdrop-blur-sm ${
-                  isDragging
-                    ? "border-primary bg-primary/10"
-                    : errors.profile
-                      ? "border-destructive bg-destructive/5"
-                      : "border-border hover:border-primary/50 hover:bg-primary/5"
-                }`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                />
-                {pdfFile ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-center gap-2">
-                      <svg
-                        className="w-5 h-5 text-primary"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <span className="font-medium text-sm">
-                        {pdfFile.name}
-                      </span>
-                    </div>
-                    <LoadingButton
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removePdf();
-                      }}
-                    >
-                      Remove
-                    </LoadingButton>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto">
-                      <Upload className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium">
-                        Click to upload or drag and drop
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        LinkedIn profile PDF only (max 10MB)
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-              {errors.profile && (
-                <p className="text-sm text-destructive">{errors.profile}</p>
-              )}
-            </div>
-          </div>
-        );
-
-      case "requirements":
-        return (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center backdrop-blur-sm">
-                <Briefcase className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">Job Requirements</h3>
-                <p className="text-xs text-muted-foreground">
-                  Select a role or paste a job description
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant={inputMode === "role" ? "default" : "outline"}
-                  onClick={() => setInputMode("role")}
-                  className={`rounded-xl transition-all duration-300 ${
-                    inputMode === "role"
-                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
-                      : ""
-                  }`}
-                >
-                  Select A Role
-                </Button>
-                <Button
-                  type="button"
-                  variant={
-                    inputMode === "jobDescription" ? "default" : "outline"
-                  }
-                  onClick={() => setInputMode("jobDescription")}
-                  className={`rounded-xl transition-all duration-300 ${
-                    inputMode === "jobDescription"
-                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
-                      : ""
-                  }`}
-                >
-                  Paste Job Description
-                </Button>
-              </div>
-
-              {inputMode === "role" ? (
-                <RoleSelector
-                  value={selectedRole}
-                  onChange={setSelectedRole}
-                  error={errors.role}
-                  placeholder="Search and select your target role..."
-                />
-              ) : (
-                <JobDescriptionInput
-                  value={jobDescription}
-                  onChange={setJobDescription}
-                  error={errors.jobDescription}
-                  placeholder="Enter the job description for the role you're targeting..."
-                />
-              )}
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
     }
   };
 
@@ -710,11 +426,12 @@ const LinkedinAnalyze = () => {
           onCancel={handleCancelAnalysis}
         />
       )}
+
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-6 pb-4">
         <div className="absolute inset-0 bg-linear-to-br from-background via-muted/20 to-background" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
-        <div className="relative container mx-auto px-4 max-w-5xl z-10">
+        <div className="relative container mx-auto px-4 max-w-3xl z-10">
           <div className="text-center space-y-2 animate-fade-in">
             <Badge
               variant="secondary"
@@ -727,15 +444,15 @@ const LinkedinAnalyze = () => {
               LinkedIn Profile Analysis
             </h1>
             <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-              Analyze your LinkedIn profile for FREE! Get AI-powered insights
-              with limited access, or upgrade for full analysis.
+              Analyze your LinkedIn profile for FREE! Get complete AI-powered
+              insights and actionable recommendations.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="relative container mx-auto px-4 max-w-5xl pb-8">
+      {/* Main Content — Single Page Form */}
+      <div className="relative container mx-auto px-4 max-w-3xl pb-8">
         {errors.general && (
           <div className="mb-4 p-3 bg-destructive/10 border-2 border-destructive/20 rounded-xl backdrop-blur-sm animate-fade-in">
             <p className="text-sm text-destructive font-medium">
@@ -744,82 +461,172 @@ const LinkedinAnalyze = () => {
           </div>
         )}
 
-        <Card className="p-4 md:p-5 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl">
-          <Tabs
-            value={activeTab}
-            onValueChange={handleTabChange}
-            className="w-full"
-          >
-            <TabsList className="grid w-full grid-cols-2 mb-4 bg-muted/50 rounded-xl p-1">
-              {tabs.map((tab) => {
-                const IconComponent = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <TabsTrigger
-                    key={tab.id}
-                    value={tab.id}
-                    className={`rounded-lg transition-all duration-300 ${
-                      isActive
-                        ? "bg-background shadow-md text-primary"
-                        : "text-muted-foreground hover:text-foreground"
-                    }`}
+        <Card className="p-5 md:p-7 bg-card/50 backdrop-blur-sm border-2 border-primary/20 shadow-xl rounded-xl space-y-8">
+          {/* ─── Section 1: LinkedIn Profile ─── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+                <Linkedin className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">LinkedIn Profile</h3>
+                <p className="text-xs text-muted-foreground">
+                  Add your LinkedIn URL or upload a profile PDF
+                </p>
+              </div>
+            </div>
+
+            {/* LinkedIn URL Input */}
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="linkedinUrl"
+                className="text-sm font-medium flex items-center gap-2"
+              >
+                <Linkedin className="w-4 h-4 text-primary" />
+                LinkedIn Profile URL
+              </Label>
+              <Input
+                id="linkedinUrl"
+                placeholder="https://www.linkedin.com/in/your-profile"
+                value={linkedinUrl}
+                onChange={(e) => setLinkedinUrl(e.target.value)}
+                className={`rounded-lg bg-background border-border hover:border-primary/50 transition-colors ${
+                  errors.linkedinUrl ? "border-destructive" : ""
+                }`}
+              />
+              {errors.linkedinUrl && (
+                <p className="text-sm text-destructive">{errors.linkedinUrl}</p>
+              )}
+            </div>
+
+            {/* Divider */}
+            <div className="relative py-1">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-card px-3 text-muted-foreground">OR</span>
+              </div>
+            </div>
+
+            {/* Compact PDF Upload */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium flex items-center gap-2">
+                <FileText className="w-4 h-4 text-primary" />
+                Upload LinkedIn Profile PDF
+              </Label>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept=".pdf"
+                onChange={handleFileChange}
+              />
+              {pdfFile ? (
+                <div className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-primary/30 bg-primary/5">
+                  <FileText className="w-4 h-4 text-primary shrink-0" />
+                  <span className="text-sm font-medium truncate flex-1">
+                    {pdfFile.name}
+                  </span>
+                  <button
+                    onClick={removePdf}
+                    className="p-1 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
                   >
-                    <IconComponent className="w-4 h-4 mr-2" />
-                    {tab.label}
-                  </TabsTrigger>
-                );
-              })}
-            </TabsList>
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm text-muted-foreground"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>Click to upload PDF (max 10MB)</span>
+                </button>
+              )}
+              {errors.profile && (
+                <p className="text-sm text-destructive">{errors.profile}</p>
+              )}
+            </div>
+          </div>
 
-            {tabs.map((tab) => (
-              <TabsContent key={tab.id} value={tab.id} className="mt-0">
-                <div className="animate-fade-in">{renderTabContent()}</div>
-              </TabsContent>
-            ))}
-          </Tabs>
+          {/* Separator */}
+          <div className="border-t border-border" />
 
-          {/* Navigation Footer */}
-          <div className="flex justify-between items-center pt-4 mt-4 border-t border-border">
-            <Button
-              variant="outline"
-              onClick={() => {
-                if (activeTab === "requirements") {
-                  setActiveTab("profile");
-                }
-              }}
-              disabled={activeTab === "profile"}
-              className="rounded-xl"
-            >
-              Previous
-            </Button>
-            {activeTab === "requirements" ? (
-              <Button
-                onClick={handleStepSubmit}
-                disabled={isSubmitting || !canSubmit()}
-                className="bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
-              >
-                {isSubmitting ? "Analyzing..." : "Analyze for Free"}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  if (activeTab === "profile") {
-                    if (linkedinUrl || pdfFile) {
-                      setActiveTab("requirements");
-                    } else {
-                      setErrors({
-                        profile: "Please add your LinkedIn profile",
-                      });
-                    }
+          {/* ─── Section 2: Job Requirements ─── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center backdrop-blur-sm">
+                <Briefcase className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Job Requirements</h3>
+                <p className="text-xs text-muted-foreground">
+                  Select a role or paste a job description
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant={inputMode === "role" ? "default" : "outline"}
+                  onClick={() => setInputMode("role")}
+                  size="sm"
+                  className={`rounded-xl transition-all duration-300 ${
+                    inputMode === "role"
+                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      : ""
+                  }`}
+                >
+                  Select A Role
+                </Button>
+                <Button
+                  type="button"
+                  variant={
+                    inputMode === "jobDescription" ? "default" : "outline"
                   }
-                }}
-                className="bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl"
-              >
-                Next
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            )}
+                  onClick={() => setInputMode("jobDescription")}
+                  size="sm"
+                  className={`rounded-xl transition-all duration-300 ${
+                    inputMode === "jobDescription"
+                      ? "bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50"
+                      : ""
+                  }`}
+                >
+                  Paste Job Description
+                </Button>
+              </div>
+
+              {inputMode === "role" ? (
+                <RoleSelector
+                  value={selectedRole}
+                  onChange={setSelectedRole}
+                  error={errors.role}
+                  placeholder="Search and select your target role..."
+                />
+              ) : (
+                <JobDescriptionInput
+                  value={jobDescription}
+                  onChange={setJobDescription}
+                  error={errors.jobDescription}
+                  placeholder="Enter the job description for the role you're targeting..."
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="pt-2">
+            <Button
+              onClick={handleStepSubmit}
+              disabled={isSubmitting || !canSubmit()}
+              className="w-full bg-linear-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 rounded-xl py-5 text-base font-semibold"
+            >
+              {isSubmitting ? "Analyzing..." : "Analyze for Free"}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
           </div>
         </Card>
       </div>

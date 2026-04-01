@@ -44,6 +44,17 @@ export const metadata = {
     description:
       "AI-powered career growth platform helping professionals navigate the job market with confidence.",
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 const organizationSchema = {

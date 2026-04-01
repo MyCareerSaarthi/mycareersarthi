@@ -58,7 +58,7 @@ const CareerAssessmentSlide = () => {
       {/* Left Content Section */}
       <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
         <h2 className={headingClass}>
-          Career Assessment & Roadmap to Ace the Indian Job Market
+          Career Diagnostics To Build A Successful Career
         </h2>
 
         <ul className="space-y-3 sm:space-y-4">
@@ -146,9 +146,9 @@ const InterviewPreparationSlide = () => {
       </div>
 
       {/* Left Content Section */}
-      <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
+      <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10 capitaliz">
         <h2 className={headingClass}>
-          Interview Preparation That Helps You Convert Interviews into Offers
+          Interview Preparation To Get You 5X Closer To The Offer Letter
         </h2>
 
         <ul className="space-y-3 sm:space-y-4">
@@ -237,7 +237,7 @@ const JobSearchSlide = () => {
       {/* Left Content Section */}
       <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
         <h2 className={headingClass}>
-          Job Search Strategy Built to 10X Interview Calls
+          Job Search Strategy Designed To 10X Your Interview Calls
         </h2>
 
         <ul className="space-y-3 sm:space-y-4">

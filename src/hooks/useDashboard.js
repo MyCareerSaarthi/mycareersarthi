@@ -24,6 +24,17 @@ export const useDashboard = () => {
   const [activity, setActivity] = useState([]);
   const [insights, setInsights] = useState(null);
 
+  // New comprehensive category states
+  const [roleWiseBreakdown, setRoleWiseBreakdown] = useState(null);
+  const [typeWiseBreakdown, setTypeWiseBreakdown] = useState(null);
+  const [sectionAnalytics, setSectionAnalytics] = useState(null);
+  const [comparisonSummary, setComparisonSummary] = useState(null);
+  const [paymentBreakdown, setPaymentBreakdown] = useState(null);
+  const [analysisRequestSummary, setAnalysisRequestSummary] = useState(null);
+  const [scoreDistribution, setScoreDistribution] = useState(null);
+  const [monthlyActivity, setMonthlyActivity] = useState(null);
+  const [topRoles, setTopRoles] = useState(null);
+
   // Fetch comprehensive dashboard data
   const fetchDashboardData = useCallback(
     async (isRefresh = false) => {
@@ -55,6 +66,17 @@ export const useDashboard = () => {
           setAchievements(response.data.achievements);
           setActivity(response.data.activity || []);
           setInsights(response.data.insights);
+
+          // Update new category states
+          setRoleWiseBreakdown(response.data.roleWiseBreakdown || null);
+          setTypeWiseBreakdown(response.data.typeWiseBreakdown || null);
+          setSectionAnalytics(response.data.sectionAnalytics || null);
+          setComparisonSummary(response.data.comparisonSummary || null);
+          setPaymentBreakdown(response.data.paymentBreakdown || null);
+          setAnalysisRequestSummary(response.data.analysisRequestSummary || null);
+          setScoreDistribution(response.data.scoreDistribution || null);
+          setMonthlyActivity(response.data.monthlyActivity || null);
+          setTopRoles(response.data.topRoles || null);
         } else {
           throw new Error(response.error || "Failed to fetch dashboard data");
         }
@@ -271,6 +293,17 @@ export const useDashboard = () => {
     achievements,
     activity,
     insights,
+
+    // New category data
+    roleWiseBreakdown,
+    typeWiseBreakdown,
+    sectionAnalytics,
+    comparisonSummary,
+    paymentBreakdown,
+    analysisRequestSummary,
+    scoreDistribution,
+    monthlyActivity,
+    topRoles,
 
     // Computed values
     highPriorityRecommendations,

@@ -16,6 +16,7 @@ export const resumePayment = async (
 
     let pollTimer = null;
     let modalOpen = true;
+    let paymentHandled = false;
     const stopPolling = () => {
       modalOpen = false;
       if (pollTimer) clearInterval(pollTimer);
@@ -28,6 +29,7 @@ export const resumePayment = async (
       name: "MyCareerSarthi",
       order_id: orderId,
       handler: async function (razorpayResponse) {
+        paymentHandled = true;
         const currentToken = getToken ? await getToken() : token;
         handleVerifyPayment(
           razorpayResponse,
@@ -49,10 +51,12 @@ export const resumePayment = async (
       modal: {
         ondismiss: function () {
           stopPolling();
-          onErrorChange?.(
-            "Payment cancelled. Please try again if you wish to proceed.",
-            { amount, orderId, analysisRequestId }
-          );
+          if (!paymentHandled) {
+            onErrorChange?.(
+              "Payment cancelled. Please try again if you wish to proceed.",
+              { amount, orderId, analysisRequestId }
+            );
+          }
         },
       },
     };
@@ -170,6 +174,7 @@ const handlePayment = async (
     // Declare polling variables outside the options object
     let pollTimer = null;
     let modalOpen = true;
+    let paymentHandled = false;
     const stopPolling = () => {
       modalOpen = false;
       if (pollTimer) clearInterval(pollTimer);
@@ -182,6 +187,7 @@ const handlePayment = async (
       name: "MyCareerSarthi",
       order_id: orderId,
       handler: async function (razorpayResponse) {
+        paymentHandled = true;
         // Get fresh token if getToken function is provided
         const currentToken = getToken ? await getToken() : token;
         handleVerifyPayment(
@@ -204,10 +210,13 @@ const handlePayment = async (
       modal: {
         ondismiss: function () {
           stopPolling();
-          onErrorChange?.(
-            "Payment cancelled. Please try again if you wish to proceed.",
-            { amount, orderId, analysisRequestId }
-          );
+          // Don't show cancelled error if payment was already handled successfully
+          if (!paymentHandled) {
+            onErrorChange?.(
+              "Payment cancelled. Please try again if you wish to proceed.",
+              { amount, orderId, analysisRequestId }
+            );
+          }
         },
       },
     };

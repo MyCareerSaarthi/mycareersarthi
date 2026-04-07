@@ -98,6 +98,8 @@ const ResumeAnalyze = () => {
       const analysisRequestId = activeSession.analysisRequestId;
       let pollCount = 0;
       const MAX_POLLS = 450;
+      let paymentWaitCount = 0;
+      const MAX_PAYMENT_WAITS = 15; // Wait up to ~30 seconds for payment verification
       const poll = async () => {
         if (pollCount >= MAX_POLLS) { clearSession(); setIsAnalyzing(false); setErrors({ general: "Analysis timed out." }); return; }
         pollCount++;
@@ -106,8 +108,21 @@ const ResumeAnalyze = () => {
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
           const data = await resp.json();
           if (data.status === "completed" && data.result_report_id) {
-            if (data.payment_status === "completed") { clearSession(); window.location.href = `/resume/report?id=${data.result_report_id}`; return; }
-            else { clearSession(); setIsAnalyzing(false); setErrors({ general: "Please complete your payment to view the report." }); return; }
+            if (data.payment_status === "completed" || !data.order_id) {
+              // Payment verified or free analysis — redirect to report
+              clearSession(); window.location.href = `/resume/report?id=${data.result_report_id}`; return;
+            } else {
+              // Payment verification still in progress — keep waiting
+              paymentWaitCount++;
+              if (paymentWaitCount >= MAX_PAYMENT_WAITS) {
+                clearSession(); setIsAnalyzing(false);
+                setErrors({ general: "Payment verification is taking longer than expected. Please check your payment status or try again." });
+                return;
+              }
+              setProcessData({ title: "Verifying Payment", subtitle: "Your payment is being verified. Please wait...", currentStep: 4, totalSteps: 5, percentage: 80 });
+              setTimeout(poll, 2000);
+              return;
+            }
           }
           if (data.status === "failed") { clearSession(); setIsAnalyzing(false); setErrors({ general: data.message || "Analysis failed." }); return; }
           setTimeout(poll, 2000);

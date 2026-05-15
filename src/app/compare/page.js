@@ -196,17 +196,6 @@ export default function ComparePage() {
   const removeResumePdf = () => { setResumePdf(null); if (fileInputRefResume.current) fileInputRefResume.current.value = ""; };
   const handleCancelAnalysis = () => { clearSession(); setIsComparing(false); };
 
-  const StepIndicator = ({ number, done, active, label }) => (
-    <div className="flex items-center gap-3">
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all duration-300 ${
-        done ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" :
-        active ? "bg-primary/15 text-primary border-2 border-primary" :
-        "bg-muted text-muted-foreground border border-border"
-      }`}>{done ? <Check className="w-4 h-4" /> : number}</div>
-      <span className={`text-sm font-semibold transition-colors ${done || active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
-    </div>
-  );
-
   const FileUploadField = ({ file, onRemove, onSelect, inputRef, onChange, isDragging, setIsDragging, label, error, accept = ".pdf" }) => (
     <div>
       <input type="file" ref={inputRef} className="hidden" accept={accept} onChange={onChange} />
@@ -269,13 +258,6 @@ export default function ComparePage() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* ──── LEFT: Form ──── */}
           <div className="flex-1 min-w-0 space-y-5">
-            {/* Step progress */}
-            <div className="flex items-center gap-2 px-1">
-              <StepIndicator number={1} done={step1Done} active={!step1Done} label="LinkedIn" />
-              <div className={`flex-1 h-0.5 rounded-full transition-colors ${step1Done ? "bg-primary" : "bg-border"}`} />
-              <StepIndicator number={2} done={step2Done} active={step1Done && !step2Done} label="Resume" />
-            </div>
-
             {/* Card 1: LinkedIn Profile */}
             <Card className={`p-5 md:p-6 rounded-2xl border-2 transition-all duration-300 ${
               step1Done ? "border-primary/30 bg-card shadow-sm" : "border-primary/20 bg-card/80 shadow-lg shadow-primary/5"
@@ -397,7 +379,7 @@ export default function ComparePage() {
                   {isSubmitting ? "Processing..." : "Complete Payment"}<ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
-                <Button onClick={handleStepSubmit} disabled={isSubmitting || !canSubmit} className="w-full h-12 text-[15px] font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-50 disabled:shadow-none">
+                <Button onClick={handleStepSubmit} disabled={isSubmitting || !canSubmit} className="w-full h-12 text-[15px] font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-100 disabled:shadow-none disabled:bg-muted disabled:text-muted-foreground disabled:hover:bg-muted">
                   {isSubmitting ? "Processing..." : "Start Comparison"}<ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               )}

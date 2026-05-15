@@ -42,7 +42,7 @@ const LinkedinOptimizationPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+      <section className="relative pt-24 pb-14 md:pt-28 md:pb-18 lg:pt-34 lg:pb-24 overflow-hidden">
         {/* Abstract Background Elements */}
         <div className="absolute top-0 inset-x-0 h-[500px] w-full bg-gradient-to-b from-primary/10 via-primary/5 to-transparent -z-10" />
         <div className="absolute -top-[300px] -right-[300px] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] opacity-70 animate-pulse -z-10" />
@@ -54,7 +54,7 @@ const LinkedinOptimizationPage = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 font-medium mb-8"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs md:text-sm font-medium mb-6"
             >
               <Sparkles className="w-4 h-4" />
               <span>LinkedIn Profile Optimization Service</span>
@@ -64,7 +64,7 @@ const LinkedinOptimizationPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-8 leading-[1.1]"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-5 md:mb-6 leading-[1.15]"
             >
               Optimize your LinkedIn profile to get{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
@@ -76,7 +76,7 @@ const LinkedinOptimizationPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-12 max-w-3xl mx-auto"
+              className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-10 max-w-3xl mx-auto"
             >
               Get a customized, detailed analysis of your LinkedIn profile to
               understand your profile’s strengths, weaknesses, and suggestions

@@ -49,6 +49,7 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Apply to all routes
         source: "/(.*)",
         headers: [
           {
@@ -82,6 +83,7 @@ const nextConfig = {
     "*.local-origin.dev",
     "mycareersarthi.com",
     "*.mycareersarthi.com",
+    "localhost",
   ],
 };
 

@@ -24,11 +24,10 @@ import {
 } from "@/components/ui/select";
 
 const EXPERIENCE_LEVELS = [
-  "Entry",
-  "Mid-level",
+  "Entry Level",
+  "Mid-Level",
+  "Experienced",
   "Senior",
-  "Lead",
-  "Principal",
   "Executive",
 ];
 
@@ -57,7 +56,9 @@ const RoleSelector = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [experienceLevel, setExperienceLevel] = useState("Mid-level");
+  const [experienceLevel, setExperienceLevel] = useState(
+    "Mid-Level",
+  );
   const [filteredRoles, setFilteredRoles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);

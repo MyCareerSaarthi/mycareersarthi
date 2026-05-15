@@ -197,7 +197,7 @@ const ResumeAnalyze = () => {
           formData.append("roleId", selectedRole.roleId);
           formData.append("roleName", selectedRole.roleName);
           if (selectedRole.experienceLevel) formData.append("experienceLevel", selectedRole.experienceLevel);
-        } else if (selectedRole.type === "custom") { formData.append("roleName", selectedRole.roleName); formData.append("experienceLevel", "Mid-level"); }
+        } else if (selectedRole.type === "custom") { formData.append("roleName", selectedRole.roleName); formData.append("experienceLevel", "Mid-Level"); }
       }
       if (inputMode === "jobDescription" && jobDescription) formData.append("jobDescription", jobDescription);
       if (appliedCoupon) { formData.append("couponCode", appliedCoupon.code); formData.append("discountAmount", appliedCoupon.discount); }
@@ -241,19 +241,6 @@ const ResumeAnalyze = () => {
   const removePdf = () => { setPdfFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; };
   const handleCancelAnalysis = () => { clearSession(); setIsAnalyzing(false); };
 
-  const StepIndicator = ({ number, done, active, label }) => (
-    <div className="flex items-center gap-3">
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all duration-300 ${
-        done ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" :
-        active ? "bg-primary/15 text-primary border-2 border-primary" :
-        "bg-muted text-muted-foreground border border-border"
-      }`}>
-        {done ? <Check className="w-4 h-4" /> : number}
-      </div>
-      <span className={`text-sm font-semibold transition-colors ${done || active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-background relative">
       {isAnalyzing && <SimpleLoader message="Analyzing your resume... This may take a while." onCancel={handleCancelAnalysis} />}
@@ -279,13 +266,6 @@ const ResumeAnalyze = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* ──── LEFT: Form ──── */}
           <div className="flex-1 min-w-0 space-y-5">
-            {/* Step progress */}
-            <div className="flex items-center gap-2 px-1">
-              <StepIndicator number={1} done={step1Done} active={!step1Done} label="Resume" />
-              <div className={`flex-1 h-0.5 rounded-full transition-colors ${step1Done ? "bg-primary" : "bg-border"}`} />
-              <StepIndicator number={2} done={step2Done} active={step1Done && !step2Done} label="Requirements" />
-            </div>
-
             {/* Card 1: Resume Upload */}
             <Card className={`p-5 md:p-6 rounded-2xl border-2 transition-all duration-300 ${
               step1Done ? "border-primary/30 bg-card shadow-sm" : "border-primary/20 bg-card/80 shadow-lg shadow-primary/5"
@@ -447,7 +427,7 @@ const ResumeAnalyze = () => {
               <Button
                 onClick={handleStepSubmit}
                 disabled={isSubmitting || !canSubmit}
-                className="w-full h-12 text-[15px] font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-50 disabled:shadow-none"
+                className="w-full h-12 text-[15px] font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-100 disabled:shadow-none disabled:bg-muted disabled:text-muted-foreground disabled:hover:bg-muted"
               >
                 {isSubmitting ? "Processing..." : "Start Analysis"}
                 <ArrowRight className="w-4 h-4 ml-2" />

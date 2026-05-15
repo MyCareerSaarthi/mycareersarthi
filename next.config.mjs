@@ -49,6 +49,15 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "index, follow",
+          },
+        ],
+      },
+      {
         source: "/(.*).(jpg|jpeg|png|webp|svg|gif|mp4|webm)",
         headers: [
           {

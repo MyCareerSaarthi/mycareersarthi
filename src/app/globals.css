@@ -198,6 +198,14 @@
   * {
     @apply border-border outline-ring/50 scroll-smooth;
   }
+  a,
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    cursor: pointer;
+  }
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);

@@ -49,6 +49,16 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Apply to all routes
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "index, follow",
+          },
+        ],
+      },
+      {
         source: "/(.*).(jpg|jpeg|png|webp|svg|gif|mp4|webm)",
         headers: [
           {
@@ -73,6 +83,7 @@ const nextConfig = {
     "*.local-origin.dev",
     "mycareersarthi.com",
     "*.mycareersarthi.com",
+    "localhost",
   ],
 };
 

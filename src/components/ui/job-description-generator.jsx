@@ -16,17 +16,16 @@ import {
 } from "@/components/ui/select";
 
 const EXPERIENCE_LEVELS = [
-  "Entry",
-  "Mid-level",
+  "Entry Level",
+  "Mid-Level",
+  "Experienced",
   "Senior",
-  "Lead",
-  "Principal",
   "Executive",
 ];
 
 const JobDescriptionGenerator = ({
   roleName,
-  experienceLevel: initialExperienceLevel = "Mid-level",
+  experienceLevel: initialExperienceLevel = "Mid-Level",
   onJobDescriptionGenerated,
   onCancel,
 }) => {

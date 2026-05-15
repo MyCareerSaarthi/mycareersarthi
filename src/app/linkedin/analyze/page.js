@@ -18,10 +18,6 @@ import {
   Linkedin,
   Briefcase,
   ArrowRight,
-  Upload,
-  Sparkles,
-  FileText,
-  X,
   Link,
   Check,
   CreditCard,
@@ -33,11 +29,8 @@ const LinkedinAnalyze = () => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [jobDescription, setJobDescription] = useState("");
   const [inputMode, setInputMode] = useState("role");
-  const [pdfFile, setPdfFile] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef(null);
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [processData, setProcessData] = useState({
@@ -170,15 +163,16 @@ const LinkedinAnalyze = () => {
   }
 
   // ── Helpers ──
-  const step1Done = !!(linkedinUrl || pdfFile);
+  const step1Done = !!linkedinUrl.trim();
   const step2Done = !!(
     (inputMode === "role" && selectedRole) ||
     (inputMode === "jobDescription" && jobDescription.trim())
   );
+  const canSubmit = step1Done && step2Done;
 
   const validateForm = () => {
     const newErrors = {};
-    if (!linkedinUrl && !pdfFile) newErrors.profile = "Please provide either a LinkedIn URL or upload a LinkedIn profile PDF file";
+    if (!linkedinUrl.trim()) newErrors.linkedinUrl = "Please provide your LinkedIn profile URL";
     if (linkedinUrl && !linkedinUrl.match(/^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9\-_.]+\/?$/)) newErrors.linkedinUrl = "Please enter a valid LinkedIn profile URL";
     if (inputMode === "role" && !selectedRole) newErrors.role = "Please select a role";
     if (inputMode === "jobDescription" && !jobDescription.trim()) newErrors.jobDescription = "Please enter a job description";
@@ -196,7 +190,6 @@ const LinkedinAnalyze = () => {
       const formData = new FormData();
       formData.append("userId", user?.id);
       if (linkedinUrl) formData.append("linkedinUrl", linkedinUrl);
-      if (pdfFile) formData.append("file", pdfFile);
       if (inputMode === "role" && selectedRole) {
         if (selectedRole.type === "existing") {
           formData.append("roleId", selectedRole.roleId);
@@ -204,7 +197,7 @@ const LinkedinAnalyze = () => {
           if (selectedRole.experienceLevel) formData.append("experienceLevel", selectedRole.experienceLevel);
         } else if (selectedRole.type === "custom") {
           formData.append("roleName", selectedRole.roleName);
-          formData.append("experienceLevel", "Mid-level");
+          formData.append("experienceLevel", "Mid-Level");
         }
       }
       if (inputMode === "jobDescription" && jobDescription) formData.append("jobDescription", jobDescription);
@@ -224,48 +217,7 @@ const LinkedinAnalyze = () => {
     } finally { setIsSubmitting(false); }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const fn = file.name.toLowerCase();
-      if (file.type === "application/pdf" || fn.endsWith(".pdf")) {
-        setPdfFile(file);
-        setErrors((prev) => ({ ...prev, profile: null }));
-      } else {
-        setErrors((prev) => ({ ...prev, profile: "Please upload a valid PDF file" }));
-      }
-    }
-  };
-
-  const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
-  const handleDragLeave = () => setIsDragging(false);
-  const handleDrop = (e) => {
-    e.preventDefault(); setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      const fn = file.name.toLowerCase();
-      if (file.type === "application/pdf" || fn.endsWith(".pdf")) {
-        setPdfFile(file); setErrors((prev) => ({ ...prev, profile: null }));
-      } else { setErrors((prev) => ({ ...prev, profile: "Please upload a valid PDF file" })); }
-    }
-  };
-
-  const removePdf = () => { setPdfFile(null); if (fileInputRef.current) fileInputRef.current.value = ""; };
   const handleCancelAnalysis = () => { if (eventSourceRef.current) { eventSourceRef.current.close(); eventSourceRef.current = null; } clearSession(); setIsAnalyzing(false); };
-
-  // ── Step indicator component ──
-  const StepIndicator = ({ number, done, active, label }) => (
-    <div className="flex items-center gap-3">
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all duration-300 ${
-        done ? "bg-primary text-primary-foreground shadow-md shadow-primary/30" :
-        active ? "bg-primary/15 text-primary border-2 border-primary" :
-        "bg-muted text-muted-foreground border border-border"
-      }`}>
-        {done ? <Check className="w-4 h-4" /> : number}
-      </div>
-      <span className={`text-sm font-semibold transition-colors ${done || active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -294,13 +246,6 @@ const LinkedinAnalyze = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* ──── LEFT: Form ──── */}
           <div className="flex-1 min-w-0 space-y-5">
-            {/* Step progress bar */}
-            <div className="flex items-center gap-2 px-1">
-              <StepIndicator number={1} done={step1Done} active={!step1Done} label="Profile" />
-              <div className={`flex-1 h-0.5 rounded-full transition-colors ${step1Done ? "bg-primary" : "bg-border"}`} />
-              <StepIndicator number={2} done={step2Done} active={step1Done && !step2Done} label="Requirements" />
-            </div>
-
             {/* ─── Card 1: LinkedIn Profile ─── */}
             <Card className={`p-5 md:p-6 rounded-2xl border-2 transition-all duration-300 ${
               step1Done ? "border-primary/30 bg-card shadow-sm" : "border-primary/20 bg-card/80 shadow-lg shadow-primary/5"
@@ -312,7 +257,7 @@ const LinkedinAnalyze = () => {
                 <div className="flex-1 min-w-0">
                   <h3 className="text-base font-semibold leading-tight">LinkedIn Profile</h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Enter your profile URL or upload a saved PDF
+                    Enter your LinkedIn profile URL
                   </p>
                 </div>
                 {step1Done && (
@@ -338,52 +283,6 @@ const LinkedinAnalyze = () => {
                   />
                 </div>
                 {errors.linkedinUrl && <p className="text-xs text-destructive">{errors.linkedinUrl}</p>}
-              </div>
-
-              {/* OR divider */}
-              <div className="relative py-2">
-                <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-                <div className="relative flex justify-center"><span className="bg-card px-3 text-[11px] font-medium text-muted-foreground uppercase tracking-widest">or upload pdf</span></div>
-              </div>
-
-              {/* Compact file upload */}
-              <div className="mt-3">
-                <input type="file" ref={fileInputRef} className="hidden" accept=".pdf" onChange={handleFileChange} />
-                {pdfFile ? (
-                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-primary/30 bg-primary/5 transition-all">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <FileText className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{pdfFile.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{(pdfFile.size / 1024).toFixed(0)} KB</p>
-                    </div>
-                    <button onClick={removePdf} className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-dashed cursor-pointer transition-all duration-200 ${
-                      isDragging
-                        ? "border-primary bg-primary/10 scale-[1.01]"
-                        : "border-border hover:border-primary/40 hover:bg-muted/50"
-                    }`}
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                      <Upload className="w-4 h-4 text-muted-foreground" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">Drop file here or click to browse</p>
-                      <p className="text-[11px] text-muted-foreground">PDF only, up to 10 MB</p>
-                    </div>
-                  </div>
-                )}
-                {errors.profile && <p className="text-xs text-destructive mt-1.5">{errors.profile}</p>}
               </div>
             </Card>
 
@@ -475,8 +374,8 @@ const LinkedinAnalyze = () => {
               {/* CTA Button */}
               <Button
                 onClick={handleStepSubmit}
-                disabled={isSubmitting || !(step1Done && step2Done)}
-                className="w-full h-12 text-[15px] font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-50 disabled:shadow-none"
+                disabled={isSubmitting || !canSubmit}
+                className="w-full h-12 text-[15px] font-semibold rounded-full bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 disabled:opacity-100 disabled:shadow-none disabled:bg-muted disabled:text-muted-foreground disabled:hover:bg-muted"
               >
                 {isSubmitting ? "Analyzing..." : "Analyze for Free"}
                 <ArrowRight className="w-4 h-4 ml-2" />

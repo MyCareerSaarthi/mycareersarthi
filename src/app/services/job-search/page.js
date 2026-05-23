@@ -7,7 +7,7 @@ export const metadata = {
       "Job Search Services | Executive Job Search Strategy & Mentor India – MyCareerSarthi",
   },
   description:
-    "Get structured support with job search services from MyCareerSarthi. Our executive job search service and job search mentor in India help professionals build an effective job search strategy, improve applications, and approach recruiters with confidence. We guide job seekers through targeted job search planning, networking, and interview preparation.",
+    "Get structured support with job search services from MyCareerSarthi. Stop applying to 200 jobs blindly. Our executive job search strategy and job search mentor India service help you target the right roles, improve applications, and approach recruiters strategically.",
   keywords: [
     "Job Search Services",
     "executive job search service",

@@ -11,6 +11,8 @@ import { Suspense } from "react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark, shadcn } from "@clerk/themes";
 import { JsonLd } from "@/components/seo/json-ld";
+import AnalyticsProvider from "@/components/AnalyticsProvider";
+
 const poppins = Poppins({
   variable: "--font-poppins ",
   display: "swap",
@@ -145,13 +147,14 @@ export default function RootLayout({ children }) {
               crawl={true}
               showSpinner={true}
               easing="cubic-bezier(0.22, 0.61, 0.36, 1)"
-              speed={300}
               shadow="0 0 15px rgba(34, 153, 221, 0.5), 0 0 5px rgba(106, 17, 203, 0.5)"
             />
             <Suspense>
-              <Navbar className="mt-0" />
-              <main className="mt-0">{children}</main>
-              <Footer />
+              <AnalyticsProvider>
+                <Navbar className="mt-0" />
+                <main className="mt-0">{children}</main>
+                <Footer />
+              </AnalyticsProvider>
             </Suspense>
           </ThemeProvider>
         </body>

@@ -2,9 +2,19 @@ import Content from "./content";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export const metadata = {
-  title: "LinkedIn vs Resume Alignment",
+  title: {
+    absolute: "LinkedIn vs Resume Alignment Services | MyCareerSarthi",
+  },
   description:
-    "Compare your LinkedIn profile and resume to identify gaps, contradictions, and alignment opportunities. Get AI-powered insights and actionable recommendations.",
+    "At MyCareerSarthi, our LinkedIn vs Resume Alignment service helps professionals identify inconsistencies, positioning gaps, keyword mismatches, and branding issues between both platforms. Make sure your LinkedIn profile and resume work together to strengthen recruiter trust.",
+  keywords: [
+    "LinkedIn vs Resume Alignment Services",
+    "LinkedIn vs Resume Alignment",
+    "linkedin profile optimization services",
+    "resume optimization services",
+    "linkedin profile writing service India",
+    "profile alignment",
+  ],
   alternates: {
     canonical: "https://www.mycareersarthi.com/services/alignment",
   },

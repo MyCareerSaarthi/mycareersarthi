@@ -54,6 +54,21 @@ export default clerkMiddleware(async (auth, req) => {
   const response = NextResponse.next();
   response.headers.set("x-robots-tag", "index, follow");
   return response;
+}, {
+  authorizedParties: [
+    "https://www.mycareersarthi.com",
+    "https://mycareersarthi.com",
+    "https://interview.mycareersarthi.com",
+    "https://admin.mycareersarthi.com",
+    "https://staging.mycareersarthi.com",
+    "https://staging-interview.mycareersarthi.com",
+    "https://staging-admin.mycareersarthi.com",
+    "http://localhost:3000",
+    "http://localhost:4000",
+    "http://localhost:5000",
+    "http://localhost:5173",
+    "http://localhost:5174"
+  ]
 });
 
 export const config = {

@@ -7,7 +7,7 @@ export const metadata = {
       "Resume Optimization Services | Professional Resume Writing Service India – MyCareerSarthi",
   },
   description:
-    "Looking for resume optimization services in India? MyCareerSarthi offers professional resume writing service, executive resume writing service, and complete resume optimization to improve ATS compatibility and recruiter visibility. Our experts create clear, structured resumes that help professionals stand out and increase interview opportunities.",
+    "Looking for resume optimization services in India? MyCareerSarthi offers professional resume writing service, executive resume writing service, and complete resume optimization to improve ATS compatibility and recruiter visibility.",
   keywords: [
     "Resume Optimization Services",
     "professional resume writing service",

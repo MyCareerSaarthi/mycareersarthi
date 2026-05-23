@@ -175,7 +175,7 @@ const InterviewPreparationSlide = () => {
           </li>
         </ul>
 
-        <Link href="/services/interview-preparation" className="pt-1 sm:pt-2">
+        <Link href="https://interview.mycareersarthi.com" className="pt-1 sm:pt-2">
           <button
             className={`${buttonBaseClass} bg-white text-orange-600 hover:bg-orange-50`}
           >

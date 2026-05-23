@@ -7,7 +7,7 @@ export const metadata = {
       "Career Assessment Services | Professional Career Path Assessment – MyCareerSarthi",
   },
   description:
-    "Get clarity about your future with career assessment services from MyCareerSarthi. Our professional career assessment helps you understand your strengths, interests, and suitable career options. Through structured career path assessment and career suitability assessment, we guide students, job seekers, and professionals in choosing the right direction for long-term growth.",
+    "Get clarity about your future with career assessment services from MyCareerSarthi. Our professional career suitability assessment helps you understand your strengths, interests, and suitable career options based on market demand and recruiter expectations.",
   keywords: [
     "Career Assessment Services",
     "career path assessment",

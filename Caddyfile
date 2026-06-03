@@ -1,7 +1,0 @@
-{
-	local_certs
-}
-
-local.mycareersarthi.com {
-	reverse_proxy localhost:3000
-}

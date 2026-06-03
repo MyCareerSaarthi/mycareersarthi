@@ -24,10 +24,6 @@ export default function LinkedinReviewContent() {
             transition={{ duration: 0.5 }}
             className="text-center"
           >
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm text-primary mb-6">
-              <Linkedin className="w-4 h-4" />
-              LinkedIn Review Service
-            </div>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">
               Get a Detailed LinkedIn Profile Review
             </h1>

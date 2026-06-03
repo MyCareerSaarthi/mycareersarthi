@@ -14,7 +14,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 
 const poppins = Poppins({
-  variable: "--font-poppins ",
+  variable: "--font-poppins",
   display: "swap",
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],

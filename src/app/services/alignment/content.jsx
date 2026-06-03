@@ -40,6 +40,7 @@ const CTAButton = ({ text, href = "/compare" }) => (
   <Button size="lg" className="group rounded-full px-8 py-6 text-lg font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 transform hover:-translate-y-0.5" asChild>
     <Link href={href}>
       {text}
+      <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
     </Link>
   </Button>
 );
@@ -47,87 +48,76 @@ const CTAButton = ({ text, href = "/compare" }) => (
 const AlignmentContentPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden">
-      {/* 1. HERO SECTION */}
-      <section className="relative pt-12 pb-14  md:pb-18 lg:pb-24 overflow-hidden">
+      {/* 1. HERO SECTION (SINGLE COLUMN CENTERED REDESIGN) */}
+      <section className="relative pt-12 pb-14 md:pb-18 lg:pb-24 overflow-hidden">
         {/* Decorative Background Elements */}
         <div className="absolute top-0 inset-x-0 h-[500px] w-full bg-gradient-to-b from-primary/10 via-primary/5 to-transparent -z-10" />
-        <div className="absolute -top-[300px] -right-[300px] w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] opacity-70 animate-pulse -z-10" />
-        <div className="absolute top-[20%] -left-[200px] w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[100px] opacity-60 -z-10" />
+        <div className="absolute -top-[300px] -right-[300px] w-[800px] h-[800px] bg-primary/15 rounded-full blur-[120px] opacity-60 -z-10" />
+        <div className="absolute top-[20%] -left-[200px] w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[100px] opacity-40 -z-10" />
 
-        <div className="container mx-auto px-4 relative">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs md:text-sm font-medium mb-8"
-            >
-              <Sparkles className="w-4 h-4 animate-spin-slow" />
-              <span>LinkedIn vs Resume Alignment Services</span>
-            </motion.div>
+        <div className="container mx-auto px-4 max-w-4xl relative text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-black tracking-tight mb-6 md:mb-8 leading-[1.15] text-[#0f172a]"
+          >
+            Your LinkedIn Profile Can Either{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
+              Support Your Resume…
+            </span>{" "}
+            Or Weaken It
+          </motion.h1>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 md:mb-8 leading-[1.2]"
-            >
-              Your LinkedIn Profile Can Either{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-                Support Your Resume…
-              </span>{" "}
-              Or Weaken It
-            </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 space-y-4 font-medium max-w-3xl mx-auto"
+          >
+            <p>
+              Today, recruiters don’t evaluate candidates through resumes alone.
+            </p>
+            <p>
+              They cross-check LinkedIn profiles, resumes, timelines, job titles, achievements, skills, and professional positioning before making shortlisting decisions.
+            </p>
+            <p className="font-bold text-destructive bg-destructive/5 border border-destructive/20 rounded-xl px-4 py-3 max-w-2xl mx-auto">
+              And when both platforms tell different stories, it creates confusion, weakens credibility, and raises recruiter red flags instantly.
+            </p>
+            <p>
+              At MyCareerSarthi, our LinkedIn vs Resume Alignment service helps professionals identify inconsistencies, positioning gaps, keyword mismatches, and branding issues between both platforms.
+            </p>
+            <p className="text-foreground/90 font-bold pt-2">
+              The goal is simple — make sure your LinkedIn profile and resume work together to strengthen recruiter trust, visibility, and professional positioning.
+            </p>
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-10 max-w-3xl mx-auto space-y-4"
-            >
-              <p>
-                Today, recruiters don’t evaluate candidates through resumes alone.
-              </p>
-              <p>
-                They cross-check LinkedIn profiles, resumes, timelines, job titles, achievements, skills, and professional positioning before making shortlisting decisions.
-              </p>
-              <p className="font-semibold text-foreground bg-destructive/10 border border-destructive/20 rounded-xl px-4 py-3 max-w-2xl mx-auto">
-                And when both platforms tell different stories, it creates confusion, weakens credibility, and raises recruiter red flags instantly.
-              </p>
-              <p>
-                At MyCareerSarthi, our LinkedIn vs Resume Alignment service helps professionals identify inconsistencies, positioning gaps, keyword mismatches, and branding issues between both platforms.
-              </p>
-              <p className="text-foreground/90 font-medium pt-2">
-                The goal is simple — make sure your LinkedIn profile and resume work together to strengthen recruiter trust, visibility, and professional positioning.
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="flex justify-center"
-            >
-              <CTAButton text="Start Alignment Analysis →" />
-            </motion.div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex justify-center"
+          >
+            <CTAButton text="Start Alignment Analysis" />
+          </motion.div>
         </div>
       </section>
 
-      {/* 2. DOES YOUR LINKEDIN MATCH STORY SECTION */}
+
+      {/* 2. DOES YOUR LINKEDIN MATCH STORY SECTION (SPACIOUS 2-COLUMN SPLIT) */}
       <section className="py-24 bg-muted/30 relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
+              <h2 className="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">
                 Does Your LinkedIn Match the Story Your Resume Tells?
               </h2>
-              <div className="space-y-6 text-lg text-muted-foreground leading-relaxed mb-8">
+              <div className="space-y-6 text-base md:text-lg text-muted-foreground leading-relaxed mb-8">
                 <p>
                   Most recruiters today evaluate candidates across multiple platforms before shortlisting them.
                 </p>
@@ -142,7 +132,7 @@ const AlignmentContentPage = () => {
                 </p>
               </div>
 
-              <CTAButton text="Check My Profile Alignment →" />
+              <CTAButton text="Check My Profile Alignment" />
             </motion.div>
 
             <motion.div
@@ -157,7 +147,7 @@ const AlignmentContentPage = () => {
                   {/* Visual design showing alignment vs misalignment */}
                   <div className="space-y-6">
                     <div className="flex items-center justify-between border-b border-border/60 pb-4">
-                      <span className="text-sm font-semibold tracking-wider uppercase text-muted-foreground">Verification Engine</span>
+                      <span className="text-xs font-semibold tracking-wider uppercase text-muted-foreground">Verification Engine</span>
                       <span className="flex h-2.5 w-2.5 rounded-full bg-red-500 animate-ping" />
                     </div>
 
@@ -172,7 +162,7 @@ const AlignmentContentPage = () => {
                             <p className="text-sm font-bold">Resume Profile</p>
                             <p className="text-xs text-muted-foreground">Product Manager • 5 yrs Exp</p>
                           </div>
-                          <span className="ml-auto text-xs font-semibold px-2 py-1 bg-red-100 text-red-700 rounded-md">Timeline Conflict</span>
+                          <span className="ml-auto text-xs font-semibold px-2 py-1 bg-red-100 dark:bg-red-950/40 text-red-700 rounded-md">Timeline Conflict</span>
                         </div>
                       </div>
 
@@ -184,14 +174,14 @@ const AlignmentContentPage = () => {
                       {/* LinkedIn Card */}
                       <div className="bg-background border border-border rounded-xl p-4 relative group hover:border-red-300 transition-colors">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-blue-100 rounded-lg">
+                          <div className="p-2 bg-blue-100 dark:bg-blue-950/40 rounded-lg">
                             <Activity className="w-5 h-5 text-blue-600" />
                           </div>
                           <div>
                             <p className="text-sm font-bold">LinkedIn Profile</p>
                             <p className="text-xs text-muted-foreground">Marketing Lead • Product Consultant</p>
                           </div>
-                          <span className="ml-auto text-xs font-semibold px-2 py-1 bg-red-100 text-red-700 rounded-md">Role Mismatch</span>
+                          <span className="ml-auto text-xs font-semibold px-2 py-1 bg-red-100 dark:bg-red-950/40 text-red-700 rounded-md">Role Mismatch</span>
                         </div>
                       </div>
                     </div>
@@ -208,34 +198,48 @@ const AlignmentContentPage = () => {
         </div>
       </section>
 
-      {/* 3. WHAT IS ALIGNMENT SECTION */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="bg-card border border-border/60 rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden"
-            >
-              {/* Decorative radial gradient */}
-              <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl -z-10" />
+      {/* 3. WHAT IS ALIGNMENT SECTION (SPACIOUS 2-COLUMN SPLIT) */}
+      <section className="py-24 relative overflow-hidden animate-pulse-slow">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-card border border-border/60 rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden"
+          >
+            {/* Decorative radial gradient */}
+            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl -z-10" />
 
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                What is LinkedIn vs Resume Alignment?
-              </h2>
+            <div className="grid lg:grid-cols-12 gap-8 items-start">
+              {/* Left Column: Context Card (Span 5) */}
+              <div className="lg:col-span-5 space-y-6">
+                <h2 className="text-2xl md:text-3xl font-extrabold leading-tight">
+                  What is LinkedIn vs Resume Alignment?
+                </h2>
+                <p className="text-base text-muted-foreground leading-relaxed">
+                  LinkedIn vs Resume Alignment is a structured comparison service designed to evaluate how consistently your LinkedIn profile and resume represent your experience, expertise, positioning, and career direction.
+                </p>
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-2xl space-y-2">
+                  <p className="text-sm font-bold text-foreground">
+                    Because recruiters trust consistency.
+                  </p>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    And strong professional positioning requires alignment across every recruiter-facing platform.
+                  </p>
+                </div>
+                <div className="pt-4">
+                  <CTAButton text="Analyze My LinkedIn & Resume" />
+                </div>
+              </div>
 
-              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 text-center">
-                LinkedIn vs Resume Alignment is a structured comparison service designed to evaluate how consistently your LinkedIn profile and resume represent your experience, expertise, positioning, and career direction.
-              </p>
-
-              <div className="bg-background border border-border/50 rounded-2xl p-6 md:p-8 mb-8">
-                <h3 className="text-lg font-bold mb-6 text-foreground">
+              {/* Right Column: Focus Areas List (Span 7) */}
+              <div className="lg:col-span-7 bg-background border border-border/50 rounded-2xl p-6 md:p-8">
+                <h3 className="text-base font-black mb-6 text-foreground tracking-wide uppercase">
                   Our analysis helps professionals understand:
                 </h3>
 
-                <ul className="grid md:grid-cols-2 gap-4">
+                <ul className="space-y-4">
                   {[
                     "whether both profiles support the same target role",
                     "whether skills and achievements align properly",
@@ -243,32 +247,19 @@ const AlignmentContentPage = () => {
                     "whether positioning gaps exist",
                     "whether both platforms strengthen professional credibility together"
                   ].map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-3">
-                      <div className="p-1 rounded-full bg-primary/10 mt-0.5">
+                    <li key={idx} className="flex items-start gap-4">
+                      <div className="p-1 rounded-full bg-primary/10 mt-0.5 shrink-0">
                         <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                       </div>
-                      <span className="text-muted-foreground font-medium text-base">
+                      <span className="text-muted-foreground font-semibold text-sm md:text-base">
                         {item}
                       </span>
                     </li>
                   ))}
                 </ul>
               </div>
-
-              <div className="space-y-4 text-center max-w-2xl mx-auto mb-10">
-                <p className="text-lg font-medium text-foreground">
-                  Because recruiters trust consistency.
-                </p>
-                <p className="text-lg text-muted-foreground">
-                  And strong professional positioning requires alignment across every recruiter-facing platform.
-                </p>
-              </div>
-
-              <div className="flex justify-center">
-                <CTAButton text="Analyze My LinkedIn & Resume →" />
-              </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -282,11 +273,11 @@ const AlignmentContentPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-6">
               Why Recruiters Cross-Check LinkedIn Profiles Before Shortlisting
             </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Recruiters today rarely rely on resumes alone.
+            <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto font-medium">
+              Recruiters today rarely rely on resumes alone. They require cohesive stories before extending an interview offer.
             </p>
           </motion.div>
 
@@ -297,9 +288,9 @@ const AlignmentContentPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="bg-card rounded-3xl p-8 border border-border/50 shadow-md relative overflow-hidden"
+              className="bg-card rounded-3xl p-8 border border-border/50 shadow-md relative overflow-hidden hover:-translate-y-1.5 transition-transform duration-300"
             >
-              <div className="absolute top-0 right-0 p-8 opacity-5">
+              <div className="absolute top-0 right-0 p-8 opacity-[0.03]">
                 <ShieldCheck className="w-32 h-32" />
               </div>
               <div className="relative z-10">
@@ -307,7 +298,7 @@ const AlignmentContentPage = () => {
                   <Search className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold mb-4">What They Validate</h3>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-6 text-sm md:text-base leading-relaxed">
                   Before scheduling interviews, they often validate candidates through LinkedIn to assess:
                 </p>
                 <ul className="space-y-4">
@@ -319,9 +310,9 @@ const AlignmentContentPage = () => {
                     "recruiter-facing visibility",
                     "industry relevance"
                   ].map((item, idx) => (
-                    <li key={idx} className="flex gap-3 items-center">
+                    <li key={idx} className="flex gap-3 items-center text-sm md:text-base font-semibold text-muted-foreground">
                       <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                      <span className="font-semibold text-muted-foreground">{item}</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -334,17 +325,17 @@ const AlignmentContentPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="bg-destructive/5 rounded-3xl p-8 border border-destructive/20 shadow-md relative overflow-hidden"
+              className="bg-destructive/5 rounded-3xl p-8 border border-destructive/20 shadow-md relative overflow-hidden hover:-translate-y-1.5 transition-transform duration-300"
             >
-              <div className="absolute top-0 right-0 p-8 opacity-5">
+              <div className="absolute top-0 right-0 p-8 opacity-[0.03]">
                 <AlertTriangle className="w-32 h-32 text-destructive" />
               </div>
               <div className="relative z-10">
                 <div className="w-12 h-12 bg-destructive/10 rounded-xl flex items-center justify-center mb-6">
                   <AlertTriangle className="w-6 h-6 text-destructive" />
                 </div>
-                <h3 className="text-2xl font-bold mb-4">Recruiter Doubts</h3>
-                <p className="text-muted-foreground mb-6">
+                <h3 className="text-2xl font-bold mb-4 text-destructive">Recruiter Doubts</h3>
+                <p className="text-muted-foreground mb-6 text-sm md:text-base leading-relaxed">
                   If both platforms communicate different things, recruiters start questioning:
                 </p>
                 <ul className="space-y-4">
@@ -354,9 +345,9 @@ const AlignmentContentPage = () => {
                     "career direction",
                     "authenticity of achievements"
                   ].map((item, idx) => (
-                    <li key={idx} className="flex gap-3 items-center">
+                    <li key={idx} className="flex gap-3 items-center text-sm md:text-base font-semibold text-muted-foreground">
                       <span className="w-2 h-2 rounded-full bg-destructive shrink-0" />
-                      <span className="font-semibold text-muted-foreground">{item}</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -371,20 +362,20 @@ const AlignmentContentPage = () => {
             viewport={{ once: true }}
             className="text-center max-w-2xl mx-auto"
           >
-            <p className="text-lg text-muted-foreground mb-6">
+            <p className="text-base text-muted-foreground mb-4">
               Which means your LinkedIn profile has now become an extension of your resume.
             </p>
-            <p className="text-xl font-bold mb-8 text-foreground">
+            <p className="text-lg md:text-xl font-bold mb-8 text-foreground">
               That is why profile alignment matters more than ever in today’s hiring market.
             </p>
-            <CTAButton text="Improve My Recruiter Credibility →" />
+            <CTAButton text="Improve My Recruiter Credibility" />
           </motion.div>
         </div>
       </section>
 
-      {/* 5. STRUCTURED APPROACH (TIMELINE) */}
+      {/* 5. A STRUCTURED APPROACH (TIMELINE REMOVED -> 2-COLUMN STEP GRID REDESIGN) */}
       <section className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-4 max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -392,18 +383,19 @@ const AlignmentContentPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-6">
               A Structured Approach to LinkedIn vs Resume Alignment
             </h2>
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+              We leverage an analytical and standard framework to align your public identity with your career assets.
+            </p>
           </motion.div>
 
-          <div className="space-y-12 mb-16 relative">
-            {/* Timeline connector path */}
-            <div className="absolute left-[27px] md:left-1/2 md:-ml-px top-8 bottom-8 w-0.5 bg-border hidden md:block" />
-
+          {/* Redesigned to 2-Column Grid Matrix, completely removing the connector timeline lines */}
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
             {[
               {
-                num: "1",
+                num: "01",
                 title: "1. Upload Your Documents",
                 desc: "We begin by collecting your LinkedIn profile and resume for structured analysis.",
                 subText: "You can submit:",
@@ -417,7 +409,7 @@ const AlignmentContentPage = () => {
                 icon: FileText,
               },
               {
-                num: "2",
+                num: "02",
                 title: "2. AI-Powered Alignment Analysis",
                 desc: "Our AI engine performs a deep comparison between your LinkedIn profile and resume across all major sections.",
                 subText: "The analysis evaluates:",
@@ -435,7 +427,7 @@ const AlignmentContentPage = () => {
                 icon: Brain,
               },
               {
-                num: "3",
+                num: "03",
                 title: "3. Role-Specific Fit Assessment",
                 desc: "When a target role or job description is provided, the analysis goes deeper to evaluate how effectively both profiles support your intended career direction.",
                 subText: "This includes:",
@@ -450,7 +442,7 @@ const AlignmentContentPage = () => {
                 icon: Target,
               },
               {
-                num: "4",
+                num: "04",
                 title: "4. Actionable Recommendations Report",
                 desc: "Once the analysis is complete, you receive a detailed LinkedIn vs Resume Alignment report with scores, insights, and structured recommendations.",
                 subText: "Your report includes:",
@@ -466,56 +458,48 @@ const AlignmentContentPage = () => {
                 icon: ShieldCheck,
               },
             ].map((step, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                viewport={{ once: true }}
-                className={`flex flex-col md:flex-row items-center gap-8 ${idx % 2 === 1 ? "md:flex-row-reverse" : ""}`}
-              >
-                <div className={`md:w-1/2 flex ${idx % 2 === 1 ? "md:justify-start" : "md:justify-end"} w-full`}>
-                  <div className="bg-card border border-border/50 p-6 md:p-8 rounded-2xl shadow-md hover:shadow-lg transition-shadow relative w-full group overflow-hidden">
-                    <div className="absolute top-0 left-0 w-2.5 h-full bg-primary transform origin-left scale-y-0 group-hover:scale-y-100 transition-transform duration-300 ease-in-out" />
-                    
-                    <h3 className="text-xl md:text-2xl font-bold mb-4 flex items-center gap-3 text-foreground">
-                      <span className="md:hidden flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
-                        {step.num}
-                      </span>
-                      {step.title}
-                    </h3>
-                    
-                    <p className="text-muted-foreground mb-4 text-base md:text-lg">
-                      {step.desc}
-                    </p>
+              <div key={idx} className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                <div>
+                  {/* Step Card Header */}
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-border/40">
+                    <span className="text-3xl font-black text-primary/30 tracking-tight">{step.num}</span>
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <step.icon className="w-5 h-5" />
+                    </div>
+                  </div>
 
-                    <p className="text-sm font-semibold mb-2 text-foreground/80">{step.subText}</p>
-                    <ul className="grid sm:grid-cols-2 gap-2 mb-4">
+                  <h3 className="text-lg md:text-xl font-bold mb-3 text-foreground">{step.title}</h3>
+                  <p className="text-muted-foreground text-sm md:text-base leading-relaxed mb-6 font-semibold">
+                    {step.desc}
+                  </p>
+
+                  {step.subText && (
+                    <p className="text-xs uppercase font-black tracking-widest text-foreground/80 mb-3">{step.subText}</p>
+                  )}
+
+                  {step.items.length > 0 && (
+                    <ul className="grid sm:grid-cols-2 gap-2 mb-6">
                       {step.items.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <li key={i} className="flex items-start gap-2.5 text-xs md:text-sm font-semibold text-muted-foreground leading-normal">
                           <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
                       ))}
                     </ul>
+                  )}
+                </div>
 
-                    {step.finalText && (
-                      <p className="text-sm font-medium text-primary mt-3 pt-3 border-t border-border/60">
-                        {step.finalText}
-                      </p>
-                    )}
+                {step.finalText && (
+                  <div className="text-xs font-semibold text-foreground/90 bg-primary/5 rounded-xl p-4 border border-primary/15 mt-3 shadow-inner leading-relaxed">
+                    {step.finalText}
                   </div>
-                </div>
-                <div className="hidden md:flex relative z-10 w-14 h-14 bg-background border-4 border-primary rounded-full items-center justify-center shadow-lg">
-                  <step.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div className="md:w-1/2 hidden md:block" />
-              </motion.div>
+                )}
+              </div>
             ))}
           </div>
 
           <div className="text-center">
-            <CTAButton text="Get My Alignment Report →" />
+            <CTAButton text="Get My Alignment Report" />
           </div>
         </div>
       </section>
@@ -531,20 +515,20 @@ const AlignmentContentPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-5xl font-bold mb-6"
+              className="text-3xl md:text-5xl font-black mb-6 leading-tight"
             >
               Most Professionals Don’t Realize Their LinkedIn Is Hurting Their Resume
             </motion.h2>
-            <p className="text-lg md:text-xl text-background/80 max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-background/80 max-w-2xl mx-auto leading-relaxed">
               Many professionals update resumes regularly but completely neglect LinkedIn.
             </p>
-            <p className="text-lg md:text-xl text-background/80 max-w-2xl mx-auto mt-2">
+            <p className="text-base md:text-lg text-background/80 max-w-2xl mx-auto mt-2 leading-relaxed">
               Others optimize LinkedIn but fail to align it with their resume strategy. And over time, that creates inconsistencies without them even realizing it.
             </p>
           </div>
 
           <div className="bg-background text-foreground rounded-3xl p-8 border border-border/20 shadow-2xl mb-16 max-w-4xl mx-auto">
-            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <h3 className="text-lg md:text-xl font-bold mb-6 flex items-center gap-2">
               <AlertTriangle className="w-6 h-6 text-amber-500" />
               Common problems include:
             </h3>
@@ -559,17 +543,17 @@ const AlignmentContentPage = () => {
                 "conflicting positioning across platforms"
               ].map((item, idx) => (
                 <li key={idx} className="flex gap-3 items-start">
-                  <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 shrink-0" />
-                  <span className="font-semibold text-muted-foreground">{item}</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2.5 shrink-0" />
+                  <span className="font-semibold text-muted-foreground text-sm md:text-base">{item}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="mt-8 pt-6 border-t border-border flex flex-col md:flex-row gap-4 items-center justify-between">
-              <p className="text-base text-muted-foreground">
+            <div className="mt-8 pt-6 border-t border-border flex flex-col md:flex-row gap-4 items-center justify-between text-sm">
+              <p className="text-muted-foreground font-medium">
                 These gaps reduce professional credibility and create recruiter doubt during shortlisting.
               </p>
-              <p className="text-sm font-semibold bg-destructive/10 text-destructive border border-destructive/20 rounded-lg px-3 py-1 text-center shrink-0">
+              <p className="text-xs font-black bg-destructive/10 text-destructive border border-destructive/20 rounded-lg px-3 py-1.5 text-center shrink-0">
                 Red Flags Flagged Globally
               </p>
             </div>
@@ -582,7 +566,7 @@ const AlignmentContentPage = () => {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto bg-primary text-primary-foreground p-8 md:p-12 rounded-3xl shadow-2xl text-center"
           >
-            <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-primary-foreground/90 mb-8 leading-relaxed max-w-2xl mx-auto">
               Our linkedin profile optimization services and resume optimization services help professionals eliminate these inconsistencies strategically.
             </p>
             <Button
@@ -609,10 +593,10 @@ const AlignmentContentPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-6">
               What We Evaluate During Alignment Analysis
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto font-medium">
               Our analysis focuses on the key areas recruiters evaluate while cross-checking professional profiles.
             </p>
           </motion.div>
@@ -667,7 +651,7 @@ const AlignmentContentPage = () => {
                   <item.icon className={`w-7 h-7 ${item.color}`} />
                 </div>
                 <h3 className="text-xl font-bold mb-3">{item.title}</h3>
-                <p className="text-muted-foreground leading-relaxed text-base">
+                <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
                   {item.desc}
                 </p>
               </motion.div>
@@ -675,7 +659,7 @@ const AlignmentContentPage = () => {
           </div>
 
           <div className="text-center">
-            <CTAButton text="Analyze My Recruiter Visibility →" />
+            <CTAButton text="Analyze My Recruiter Visibility" />
           </div>
         </div>
       </section>
@@ -690,16 +674,16 @@ const AlignmentContentPage = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-6">
               Why Alignment Improves Recruiter Trust
             </h2>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Recruiters often spend only seconds evaluating candidates initially.
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto font-medium">
+              Recruiters often spend only seconds evaluating candidates initially. Inconsistency raises direct skepticism.
             </p>
           </motion.div>
 
           <div className="bg-card border border-border rounded-3xl p-8 shadow-xl mb-12">
-            <p className="font-semibold text-lg mb-6 text-foreground/80">
+            <p className="font-bold text-base md:text-lg mb-6 text-foreground/80">
               When both your LinkedIn profile and resume:
             </p>
 
@@ -714,7 +698,7 @@ const AlignmentContentPage = () => {
                   <div className="p-1 rounded-full bg-primary/10 mt-0.5">
                     <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                   </div>
-                  <span className="text-muted-foreground font-semibold text-base">
+                  <span className="text-muted-foreground font-semibold text-sm md:text-base">
                     {item}
                   </span>
                 </li>
@@ -722,20 +706,20 @@ const AlignmentContentPage = () => {
             </ul>
 
             <div className="border-t border-border/60 pt-6 space-y-4">
-              <p className="text-lg font-bold text-primary">
+              <p className="text-base md:text-lg font-extrabold text-primary">
                 …it strengthens credibility immediately.
               </p>
-              <p className="text-base text-muted-foreground">
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed font-semibold">
                 But when inconsistencies appear, recruiters often lose confidence quickly.
               </p>
-              <p className="text-base text-muted-foreground font-medium italic">
+              <p className="text-sm md:text-base text-muted-foreground font-bold italic">
                 That is why strong professional branding depends heavily on consistency and alignment.
               </p>
             </div>
           </div>
 
           <div className="text-center">
-            <CTAButton text="Build a Consistent Professional Brand →" />
+            <CTAButton text="Build a Consistent Professional Brand" />
           </div>
         </div>
       </section>
@@ -750,10 +734,10 @@ const AlignmentContentPage = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-6">
               Wondering If This Service Is Right for You?
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto font-medium">
               Our LinkedIn vs Resume Alignment service is ideal for:
             </p>
           </motion.div>
@@ -825,16 +809,16 @@ const AlignmentContentPage = () => {
           </div>
 
           <div className="max-w-4xl mx-auto text-center">
-            <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-3xl mx-auto font-medium">
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-8 max-w-3xl mx-auto font-medium">
               Whether you are actively job searching or improving your professional visibility, our linkedin profile writing service India and resume optimization services help ensure recruiters see one clear and credible professional story.
             </p>
-            <CTAButton text="Yes, Align My Profiles →" />
+            <CTAButton text="Yes, Align My Profiles" />
           </div>
         </div>
       </section>
 
       {/* 10. WHY CHOOSE US */}
-      <section className="py-24 bg-muted/40 relative overflow-hidden">
+      <section className="py-24 bg-muted/40 relative overflow-hidden animate-pulse-slow">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -843,18 +827,18 @@ const AlignmentContentPage = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              <h2 className="text-3xl md:text-5xl font-black mb-6">
                 Why Choose MyCareerSarthi?
               </h2>
-              <p className="text-xl font-semibold text-primary mb-4">
+              <p className="text-lg font-bold text-primary mb-4">
                 Most professionals optimize LinkedIn and resumes separately.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-6 font-medium">
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6 font-semibold">
                 We help professionals align both strategically.
               </p>
 
-              <div className="bg-background rounded-2xl border border-border p-6 mb-8">
-                <p className="text-base text-muted-foreground mb-4">
+              <div className="bg-background rounded-2xl border border-border p-6 mb-8 shadow-sm">
+                <p className="text-sm text-muted-foreground font-bold tracking-wide uppercase mb-4">
                   Our process combines:
                 </p>
                 <ul className="grid sm:grid-cols-2 gap-3">
@@ -874,7 +858,7 @@ const AlignmentContentPage = () => {
                 </ul>
               </div>
 
-              <div className="space-y-4 text-muted-foreground mb-8">
+              <div className="space-y-4 text-muted-foreground text-sm md:text-base leading-relaxed mb-8">
                 <p>
                   to help professionals strengthen recruiter trust, improve profile consistency, and create stronger professional visibility.
                 </p>
@@ -883,7 +867,7 @@ const AlignmentContentPage = () => {
                 </p>
               </div>
 
-              <CTAButton text="Improve My Professional Alignment →" />
+              <CTAButton text="Improve My Professional Alignment" />
             </motion.div>
 
             <motion.div
@@ -897,7 +881,7 @@ const AlignmentContentPage = () => {
               
               <div className="grid grid-cols-2 gap-4 w-full h-full max-h-[350px] relative z-10">
                 <div className="bg-background rounded-2xl p-4 shadow-sm border border-border flex flex-col items-center justify-center text-center gap-2 transform translate-y-2 hover:-translate-y-1 transition-transform">
-                  <div className="p-2.5 bg-blue-500/10 rounded-full text-blue-500">
+                  <div className="p-2.5 bg-blue-500/10 rounded-full text-blue-500 animate-pulse">
                     <Search className="w-6 h-6" />
                   </div>
                   <h4 className="font-bold text-sm">Keyword Alignment</h4>
@@ -921,7 +905,7 @@ const AlignmentContentPage = () => {
                   <h4 className="font-bold text-sm">Branding Consistency</h4>
                 </div>
 
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground font-bold w-16 h-16 rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground font-black w-16 h-16 rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center">
                   MCS
                 </div>
               </div>
@@ -940,7 +924,7 @@ const AlignmentContentPage = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-5xl font-bold mb-4 animate-pulse-slow">
+            <h2 className="text-3xl md:text-5xl font-extrabold mb-4">
               Frequently Asked Questions
             </h2>
           </motion.div>

@@ -55,9 +55,10 @@ const CTAButton = ({ text, href = "/pricing", primary = true }) => (
         ? "bg-[#3f3fe2] hover:bg-[#3232c7] text-white shadow-[#3f3fe2]/20"
         : "bg-white hover:bg-slate-50 text-[#3f3fe2] shadow-slate-200/50 border border-slate-200"
     }`}
+    style={{ cursor: "pointer" }}
     asChild
   >
-    <Link href={href}>
+    <Link href={href} style={{ cursor: "pointer" }}>
       <span className="flex items-center gap-2">
         {text}
         <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
@@ -103,7 +104,7 @@ const InterviewPreparationContentPage = () => {
                 <div className="pt-2 flex flex-wrap gap-4">
                   <CTAButton
                     text="Start Interview Preparation"
-                    href="/pricing"
+                    href="https://interview.mycareersarthi.com"
                   />
                 </div>
               </div>
@@ -665,7 +666,7 @@ const InterviewPreparationContentPage = () => {
                 </div>
               </div>
 
-              <CTAButton text="Start Practicing" href="/pricing" />
+              <CTAButton text="Start Practicing" href="https://interview.mycareersarthi.com" />
             </div>
 
             {/* Card 3 */}
@@ -715,7 +716,7 @@ const InterviewPreparationContentPage = () => {
                 </div>
               </div>
 
-              <CTAButton text="Start AI Mock Interview" href="/pricing" />
+              <CTAButton text="Start AI Mock Interview" href="https://interview.mycareersarthi.com" />
             </div>
 
             {/* Card 4 */}
@@ -882,7 +883,7 @@ const InterviewPreparationContentPage = () => {
               <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex justify-center">
                 <CTAButton
                   text="Start Free Practice Interview"
-                  href="/pricing"
+                  href="https://interview.mycareersarthi.com"
                 />
               </div>
             </div>
@@ -1514,7 +1515,7 @@ const InterviewPreparationContentPage = () => {
                 <div className="pt-4 flex flex-wrap gap-4">
                   <CTAButton
                     text="Start Interview Preparation"
-                    href="/pricing"
+                    href="https://interview.mycareersarthi.com"
                   />
                 </div>
               </div>
@@ -1724,7 +1725,7 @@ const InterviewPreparationContentPage = () => {
           <div className="pt-4 flex justify-center">
             <CTAButton
               text="Start Interview Preparation"
-              href="/pricing"
+              href="https://interview.mycareersarthi.com"
               primary={false}
             />
           </div>

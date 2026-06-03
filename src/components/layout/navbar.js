@@ -26,8 +26,8 @@ export const Navbar = () => {
     <nav
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-background/80 backdrop-blur-xl shadow-lg border-b border-border/50 translate-y-0"
-          : "bg-background/60 backdrop-blur-md translate-y-0"
+          ? "bg-white/95 dark:bg-background/95 backdrop-blur-xl shadow-xs border-b border-border/50 translate-y-0"
+          : "bg-white/90 dark:bg-background/90 backdrop-blur-md translate-y-0"
       }`}
     >
       <div className="container mx-auto px-4 max-w-7xl">

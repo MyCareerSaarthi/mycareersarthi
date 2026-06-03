@@ -30,7 +30,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "admin.mycareersarthi.com",
+        hostname: "*.mycareersarthi.com",
         pathname: "/**",
       },
       {

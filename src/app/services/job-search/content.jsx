@@ -59,16 +59,6 @@ const JobSearchContentPage = () => {
 
         <div className="container mx-auto px-4 relative">
           <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs md:text-sm font-medium mb-8"
-            >
-              <Sparkles className="w-4 h-4 animate-spin-slow" />
-              <span>Job Search Services</span>
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -313,28 +303,20 @@ const JobSearchContentPage = () => {
         </div>
       </section>
 
-      {/* 4. A STRUCTURED APPROACH (TIMELINE ROADMAP) */}
-      <section className="py-24 bg-muted/40 relative">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+      {/* 4. A STRUCTURED APPROACH (2-COLUMN STEP GRID REDESIGN) */}
+      <section className="py-20 bg-muted/40 relative">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl md:text-3xl font-extrabold mb-5 tracking-tight">
               A Structured Approach to Job Search Strategy
             </h2>
-          </motion.div>
+          </div>
 
-          <div className="space-y-12 mb-16 relative">
-            {/* Timeline connector path */}
-            <div className="absolute left-[27px] md:left-1/2 md:-ml-px top-8 bottom-8 w-0.5 bg-border hidden md:block" />
-
+          {/* Redesigned to a balanced 2-column step grid matrix */}
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
             {[
               {
-                num: "1",
+                num: "01",
                 title: "1. Job Search Diagnostic",
                 desc: "Before building a strategy, we first understand how you are currently searching for jobs.",
                 subText: "We review:",
@@ -349,7 +331,7 @@ const JobSearchContentPage = () => {
                 icon: FileText,
               },
               {
-                num: "2",
+                num: "02",
                 title: "2. Role & Company Targeting",
                 desc: "Most professionals apply to roles that look relevant on paper but are misaligned in reality.",
                 subText: "We help define:",
@@ -363,7 +345,7 @@ const JobSearchContentPage = () => {
                 icon: Target,
               },
               {
-                num: "3",
+                num: "03",
                 title: "3. Job Search Strategy & Application Planning",
                 desc: "Job search today is not about applying everywhere. It is about knowing where to apply, where not to apply, how frequently to apply, which opportunities to prioritize, and how to avoid low-quality listings and dead-end applications.",
                 subText: "",
@@ -372,7 +354,7 @@ const JobSearchContentPage = () => {
                 icon: Compass,
               },
               {
-                num: "4",
+                num: "04",
                 title: "4. Recruiter & Hiring Manager Outreach",
                 desc: "Many strong opportunities never come through job portals alone. They happen through recruiter searches, networking, referrals, and direct visibility.",
                 subText: "We guide professionals on:",
@@ -387,56 +369,43 @@ const JobSearchContentPage = () => {
                 icon: Users,
               },
             ].map((step, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                viewport={{ once: true }}
-                className={`flex flex-col md:flex-row items-center gap-8 ${idx % 2 === 1 ? "md:flex-row-reverse" : ""}`}
-              >
-                <div className={`md:w-1/2 flex ${idx % 2 === 1 ? "md:justify-start" : "md:justify-end"} w-full`}>
-                  <div className="bg-card border border-border/50 p-6 md:p-8 rounded-2xl shadow-md hover:shadow-lg transition-shadow relative w-full group overflow-hidden">
-                    <div className="absolute top-0 left-0 w-2.5 h-full bg-primary transform origin-left scale-y-0 group-hover:scale-y-100 transition-transform duration-300 ease-in-out" />
-                    
-                    <h3 className="text-xl md:text-2xl font-bold mb-4 flex items-center gap-3 text-foreground">
-                      <span className="md:hidden flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
-                        {step.num}
-                      </span>
-                      {step.title}
-                    </h3>
-                    
-                    <p className="text-muted-foreground mb-4 text-base md:text-lg">
-                      {step.desc}
-                    </p>
-
-                    {step.subText && (
-                      <p className="text-sm font-semibold mb-2 text-foreground/80">{step.subText}</p>
-                    )}
-                    
-                    {step.items.length > 0 && (
-                      <ul className="grid sm:grid-cols-2 gap-2 mb-4">
-                        {step.items.map((item, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    {step.finalText && (
-                      <p className="text-sm font-medium text-primary mt-3 pt-3 border-t border-border/60">
-                        {step.finalText}
-                      </p>
-                    )}
+              <div key={idx} className="bg-card border border-border rounded-3xl p-5 md:p-7 shadow-sm flex flex-col justify-between hover:shadow-md transition-all duration-300">
+                <div>
+                  {/* Card Header with step number */}
+                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/40">
+                    <span className="text-2xl font-black text-primary/35">{step.num}</span>
+                    <div className="w-8.5 h-8.5 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <step.icon className="w-4 h-4" />
+                    </div>
                   </div>
+
+                  <h3 className="text-base md:text-lg font-black mb-2 text-foreground">{step.title}</h3>
+                  <p className="text-muted-foreground text-xs md:text-sm leading-relaxed mb-4 font-semibold">
+                    {step.desc}
+                  </p>
+
+                  {step.subText && (
+                    <p className="text-[10px] uppercase font-black tracking-widest text-foreground/80 mb-2">{step.subText}</p>
+                  )}
+
+                  {step.items.length > 0 && (
+                    <ul className="space-y-1.5 mb-4">
+                      {step.items.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs font-semibold text-muted-foreground leading-tight">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <div className="hidden md:flex relative z-10 w-14 h-14 bg-background border-4 border-primary rounded-full items-center justify-center shadow-lg">
-                  <step.icon className="w-6 h-6 text-primary" />
-                </div>
-                <div className="md:w-1/2 hidden md:block" />
-              </motion.div>
+
+                {step.finalText && (
+                  <div className="text-[11px] font-semibold text-foreground/90 bg-primary/5 rounded-xl p-3.5 border border-primary/15 mt-2.5 shadow-inner leading-relaxed">
+                    {step.finalText}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
 

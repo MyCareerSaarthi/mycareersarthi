@@ -106,7 +106,7 @@ const AlignmentContentPage = () => {
 
       {/* 2. DOES YOUR LINKEDIN MATCH STORY SECTION (SPACIOUS 2-COLUMN SPLIT) */}
       <section className="py-24 bg-muted/30 relative overflow-hidden">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -200,7 +200,7 @@ const AlignmentContentPage = () => {
 
       {/* 3. WHAT IS ALIGNMENT SECTION (SPACIOUS 2-COLUMN SPLIT) */}
       <section className="py-24 relative overflow-hidden animate-pulse-slow">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -265,7 +265,7 @@ const AlignmentContentPage = () => {
 
       {/* 4. WHY RECRUITERS CROSS-CHECK */}
       <section className="py-24 bg-muted/40 relative">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -375,7 +375,7 @@ const AlignmentContentPage = () => {
 
       {/* 5. A STRUCTURED APPROACH (TIMELINE REMOVED -> 2-COLUMN STEP GRID REDESIGN) */}
       <section className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -508,7 +508,7 @@ const AlignmentContentPage = () => {
       <section className="py-24 bg-foreground text-background relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
 
-        <div className="container mx-auto px-4 relative z-10 max-w-5xl">
+        <div className="container mx-auto px-4 relative z-10 max-w-7xl">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -585,7 +585,7 @@ const AlignmentContentPage = () => {
 
       {/* 7. WHAT WE EVALUATE */}
       <section className="py-24 relative">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -601,7 +601,7 @@ const AlignmentContentPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-16">
             {[
               {
                 title: "Professional Positioning",
@@ -726,7 +726,7 @@ const AlignmentContentPage = () => {
 
       {/* 9. WONDERING IF RIGHT FOR YOU */}
       <section className="py-24 relative overflow-hidden">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -742,7 +742,7 @@ const AlignmentContentPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-16">
             {[
               {
                 title: "Active Job Seekers",
@@ -818,19 +818,16 @@ const AlignmentContentPage = () => {
       </section>
 
       {/* 10. WHY CHOOSE US */}
-      <section className="py-24 bg-muted/40 relative overflow-hidden animate-pulse-slow">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-5xl font-black mb-6">
+      <section className="py-24 bg-muted/40 relative overflow-hidden">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            {/* Left Column Content */}
+            <div className="lg:col-span-7 space-y-6">
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight text-foreground">
                 Why Choose MyCareerSarthi?
               </h2>
-              <p className="text-lg font-bold text-primary mb-4">
+              <p className="text-lg font-bold text-primary">
                 Most professionals optimize LinkedIn and resumes separately.
               </p>
               <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6 font-semibold">
@@ -868,48 +865,23 @@ const AlignmentContentPage = () => {
               </div>
 
               <CTAButton text="Improve My Professional Alignment" />
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="relative h-[450px] flex items-center justify-center bg-card/60 backdrop-blur-sm rounded-3xl border border-border shadow-2xl p-8"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
-              
-              <div className="grid grid-cols-2 gap-4 w-full h-full max-h-[350px] relative z-10">
-                <div className="bg-background rounded-2xl p-4 shadow-sm border border-border flex flex-col items-center justify-center text-center gap-2 transform translate-y-2 hover:-translate-y-1 transition-transform">
-                  <div className="p-2.5 bg-blue-500/10 rounded-full text-blue-500 animate-pulse">
-                    <Search className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-bold text-sm">Keyword Alignment</h4>
-                </div>
-                <div className="bg-background rounded-2xl p-4 shadow-sm border border-border flex flex-col items-center justify-center text-center gap-2 transform -translate-y-2 hover:-translate-y-5 transition-transform">
-                  <div className="p-2.5 bg-amber-500/10 rounded-full text-amber-500">
-                    <Briefcase className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-bold text-sm">Recruiter Analysis</h4>
-                </div>
-                <div className="bg-background rounded-2xl p-4 shadow-sm border border-border flex flex-col items-center justify-center text-center gap-2 transform translate-y-1 hover:-translate-y-2 transition-transform">
-                  <div className="p-2.5 bg-purple-500/10 rounded-full text-purple-500">
-                    <Target className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-bold text-sm">Role-Fit Strategy</h4>
-                </div>
-                <div className="bg-background rounded-2xl p-4 shadow-sm border border-border flex flex-col items-center justify-center text-center gap-2 transform -translate-y-4 hover:-translate-y-7 transition-transform">
-                  <div className="p-2.5 bg-green-500/10 rounded-full text-green-500">
-                    <Award className="w-6 h-6" />
-                  </div>
-                  <h4 className="font-bold text-sm">Branding Consistency</h4>
-                </div>
+            {/* Right Column Illustration */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end relative">
+              {/* Soft backdrop glow behind illustration */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground font-black w-16 h-16 rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center">
-                  MCS
-                </div>
+              <div className="relative w-full aspect-[4/3] max-w-[320px] md:max-w-[380px] hover:scale-105 transition-transform duration-500">
+                <Image
+                  src="/illustrations/destination.svg"
+                  alt="Resume Alignment"
+                  fill
+                  className="object-contain relative z-10"
+                />
               </div>
-            </motion.div>
+            </div>
+
           </div>
         </div>
       </section>

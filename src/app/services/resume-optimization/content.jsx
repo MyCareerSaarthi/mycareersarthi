@@ -68,7 +68,7 @@ const ResumeOptimizationContentPage = () => {
         </div>
 
         <div className="container mx-auto px-4 relative">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             {/* Even 50/50 Balanced Column Grid Layout */}
             <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
               {/* Left Content Column (Grid Column 6) */}
@@ -136,8 +136,8 @@ const ResumeOptimizationContentPage = () => {
                             JD
                           </div>
                           <div className="space-y-1 flex-1">
-                            <div className="h-1.5 w-[70%] bg-slate-300 dark:bg-slate-750 rounded-full" />
-                            <div className="h-1 w-[40%] bg-slate-200 dark:bg-slate-850 rounded-full" />
+                            <div className="h-1.5 w-[70%] bg-slate-300 dark:bg-slate-700 rounded-full" />
+                            <div className="h-1 w-[40%] bg-slate-200 dark:bg-slate-800 rounded-full" />
                           </div>
                         </div>
                         <div className="border-t border-slate-200/60 dark:border-slate-800/40 my-1" />
@@ -145,20 +145,20 @@ const ResumeOptimizationContentPage = () => {
                         {/* Summary Block */}
                         <div className="space-y-1">
                           <div className="h-1 w-[30%] bg-slate-400 dark:bg-slate-700 rounded-full mb-1" />
-                          <div className="h-1 w-[90%] bg-slate-200 dark:bg-slate-850 rounded-full" />
-                          <div className="h-1 w-[80%] bg-slate-200 dark:bg-slate-850 rounded-full" />
+                          <div className="h-1 w-[90%] bg-slate-200 dark:bg-slate-800 rounded-full" />
+                          <div className="h-1 w-[80%] bg-slate-200 dark:bg-slate-800 rounded-full" />
                         </div>
 
                         {/* Experience block */}
                         <div className="space-y-1.5 pt-1">
                           <div className="h-1.5 w-[50%] bg-slate-400 dark:bg-slate-700 rounded-full mb-1.5" />
                           <div className="border border-green-500/20 bg-green-500/5 rounded p-1 space-y-1">
-                            <div className="h-1 w-[85%] bg-slate-300 dark:bg-slate-750 rounded-full" />
-                            <div className="h-1 w-[70%] bg-slate-200 dark:bg-slate-850 rounded-full" />
+                            <div className="h-1 w-[85%] bg-slate-300 dark:bg-slate-700 rounded-full" />
+                            <div className="h-1 w-[70%] bg-slate-200 dark:bg-slate-800 rounded-full" />
                           </div>
                           <div className="border border-purple-500/20 bg-purple-500/5 rounded p-1 space-y-1">
-                            <div className="h-1 w-[80%] bg-slate-300 dark:bg-slate-750 rounded-full" />
-                            <div className="h-1 w-[60%] bg-slate-200 dark:bg-slate-850 rounded-full" />
+                            <div className="h-1 w-[80%] bg-slate-300 dark:bg-slate-700 rounded-full" />
+                            <div className="h-1 w-[60%] bg-slate-200 dark:bg-slate-800 rounded-full" />
                           </div>
                         </div>
                       </div>
@@ -245,7 +245,7 @@ const ResumeOptimizationContentPage = () => {
                       })}
                     </div>
 
-                    <div className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-850 text-[10px] font-bold text-slate-600 dark:text-slate-300">
+                    <div className="px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-600 dark:text-slate-300">
                       94% Score
                     </div>
                   </div>
@@ -258,68 +258,80 @@ const ResumeOptimizationContentPage = () => {
       </section>
 
       {/* 2. SO, WHAT EXACTLY IS RESUME OPTIMIZATION? */}
-      <section className="py-24 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl -z-10" />
+      <section className="py-24 bg-muted/30 relative overflow-hidden border-t border-b border-border/50">
+        <div className="container mx-auto px-4 max-w-7xl relative">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-tr from-[#3f3fe2]/5 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-              <h2 className="text-2xl md:text-3xl font-extrabold mb-5 text-center tracking-tight">
-                So, What Exactly is Resume Optimization?
-              </h2>
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center relative z-10">
+              {/* Left Column: content */}
+              <div className="lg:col-span-7 space-y-6 text-left">
+                <h2 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                  So, What Exactly is Resume Optimization?
+                </h2>
+                
+                <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                  Resume optimization is the process of strategically improving your resume so recruiters and ATS systems can quickly understand your experience, skills, impact, and role relevance.
+                </p>
 
-              <p className="text-sm md:text-base lg:text-lg text-muted-foreground leading-relaxed mb-8 text-center max-w-3xl mx-auto font-medium">
-                Resume optimization is the process of strategically improving your resume so recruiters and ATS systems can quickly understand your experience, skills, impact, and role relevance.
-              </p>
-
-              {/* Structured Two-Column Content Layout */}
-              <div className="grid md:grid-cols-12 gap-8 items-stretch mb-8">
-                {/* Left Column: Context Card */}
-                <div className="md:col-span-7 bg-background border border-border/80 rounded-2xl p-6 flex flex-col justify-center shadow-sm">
-                  <p className="font-semibold text-foreground text-xs md:text-sm lg:text-base leading-relaxed mb-3">
-                    Because today, resumes are not just read by recruiters. They are first scanned by Applicant Tracking Systems (ATS) that evaluate resumes based on keywords, structure, formatting, and job relevance before they even reach human recruiters.
+                <div className="bg-background/80 border border-border/80 rounded-2xl p-5 shadow-sm space-y-3">
+                  <p className="font-semibold text-foreground text-xs md:text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                    Today, resumes are not just read by recruiters. They are first scanned by Applicant Tracking Systems (ATS) that evaluate resumes based on keywords, structure, formatting, and job relevance before they even reach human recruiters.
                   </p>
                   <p className="text-muted-foreground text-xs md:text-sm font-semibold">
                     Which means even highly experienced professionals can get filtered out if their resumes are not properly optimized.
                   </p>
                 </div>
 
-                {/* Right Column: Priorities card */}
-                <div className="md:col-span-5 bg-background border border-border/80 rounded-2xl p-6 flex flex-col justify-center shadow-sm">
-                  <p className="text-primary text-[10px] uppercase font-extrabold tracking-wider mb-3">
+                <div className="space-y-3">
+                  <p className="text-primary text-[10.5px] uppercase font-extrabold tracking-wider">
                     Our professional resume writing service focuses on:
                   </p>
-                  <ul className="space-y-2.5">
+                  <div className="grid sm:grid-cols-2 gap-3">
                     {[
                       "ATS Optimization",
                       "Recruiter Readability",
                       "Interview Callback Shortlisting",
                       "Strategic Keyword Mapping"
                     ].map((item, idx) => (
-                      <li key={idx} className="flex items-center gap-2.5">
-                        <div className="w-4.5 h-4.5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          <CheckCircle2 className="w-3 h-3 text-primary" />
+                      <div key={idx} className="flex items-center gap-2.5">
+                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
                         </div>
                         <span className="text-muted-foreground text-xs md:text-sm font-bold capitalize">
                           {item}
                         </span>
-                      </li>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                  <CTAButton text="Optimize My Resume Strategically" />
                 </div>
               </div>
 
-              <div className="flex justify-center">
-                <CTAButton text="Optimize My Resume Strategically" />
+              {/* Right Column: illustration */}
+              <div className="lg:col-span-5 flex justify-center relative">
+                {/* Soft backdrop glow behind illustration */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+
+                <div className="relative w-full aspect-[4/3] max-w-[320px] md:max-w-[380px] hover:scale-105 transition-transform duration-500">
+                  <Image
+                    src="/illustrations/resume.svg"
+                    alt="Resume Optimization illustration"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* 3. MOST RESUMES DON'T FAIL BECAUSE OF LACK OF EXPERIENCE */}
       <section className="py-20">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left side text column */}
             <div className="lg:col-span-7 space-y-5">
@@ -467,7 +479,7 @@ const ResumeOptimizationContentPage = () => {
 
       {/* 5. ONE RESUME DOESN'T FIT EVERY JOB */}
       <section className="py-20">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left side text column */}
             <div className="lg:col-span-7 space-y-5">
@@ -548,7 +560,7 @@ const ResumeOptimizationContentPage = () => {
 
       {/* 6. GET RECRIUTER READY IN 3 STRUCTURED STEPS (HORIZONTAL 3-COLUMN REDESIGN) */}
       <section className="py-20 bg-muted/40">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-extrabold mb-5 tracking-tight">
               Get a Recruiter-Ready Resume in 3 Structured Steps
@@ -641,83 +653,96 @@ const ResumeOptimizationContentPage = () => {
       </section>
 
       {/* 7. WHY RESUME OPTIMIZATION MATTERS MORE THAN EVER */}
-      <section className="py-20 bg-muted/20">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold mb-4 tracking-tight">
-              Why Resume Optimization Matters More Than Ever
-            </h2>
-            <p className="text-sm md:text-base lg:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto font-medium">
-              Recruiters today review hundreds of resumes for a single role. They do not read resumes in detail initially. They scan.
-            </p>
-          </div>
+      <section className="py-24 bg-muted/20 relative overflow-hidden border-t border-b border-border/50">
+        <div className="container mx-auto px-4 max-w-7xl relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-primary/5 rounded-full blur-[80px] pointer-events-none -z-10" />
 
-          <div className="bg-card border border-border rounded-3xl p-6 md:p-8 shadow-sm">
-            <div className="grid md:grid-cols-2 gap-6 items-stretch mb-6">
-              {/* Left Column: Quick scans */}
-              <div className="bg-background border border-border/80 rounded-2xl p-5 md:p-6 shadow-sm">
-                <p className="font-extrabold text-sm mb-3.5 text-foreground flex items-center gap-2">
-                  They quickly look for:
+          <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
+              {/* Left Column: text content */}
+              <div className="lg:col-span-7 space-y-6 text-left">
+                <h2 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
+                  Why Resume Optimization Matters More Than Ever
+                </h2>
+                
+                <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                  Recruiters today review hundreds of resumes for a single role. They do not read resumes in detail initially. They scan. If your resume cannot communicate value within seconds, they simply move on to the next application.
                 </p>
 
-                <ul className="space-y-2">
-                  {[
-                    "role relevance",
-                    "impact",
-                    "keywords",
-                    "measurable outcomes",
-                    "clarity",
-                    "leadership",
-                    "technical alignment"
-                  ].map((item, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
-                      <span className="text-muted-foreground font-bold text-[10px] md:text-xs capitalize leading-none">
-                        {item}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="grid sm:grid-cols-2 gap-6">
+                  {/* Left Column: Quick scans */}
+                  <div className="space-y-3">
+                    <p className="font-extrabold text-sm text-foreground flex items-center gap-2">
+                      Recruiters quickly look for:
+                    </p>
+                    <ul className="space-y-2">
+                      {[
+                        "role relevance",
+                        "quantified impact",
+                        "industry keywords",
+                        "measurable outcomes",
+                        "technical alignment"
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                          <span className="text-muted-foreground font-bold text-xs capitalize leading-none">
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Right Column: Decisions */}
+                  <div className="space-y-3">
+                    <p className="font-extrabold text-sm text-foreground">
+                      Directly impacts your:
+                    </p>
+                    <ul className="space-y-2">
+                      {[
+                        "recruiter visibility",
+                        "ATS scanner score",
+                        "shortlisting chances",
+                        "interview opportunities"
+                      ].map((item, idx) => (
+                        <li key={idx} className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                          <span className="text-muted-foreground font-bold text-xs capitalize leading-none">
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-primary/5 rounded-2xl p-5 border border-primary/15 shadow-inner">
+                  <p className="text-foreground font-bold leading-relaxed text-sm">
+                    And that is exactly why a professionally optimized, role-aligned resume matters more than ever in today’s highly competitive hiring market.
+                  </p>
+                </div>
               </div>
 
-              {/* Right Column: Decisions */}
-              <div className="bg-background border border-border/80 rounded-2xl p-5 md:p-6 shadow-sm flex flex-col justify-center">
-                <p className="text-xs text-muted-foreground font-semibold leading-relaxed mb-3">
-                  If your resume cannot communicate value within seconds, recruiters simply move on to the next application.
-                </p>
-                <h3 className="text-xs md:text-sm font-extrabold text-foreground leading-snug">
-                  That is why resume optimization today directly impacts:
-                </h3>
-                <ul className="space-y-1 mt-2.5">
-                  {[
-                    "recruiter visibility",
-                    "ATS performance",
-                    "shortlisting chances",
-                    "interview opportunities"
-                  ].map((item, idx) => (
-                    <li key={idx} className="flex gap-2 items-center text-[10px] md:text-xs font-semibold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                      <span className="capitalize">{item}</span>
-                    </li>
-                  ))}
-                </ul>
+              {/* Right Column: Illustration */}
+              <div className="lg:col-span-5 flex justify-center relative">
+                {/* Soft backdrop glow behind illustration */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+
+                <div className="relative w-full aspect-[4/3] max-w-[320px] md:max-w-[380px] hover:scale-105 transition-transform duration-500">
+                  <Image
+                    src="/illustrations/analysis.svg"
+                    alt="Why Resume Optimization Matters"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
               </div>
             </div>
-
-            <div className="border-t border-border/40 pt-5">
-              <div className="bg-primary/5 rounded-2xl p-4 border border-primary/20 shadow-inner">
-                <p className="text-foreground font-bold leading-relaxed text-sm">
-                  And that is exactly why a professionally optimized resume matters more than ever in today’s hiring market.
-                </p>
-              </div>
-            </div>
           </div>
-        </div>
       </section>
 
       {/* 8. WONDERING IF RIGHT FOR YOU */}
       <section className="py-20">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-black mb-5 tracking-tight">
               Wondering If Resume Optimization Services Are Right for You?
@@ -727,7 +752,7 @@ const ResumeOptimizationContentPage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-5 max-w-5xl mx-auto mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-5 max-w-7xl mx-auto mb-12">
             {[
               {
                 title: "Fresh Graduates",
@@ -790,7 +815,7 @@ const ResumeOptimizationContentPage = () => {
 
       {/* 9. WHY CHOOSE MYCAREERSARTHI (STRUCTURED GRID LAYOUT REDESIGN) */}
       <section className="py-20 bg-muted/40">
-        <div className="container mx-auto px-4 max-w-6xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-black mb-5 tracking-tight">
               Why Choose MyCareerSarthi?
@@ -801,7 +826,7 @@ const ResumeOptimizationContentPage = () => {
           </div>
 
           {/* 2x2 Feature Pillars Grid surrounding the central value block */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12">
             {[
               {
                 title: "ATS Optimization",
@@ -866,7 +891,7 @@ const ResumeOptimizationContentPage = () => {
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-12">
+          <div className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto mb-12">
             {[
               {
                 text: "“I realized my resume looked visually good but completely lacked impact positioning. The optimization changed that completely.”",

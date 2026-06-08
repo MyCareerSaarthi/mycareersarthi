@@ -17,7 +17,7 @@ export default function LinkedinReviewContent() {
   return (
     <div className="min-h-screen bg-background">
       <section className="py-20 md:py-28">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}

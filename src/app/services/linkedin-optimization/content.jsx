@@ -137,11 +137,14 @@ const LinkedinOptimizationPage = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
-              className="relative"
+              className="relative flex justify-center lg:justify-end"
             >
-              <div className="bg-card border border-border/50 rounded-2xl p-2 shadow-2xl relative z-0 transform rotate-2  transition-transform duration-500">
-                <div className="bg-muted rounded-xl overflow-hidden min-h-[400px] flex items-center justify-center relative p">
-                  <img src="/scoring/linkedin_report.webp" alt="" />
+              {/* Glow backdrop behind the mockup */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] bg-primary/5 dark:bg-primary/10 rounded-full blur-[80px] pointer-events-none -z-10" />
+
+              <div className="bg-card border border-border/50 rounded-2xl p-2 shadow-2xl relative z-0 transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-500 w-full max-w-[420px]">
+                <div className="bg-muted rounded-xl overflow-hidden min-h-[360px] flex items-center justify-center relative">
+                  <img src="/scoring/linkedin_report.webp" alt="LinkedIn report" className="object-contain w-full h-auto max-h-[340px]" />
                 </div>
               </div>
             </motion.div>
@@ -300,7 +303,7 @@ const LinkedinOptimizationPage = () => {
             </motion.h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
+          <div className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto mb-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -375,7 +378,7 @@ const LinkedinOptimizationPage = () => {
 
       {/* 5. 3 EASY STEPS */}
       <section className="py-24 relative">
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -470,7 +473,7 @@ const LinkedinOptimizationPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-16">
             {[
               {
                 title: "Fresh Graduate",
@@ -532,22 +535,19 @@ const LinkedinOptimizationPage = () => {
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-primary/5 pattern-dots pattern-primary pattern-bg-background pattern-size-4 pattern-opacity-10" />
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">
+        <div className="container mx-auto px-4 relative z-10 max-w-7xl">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            
+            {/* Left Column Content */}
+            <div className="lg:col-span-7 space-y-6">
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">
                 Why Choose MyCareerSarthi?
               </h2>
-              <p className="text-xl font-medium text-primary mb-6">
+              <p className="text-xl font-medium text-primary">
                 We don't do things in bits and pieces. We offer a holistic
                 approach to your career journey.
               </p>
-              <div className="space-y-6 text-lg text-muted-foreground leading-relaxed mb-8">
+              <div className="space-y-6 text-base md:text-lg text-muted-foreground leading-relaxed">
                 <p>
                   While others focus on just one thing, leaving professionals
                   doing the work of connecting all the pieces themselves, we
@@ -572,51 +572,26 @@ const LinkedinOptimizationPage = () => {
                   interview calls.
                 </p>
               </div>
-              <CTAButton text="Convert my linkedin profile into a job magnet" />
-            </motion.div>
-
-            {/* Visual Element for Holistic Approach */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="relative h-[500px] flex items-center justify-center bg-card/50 backdrop-blur-sm rounded-3xl border border-border shadow-2xl overflow-hidden p-8"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent" />
-
-              <div className="grid grid-cols-2 gap-4 relative z-10 w-full h-full max-h-[400px]">
-                <div className="bg-background rounded-2xl p-6 shadow-md border border-border flex flex-col items-center justify-center text-center gap-3 transform translate-y-4 hover:-translate-y-2 transition-transform">
-                  <div className="p-3 bg-blue-500/10 rounded-full text-blue-500">
-                    <Search className="w-8 h-8" />
-                  </div>
-                  <h4 className="font-bold">Search Visibility</h4>
-                </div>
-                <div className="bg-background rounded-2xl p-6 shadow-md border border-border flex flex-col items-center justify-center text-center gap-3 transform -translate-y-4 hover:-translate-y-6 transition-transform">
-                  <div className="p-3 bg-amber-500/10 rounded-full text-amber-500">
-                    <Briefcase className="w-8 h-8" />
-                  </div>
-                  <h4 className="font-bold">Resume Alignment</h4>
-                </div>
-                <div className="bg-background rounded-2xl p-6 shadow-md border border-border flex flex-col items-center justify-center text-center gap-3 transform translate-y-2 hover:-translate-y-4 transition-transform">
-                  <div className="p-3 bg-purple-500/10 rounded-full text-purple-500">
-                    <Target className="w-8 h-8" />
-                  </div>
-                  <h4 className="font-bold">Job Strategy</h4>
-                </div>
-                <div className="bg-background rounded-2xl p-6 shadow-md border border-border flex flex-col items-center justify-center text-center gap-3 transform -translate-y-8 hover:-translate-y-10 transition-transform">
-                  <div className="p-3 bg-green-500/10 rounded-full text-green-500">
-                    <Award className="w-8 h-8" />
-                  </div>
-                  <h4 className="font-bold">Interview Prep</h4>
-                </div>
-
-                {/* Center Connector Piece */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground font-bold p-6 rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center">
-                  MCS
-                </div>
+              <div className="pt-2">
+                <CTAButton text="Convert my linkedin profile into a job magnet" />
               </div>
-            </motion.div>
+            </div>
+
+            {/* Right Column Illustration */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end relative">
+              {/* Soft backdrop glow behind illustration */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+
+              <div className="relative w-full aspect-[4/3] max-w-[320px] md:max-w-[380px] hover:scale-105 transition-transform duration-500">
+                <Image
+                  src="/illustrations/career_progress.svg"
+                  alt="Holistic Career Progress"
+                  fill
+                  className="object-contain relative z-10"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -639,7 +614,7 @@ const LinkedinOptimizationPage = () => {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+          <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto mb-16">
             {[
               {
                 text: "Before MCS, my profile was just an online resume. After their optimization, I received 3 interview calls from top tier companies within a month!",

@@ -152,27 +152,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Trust badges */}
-        <div className="pb-8">
-          <div className="flex flex-wrap justify-center items-center gap-6 text-xs text-muted-foreground/60">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>AI-Powered</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-blue-500" />
-              <span>ATS Compatible</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-violet-500" />
-              <span>Instant Results</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-orange-500" />
-              <span>Expert Support</span>
-            </div>
-          </div>
-        </div>
+
       </div>
     </footer>
   );

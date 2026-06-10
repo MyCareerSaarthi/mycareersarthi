@@ -83,27 +83,27 @@ const careerCategories = [
       },
     ],
   },
-  {
-    id: "personal-branding",
-    name: "Personal Branding Services",
-    description:
-      "Build your professional brand and establish thought leadership in your industry.",
-    icon: FileText,
-    services: [
-      {
-        name: "LinkedIn Management & Personal Branding",
-        price: 9999,
-        description: "Establish thought leadership and build organic visibility in your industry.",
-        details: [
-          "Current Branding Activities Score and Report",
-          "LinkedIn Posting - 4 Posts & One Article",
-          "Engagement Strategy",
-          "Network Expansion Strategies",
-          "Monthly Strategy Alignment Calls",
-        ],
-      },
-    ],
-  },
+  // {
+  //   id: "personal-branding",
+  //   name: "Personal Branding Services",
+  //   description:
+  //     "Build your professional brand and establish thought leadership in your industry.",
+  //   icon: FileText,
+  //   services: [
+  //     {
+  //       name: "LinkedIn Management & Personal Branding",
+  //       price: 9999,
+  //       description: "Establish thought leadership and build organic visibility in your industry.",
+  //       details: [
+  //         "Current Branding Activities Score and Report",
+  //         "LinkedIn Posting - 4 Posts & One Article",
+  //         "Engagement Strategy",
+  //         "Network Expansion Strategies",
+  //         "Monthly Strategy Alignment Calls",
+  //       ],
+  //     },
+  //   ],
+  // },
   {
     id: "career-services",
     name: "Career Services",
@@ -161,17 +161,19 @@ const careerCategories = [
         ],
       },
       {
-        name: "Interview Preparation Module",
+        name: "Personalized Interview Playbook",
         price: 17000,
         priceBreakdown:
           "₹2,500 assessment + ₹12,000 training + ₹2,500 reassessment",
-        description: "End-to-end live training covering framing, delivery, and reassessments.",
+        description: "A personalized preparation program to help you craft compelling, authentic, and high-impact answers over 5–6 guided sessions.",
         details: [
-          "Mock Interview Round 1 to assess current level",
-          "Mock Interview Report along with Gaps & Suggestions",
-          "Interview Preparation Training Sessions - Qs Response Framing - 4 Sessions",
-          "Mock Interview Round 2 to Reassess Gap Closure",
-          "Final Mock Interview Report along with Gaps & Suggestions",
+          "5–6 Guided 1-on-1 Sessions to build your playbook",
+          "Polished answers for: Tell Me About Yourself & Career Journey",
+          "Leadership & Behavioral Questions response framing",
+          "Strengths & Weaknesses + Situational Scenarios coaching",
+          "Technical, Functional & Domain-Specific Questions support",
+          "Salary & HR Discussions + Project Discussions preparation",
+          "Final Outcome: Rehearsed, interview-ready booklet of answers",
         ],
       },
     ],
@@ -183,6 +185,7 @@ const formatPrice = (price) => new Intl.NumberFormat("en-IN").format(price);
 
 // Helper to calculate savings on mentoring bundles
 const calculateSavings = (category) => {
+  if (!category || !category.services) return 0;
   const totalIndividual = category.services.reduce(
     (sum, s) => sum + s.price,
     0,
@@ -338,6 +341,12 @@ const Pricing = () => {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState(null);
   const [activeCategory, setActiveCategory] = useState("profile-optimization");
+
+  // Dynamically resolve categories to prevent index shifting bugs when categories are hidden
+  const profileCategory = careerCategories.find(c => c.id === "profile-optimization");
+  const personalBrandingCategory = careerCategories.find(c => c.id === "personal-branding");
+  const careerCategory = careerCategories.find(c => c.id === "career-services");
+  const interviewCategory = careerCategories.find(c => c.id === "interview-services");
 
   // Dynamic API states
   const [aiToolPlans, setAiToolPlans] = useState([]);
@@ -603,7 +612,7 @@ const Pricing = () => {
                   </div>
 
                   <div className="grid gap-8 md:grid-cols-3 items-stretch max-w-5xl mx-auto">
-                    {careerCategories[0].services.map((service, idx) => (
+                    {profileCategory?.services?.map((service, idx) => (
                       <div
                         key={service.name}
                         className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col h-full dark:bg-[#121212] dark:border-zinc-800/80"
@@ -649,10 +658,10 @@ const Pricing = () => {
 
                       <div className="flex-1 space-y-4">
                         <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
-                          Save ₹{formatPrice(calculateSavings(careerCategories[0]))}
+                          Save ₹{formatPrice(calculateSavings(profileCategory))}
                         </Badge>
                         <h4 className="text-xl font-black text-foreground">
-                          {careerCategories[0].bundleName}
+                          {profileCategory?.bundleName}
                         </h4>
                         <p className="text-xs text-muted-foreground leading-relaxed">
                           Get a complete professional overhaul. Includes customized LinkedIn optimization, dynamic resume redesign, and comprehensive scoring alignment to ensure recruiter consistency.
@@ -682,11 +691,11 @@ const Pricing = () => {
                             ₹{formatPrice(6000 + 4000 + 2000)}
                           </div>
                           <span className="text-4xl font-black block text-foreground">
-                            ₹{formatPrice(careerCategories[0].bundlePrice)}
+                            ₹{formatPrice(profileCategory?.bundlePrice)}
                           </span>
                         </div>
                         <Button
-                          onClick={() => handleBookingClick(careerCategories[0].bundleName)}
+                          onClick={() => handleBookingClick(profileCategory?.bundleName)}
                           className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
                         >
                           Book Complete Bundle
@@ -700,7 +709,7 @@ const Pricing = () => {
             )}
 
             {/* ═══ TAB 2: Personal Branding Services ═══ */}
-            {activeCategory === "personal-branding" && (
+            {activeCategory === "personal-branding" && personalBrandingCategory && (
               <motion.div
                 key="personal-brand"
                 initial={{ opacity: 0, y: 15 }}
@@ -730,7 +739,7 @@ const Pricing = () => {
 
                   <div className="flex-1 space-y-4">
                     <h4 className="text-lg md:text-xl font-bold">
-                      {careerCategories[1].services[0].name}
+                      {personalBrandingCategory.services[0].name}
                     </h4>
                     <p className="text-xs text-muted-foreground">
                       Deploy content blueprints, custom article publications, engagement cycles, and organic network expansion keys directly.
@@ -739,7 +748,7 @@ const Pricing = () => {
                     <div className="border-t border-border/30 my-2 pt-4 dark:border-zinc-800/60" />
                     
                     <ul className="space-y-3 pt-2">
-                      {careerCategories[1].services[0].details.map((detail, i) => (
+                      {personalBrandingCategory.services[0].details.map((detail, i) => (
                         <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed">
                           <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
                           <span>{detail}</span>
@@ -752,11 +761,11 @@ const Pricing = () => {
                     <div>
                       <div className="text-xs text-muted-foreground mb-1">Monthly retainer</div>
                       <span className="text-4xl font-black block text-foreground">
-                        ₹{formatPrice(careerCategories[1].services[0].price)}
+                        ₹{formatPrice(personalBrandingCategory.services[0].price)}
                       </span>
                     </div>
                     <Button
-                      onClick={() => handleBookingClick(careerCategories[1].services[0].name)}
+                      onClick={() => handleBookingClick(personalBrandingCategory.services[0].name)}
                       className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
                     >
                       Book Free Consultation
@@ -790,7 +799,7 @@ const Pricing = () => {
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto items-stretch">
-                  {careerCategories[2].services.map((service) => (
+                  {careerCategory?.services?.map((service) => (
                     <div
                       key={service.name}
                       className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col h-full dark:bg-[#121212] dark:border-zinc-800/80"
@@ -836,10 +845,10 @@ const Pricing = () => {
 
                     <div className="flex-1 space-y-4">
                       <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
-                        Save ₹{formatPrice(calculateSavings(careerCategories[2]))}
+                        Save ₹{formatPrice(calculateSavings(careerCategory))}
                       </Badge>
                       <h4 className="text-xl font-black text-foreground">
-                        {careerCategories[2].bundleName}
+                        {careerCategory?.bundleName}
                       </h4>
                       <p className="text-xs text-muted-foreground leading-relaxed">
                         Combines initial roadmap coaching, diagnostic career assessments, comprehensive training on inbound recruiter magnets, and active outbound deployment.
@@ -865,11 +874,11 @@ const Pricing = () => {
                           ₹{formatPrice(6000 + 7500)}
                         </div>
                         <span className="text-4xl font-black block text-foreground">
-                          ₹{formatPrice(careerCategories[2].bundlePrice)}
+                          ₹{formatPrice(careerCategory?.bundlePrice)}
                         </span>
                       </div>
                       <Button
-                        onClick={() => handleBookingClick(careerCategories[2].bundleName)}
+                        onClick={() => handleBookingClick(careerCategory?.bundleName)}
                         className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
                       >
                         Secure Clarity Bundle
@@ -1015,7 +1024,7 @@ const Pricing = () => {
                   </div>
 
                   <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto items-stretch">
-                    {careerCategories[3].services.map((service) => (
+                    {interviewCategory?.services?.map((service) => (
                       <div
                         key={service.name}
                         className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col h-full dark:bg-[#121212] dark:border-zinc-800/80"
@@ -1071,10 +1080,10 @@ const Pricing = () => {
 
                       <div className="flex-1 space-y-4">
                         <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
-                          Save ₹{formatPrice(calculateSavings(careerCategories[3]))}
+                          Save ₹{formatPrice(calculateSavings(interviewCategory))}
                         </Badge>
                         <h4 className="text-xl font-black text-foreground">
-                          {careerCategories[3].bundleName}
+                          {interviewCategory?.bundleName}
                         </h4>
                         <p className="text-xs text-muted-foreground leading-relaxed">
                           Offers full coverage: initial diagnostic mock rounds, specialized interview structural question training (4 dedicated coaching hours), and post-training feedback mock sessions.
@@ -1100,11 +1109,11 @@ const Pricing = () => {
                             ₹{formatPrice(3000 + 17000)}
                           </div>
                           <span className="text-4xl font-black block text-foreground">
-                            ₹{formatPrice(careerCategories[3].bundlePrice)}
+                            ₹{formatPrice(interviewCategory?.bundlePrice)}
                           </span>
                         </div>
                         <Button
-                          onClick={() => handleBookingClick(careerCategories[3].bundleName)}
+                          onClick={() => handleBookingClick(interviewCategory?.bundleName)}
                           className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
                         >
                           Book Mastery Bundle

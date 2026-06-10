@@ -1026,151 +1026,141 @@ const InterviewPreparationContentPage = () => {
 
       {/* 4. WHICH SERVICE IS RIGHT FOR YOU (Comparison Table) */}
       <section className="py-24 bg-slate-50/30 dark:bg-slate-950/20 relative">
-        <div className="container mx-auto px-4 max-w-7xl">
+        <div className="container mx-auto px-4 max-w-5xl">
           {/* Comparison Badge */}
           <div className="flex justify-center mb-4">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-indigo-950/50 text-[#3f3fe2] dark:text-indigo-400 text-xs font-bold tracking-wide border border-blue-100 dark:border-indigo-900/30">
-              <svg
-                className="w-3.5 h-3.5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
-              </svg>
-              <span>Comparison</span>
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
+              <span>Comparison Matrix</span>
             </div>
           </div>
 
-          <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white leading-tight">
               Which Service Is Right for You?
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-base font-medium">
-              Compare our offerings to find the perfect fit for your career
-              stage.
+              Find the perfect match for your preparation goals.
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-[20px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_15px_40px_rgba(0,0,0,0.04)]">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead>
-                <tr className="bg-[#3f3fe2] text-white">
-                  <th className="px-6 py-5 font-bold text-left text-sm tracking-wide rounded-tl-[19px]">
-                    Feature
-                  </th>
-                  <th className="px-6 py-5 font-bold text-center text-sm tracking-wide">
-                    Expert Prep
-                  </th>
-                  <th className="px-6 py-5 font-bold text-center text-sm tracking-wide">
-                    AI Practice
-                  </th>
-                  <th className="px-6 py-5 font-bold text-center text-sm tracking-wide">
-                    AI Mock
-                  </th>
-                  <th className="px-6 py-5 font-bold text-center text-sm tracking-wide rounded-tr-[19px]">
-                    Expert Mock
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {/* Row 1: Personalized Feedback */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-900/10 transition-colors">
-                  <td className="px-6 py-5 font-semibold text-slate-700 dark:text-slate-300">
-                    Personalized Feedback
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CrossCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                </tr>
-                {/* Row 2: Available 24/7 */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-900/10 transition-colors">
-                  <td className="px-6 py-5 font-semibold text-slate-700 dark:text-slate-300">
-                    Available 24/7
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CrossCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CrossCircleIcon />
-                  </td>
-                </tr>
-                {/* Row 3: Industry Expert */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-900/10 transition-colors">
-                  <td className="px-6 py-5 font-semibold text-slate-700 dark:text-slate-300">
-                    Industry Expert
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CrossCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CrossCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                </tr>
-                {/* Row 4: Performance Report */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-900/10 transition-colors">
-                  <td className="px-6 py-5 font-semibold text-slate-700 dark:text-slate-300">
-                    Performance Report
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <CheckCircleIcon />
-                  </td>
-                </tr>
-                {/* Row 5: Best For */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-900/10 transition-colors">
-                  <td className="px-6 py-5 font-semibold text-slate-700 dark:text-slate-300">
-                    Best For
-                  </td>
-                  <td className="px-6 py-5 text-center font-semibold text-slate-500 dark:text-slate-400">
-                    Senior roles
-                  </td>
-                  <td className="px-6 py-5 text-center font-semibold text-slate-500 dark:text-slate-400">
-                    Daily practice
-                  </td>
-                  <td className="px-6 py-5 text-center font-semibold text-slate-500 dark:text-slate-400">
-                    Freshers
-                  </td>
-                  <td className="px-6 py-5 text-center font-semibold text-slate-500 dark:text-slate-400">
-                    Final round
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="overflow-hidden rounded-3xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+            {/* Table Header */}
+            <div className="hidden md:grid grid-cols-12 bg-slate-100 dark:bg-slate-800/80 border-b border-slate-200/80 dark:border-slate-700">
+              <div className="col-span-7 px-8 py-5 text-sm font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                If You Want To...
+              </div>
+              <div className="col-span-5 px-8 py-5 text-sm font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                Best Option
+              </div>
+            </div>
+
+            {/* Table Body */}
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+              {/* Row 1 */}
+              <div className="grid grid-cols-1 md:grid-cols-12 items-center p-6 md:p-8 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all duration-300 group">
+                <div className="col-span-7 pr-4 mb-4 md:mb-0">
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 md:hidden">
+                    If You Want To...
+                  </span>
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 border border-blue-100/50 dark:border-blue-900/30">
+                      <Target className="w-4 h-4" />
+                    </div>
+                    <span className="text-base font-semibold text-slate-800 dark:text-slate-200 leading-snug group-hover:text-[#3f3fe2] dark:group-hover:text-indigo-400 transition-colors">
+                      Structure your answers and prepare strategically
+                    </span>
+                  </div>
+                </div>
+                <div className="col-span-5">
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 md:hidden">
+                    Best Option
+                  </span>
+                  <div className="inline-flex items-center gap-2.5 px-4.5 py-2.5 rounded-2xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 text-blue-700 dark:text-blue-300 font-bold text-sm shadow-sm">
+                    <GraduationCap className="w-4 h-4 shrink-0" />
+                    <span>Interview Preparation with Experts</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2 */}
+              <div className="grid grid-cols-1 md:grid-cols-12 items-center p-6 md:p-8 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all duration-300 group">
+                <div className="col-span-7 pr-4 mb-4 md:mb-0">
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 md:hidden">
+                    If You Want To...
+                  </span>
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-950/40 text-violet-600 dark:text-violet-400 flex items-center justify-center shrink-0 border border-violet-100/50 dark:border-violet-900/30">
+                      <Brain className="w-4 h-4" />
+                    </div>
+                    <span className="text-base font-semibold text-slate-800 dark:text-slate-200 leading-snug group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+                      Practice regularly and improve confidence
+                    </span>
+                  </div>
+                </div>
+                <div className="col-span-5">
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 md:hidden">
+                    Best Option
+                  </span>
+                  <div className="inline-flex items-center gap-2.5 px-4.5 py-2.5 rounded-2xl bg-violet-50/80 dark:bg-violet-950/30 border border-violet-100 dark:border-violet-900/40 text-violet-700 dark:text-violet-300 font-bold text-sm shadow-sm">
+                    <Sparkles className="w-4 h-4 shrink-0 text-violet-500" />
+                    <span>InterviewSarthi AI Practice</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 3 */}
+              <div className="grid grid-cols-1 md:grid-cols-12 items-center p-6 md:p-8 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all duration-300 group">
+                <div className="col-span-7 pr-4 mb-4 md:mb-0">
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 md:hidden">
+                    If You Want To...
+                  </span>
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-100/50 dark:border-emerald-900/30">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </div>
+                    <span className="text-base font-semibold text-slate-800 dark:text-slate-200 leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                      Simulate a real interview environment
+                    </span>
+                  </div>
+                </div>
+                <div className="col-span-5">
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 md:hidden">
+                    Best Option
+                  </span>
+                  <div className="inline-flex items-center gap-2.5 px-4.5 py-2.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-bold text-sm shadow-sm">
+                    <Briefcase className="w-4 h-4 shrink-0" />
+                    <span>AI Mock Interview</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 4 */}
+              <div className="grid grid-cols-1 md:grid-cols-12 items-center p-6 md:p-8 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all duration-300 group">
+                <div className="col-span-7 pr-4 mb-4 md:mb-0">
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 md:hidden">
+                    If You Want To...
+                  </span>
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-100/50 dark:border-amber-900/30">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <span className="text-base font-semibold text-slate-800 dark:text-slate-200 leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                      Receive personalized human feedback
+                    </span>
+                  </div>
+                </div>
+                <div className="col-span-5">
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 md:hidden">
+                    Best Option
+                  </span>
+                  <div className="inline-flex items-center gap-2.5 px-4.5 py-2.5 rounded-2xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 text-amber-700 dark:text-amber-300 font-bold text-sm shadow-sm">
+                    <Crown className="w-4 h-4 shrink-0 text-amber-500" />
+                    <span>Expert Mock Interview</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

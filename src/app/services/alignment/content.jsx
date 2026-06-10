@@ -97,6 +97,9 @@ const AlignmentContentPage = () => {
               
               {/* Left Content Column */}
               <div className="lg:col-span-7 space-y-6">
+                <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+                  LinkedIn vs Resume Alignment Services
+                </span>
                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-[-0.03em] text-[#0f172a] dark:text-white">
                   Your LinkedIn Profile Can Either <span className="text-[#3f3fe2]">Support Your Resume… Or Weaken It</span>
                 </h1>
@@ -746,7 +749,7 @@ const AlignmentContentPage = () => {
             Why Alignment Improves Recruiter Trust
           </h2>
           <p className="text-sm sm:text-base text-slate-350 leading-relaxed max-w-2xl mx-auto font-semibold">
-            Recruiters often spend only seconds evaluating candidates initially. Inconsistency raises direct skepticism.
+            Recruiters often spend only seconds evaluating candidates initially.
           </p>
 
           <div className="bg-slate-900/50 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-white/5 text-left space-y-6">

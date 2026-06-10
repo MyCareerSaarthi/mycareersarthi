@@ -91,6 +91,9 @@ const CareerAssessmentContentPage = () => {
               
               {/* Left Content Column */}
               <div className="lg:col-span-6 space-y-6">
+                <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+                  Career Assessment Services
+                </span>
                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-[-0.03em] text-[#0f172a] dark:text-white">
                   Applying Everywhere… <br className="hidden md:inline" /> But Still Not Getting the <span className="text-[#3f3fe2]">Right Opportunities?</span>
                 </h1>
@@ -252,9 +255,24 @@ const CareerAssessmentContentPage = () => {
                 <h2 className="text-3xl sm:text-4xl lg:text-[40px] font-black text-slate-900 dark:text-white leading-tight tracking-tight">
                   So, What Exactly is a Career Assessment?
                 </h2>
-                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
-                  A career assessment is a structured evaluation process designed to help professionals understand how their profile is positioned in the market, what roles align with their experience, what skills are helping or limiting growth, and what career paths are realistically achievable.
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-semibold">
+                  A career assessment is a structured evaluation process designed to help professionals understand:
                 </p>
+                <ul className="space-y-3 pl-0.5">
+                  {[
+                    "how their profile is positioned in the market",
+                    "what roles align with their experience",
+                    "what skills are helping or limiting growth",
+                    "what career paths are realistically achievable"
+                  ].map((item, idx) => (
+                    <li key={idx} className="flex gap-2.5 items-center text-xs md:text-sm font-semibold text-slate-600 dark:text-slate-300">
+                      <div className="w-5 h-5 rounded-full bg-indigo-55 dark:bg-slate-900/60 flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#3f3fe2] shrink-0" />
+                      </div>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
                 <div className="pt-2">
                   <CTAButton text="Help Me Understand My Career Positioning" variant="blue" />
                 </div>
@@ -295,7 +313,7 @@ const CareerAssessmentContentPage = () => {
                 Don’t Actually Know
                 <br />
                 <span className="bg-gradient-to-r from-violet-400 via-indigo-400 to-[#3f3fe2] bg-clip-text text-transparent">
-                  How the Market Sees Them.
+                  How the Market Sees Them
                 </span>
               </h2>
 
@@ -312,7 +330,7 @@ const CareerAssessmentContentPage = () => {
                   ].map((item, idx) => (
                     <li key={idx} className="flex gap-2.5 items-center text-xs text-slate-355">
                       <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
-                      <span className="capitalize">{item}</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -421,52 +439,56 @@ const CareerAssessmentContentPage = () => {
               {
                 num: "01",
                 title: "1. Career Diagnostic Assessment",
-                desc: "experience assessment to evaluate your current responsibilities and progression",
+                desc: "",
                 subText: "This includes:",
                 items: [
-                  "complexity of work you handled",
-                  "growth patterns & leadership signals",
-                  "current market positioning"
+                  "experience assessment to evaluate your current responsibilities and progression",
+                  "understanding the complexity of work you have handled",
+                  "evaluating growth patterns and leadership signals",
+                  "analyzing your current positioning in the market"
                 ],
                 icon: ClipboardList,
                 glow: "group-hover:border-blue-500/30 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.15)]"
               },
               {
                 num: "02",
-                title: "2. Skills & Psychometric",
-                desc: "online hard skills assessments & mock interview soft skills evaluations",
+                title: "2. Hard Skills, Soft Skills & Psychometric Assessments",
+                desc: "",
                 subText: "We conduct:",
                 items: [
-                  "hard skills evaluation",
-                  "psychometric strengths mappings",
-                  "personality & interests fit"
+                  "online hard skills assessments",
+                  "mock interview-based hard & soft skills assessments",
+                  "psychometric assessments to evaluate strengths, interests, personality patterns, and work preferences"
                 ],
                 icon: Brain,
                 glow: "group-hover:border-purple-500/30 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.15)]"
               },
               {
                 num: "03",
-                title: "3. Profile & Positioning Analysis",
-                desc: "We evaluate your resume, LinkedIn profile, and market communication.",
+                title: "3. Profile Assessment & Market Positioning Analysis",
+                desc: "",
                 subText: "We evaluate your:",
                 items: [
                   "LinkedIn profile positioning",
                   "resume positioning",
-                  "recruiter communications",
-                  "market visibility fit"
+                  "recruiter-facing communication",
+                  "market visibility",
+                  "profile alignment with target roles"
                 ],
                 icon: FileCheck2,
                 glow: "group-hover:border-cyan-500/30 group-hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]"
               },
               {
                 num: "04",
-                title: "4. Role Fit Evaluation",
-                desc: "We map capabilities against realistic target roles and hiring expectations.",
-                subText: "We map your:",
+                title: "4. Role Fit Evaluation & Career Direction Clarity",
+                desc: "We map your skills and experience against realistic target roles and hiring expectations. We map your:",
+                subText: "",
                 items: [
-                  "hard & soft skills suitability",
-                  "interests & strengths fit",
-                  "experience depth mapping"
+                  "hard skills",
+                  "soft skills",
+                  "interests",
+                  "strengths",
+                  "experience depth"
                 ],
                 icon: Target,
                 glow: "group-hover:border-green-500/30 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.15)]"
@@ -474,12 +496,15 @@ const CareerAssessmentContentPage = () => {
               {
                 num: "05",
                 title: "5. Personalized Career Roadmap",
-                desc: "Your roadmap outlines clear next-step career direction and milestone execution plans.",
+                desc: "",
                 subText: "Your roadmap includes:",
                 items: [
+                  "clear next-step career direction",
                   "phase-wise growth planning",
-                  "skills & certifications advice",
-                  "milestones & roadmap execution"
+                  "recommended skills and certifications",
+                  "structured growth strategy",
+                  "defined career milestones",
+                  "practical execution roadmap"
                 ],
                 icon: Map,
                 glow: "group-hover:border-pink-500/30 group-hover:shadow-[0_0_20px_rgba(236,72,153,0.15)]"
@@ -750,7 +775,7 @@ const CareerAssessmentContentPage = () => {
                 },
                 {
                   q: "Can this help with career transitions?",
-                  a: "Yes. Our suitability assessment helps professionals identify realistic transition opportunities based on transferable skills, market demand, and profile alignment."
+                  a: "Yes. Our career suitability assessment helps professionals identify realistic transition opportunities based on transferable skills, market demand, and profile alignment."
                 },
                 {
                   q: "Is this based only on AI?",

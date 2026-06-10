@@ -93,6 +93,9 @@ const JobSearchContentPage = () => {
               
               {/* Left Content Column */}
               <div className="lg:col-span-7 space-y-6">
+                <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+                  Job Search Services
+                </span>
                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-[-0.03em] text-[#0f172a] dark:text-white">
                   Applying to 200 jobs but <br className="hidden md:inline" /> still not getting <span className="text-[#3f3fe2]">interview calls?</span>
                 </h1>
@@ -107,9 +110,9 @@ const JobSearchContentPage = () => {
                   <p>
                     At MyCareerSarthi, our Job Search Services help professionals stop applying blindly and start approaching their job search with structure, intent, and direction.
                   </p>
-                  {/* <p className="text-slate-700 dark:text-slate-300 font-semibold pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <p className="text-slate-700 dark:text-slate-300 font-semibold pt-1 border-t border-slate-100 dark:border-slate-800">
                     This is not about sending hundreds of applications. It is about targeting the right roles, approaching the right companies, and positioning your profile where hiring decisions actually happen.
-                  </p> */}
+                  </p>
                 </div>
 
                 <div className="pt-2">

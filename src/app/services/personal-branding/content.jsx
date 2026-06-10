@@ -91,6 +91,9 @@ const PersonalBrandingContentPage = () => {
               
               {/* Left Content Column */}
               <div className="lg:col-span-7 space-y-6">
+                <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+                  Personal Branding Services
+                </span>
                 <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-[-0.03em] text-[#0f172a] dark:text-white">
                   Strong LinkedIn personal branding can increase <span className="text-[#3f3fe2]">interview opportunities by up to 71%</span>
                 </h1>
@@ -99,9 +102,9 @@ const PersonalBrandingContentPage = () => {
                   <p className="text-slate-700 dark:text-slate-300 font-semibold">
                     That’s because recruiters today are no longer evaluating candidates only through resumes.
                   </p>
-                  {/* <p>
+                  <p>
                     Before shortlisting candidates, recruiters actively review LinkedIn profiles to assess professional credibility, communication style, visibility, expertise, and industry presence. Which means even highly capable professionals can stay invisible if they are not positioning themselves properly online.
-                  </p> */}
+                  </p>
                   <p className="text-slate-700 dark:text-slate-300 font-semibold pt-1 border-t border-slate-100 dark:border-slate-800">
                     This is not about becoming an influencer or posting for vanity metrics. It is about becoming professionally visible, credible, and memorable.
                   </p>
@@ -275,7 +278,7 @@ const PersonalBrandingContentPage = () => {
                       <div className="w-4.5 h-4.5 rounded-full bg-indigo-50 dark:bg-slate-950 flex items-center justify-center shrink-0">
                         <Check className="w-3 h-3 text-[#3f3fe2] stroke-[3]" />
                       </div>
-                      <span className="capitalize">{item}</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -326,7 +329,7 @@ const PersonalBrandingContentPage = () => {
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
                 Most Professionals Stay Invisible
                 <br />
-                Despite Having Strong Experience.
+                Despite Having Strong Experience
                 <br />
                 <span className="bg-gradient-to-r from-violet-400 via-indigo-400 to-[#3f3fe2] bg-clip-text text-transparent">
                   Recruiters cannot value what they cannot see.
@@ -334,14 +337,10 @@ const PersonalBrandingContentPage = () => {
               </h2>
 
               <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
-                Many professionals spend years building experience but very little time building visibility. They focus on projects, targets, deadlines, and company growth while completely neglecting how they are positioned professionally in the market. And that becomes a serious problem during hiring cycles.
+                Many professionals spend years building experience but very little time building visibility. They focus on projects, targets, deadlines, and company growth while completely neglecting how they are positioned professionally in the market. And that becomes a serious problem during hiring cycles. Because recruiters cannot value expertise they cannot clearly see.
               </p>
 
-              {/* Struggle warning block */}
-              <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-5 text-left w-full shadow-inner">
-                <p className="font-bold text-rose-450 text-xs uppercase tracking-wider mb-2">
-                  Why they struggle:
-                </p>
+              <div className="bg-slate-950/65 border border-slate-800 rounded-2xl p-5 text-left w-full shadow-sm">
                 <p className="text-slate-350 text-xs leading-relaxed font-semibold">
                   Most professionals struggle with inconsistent LinkedIn activity, unclear positioning, weak professional messaging, and low recruiter visibility. Meanwhile, professionals who communicate their expertise more clearly often stand out faster, even when experience levels are similar.
                 </p>
@@ -420,7 +419,7 @@ const PersonalBrandingContentPage = () => {
                   ].map((item, idx) => (
                     <li key={idx} className="flex gap-2.5 items-center text-xs font-bold text-slate-700 dark:text-slate-300">
                       <CheckCircle2 className="w-4 h-4 text-[#3f3fe2] shrink-0" />
-                      <span className="capitalize">{item}</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -519,7 +518,7 @@ const PersonalBrandingContentPage = () => {
               {
                 num: "03",
                 title: "3. Networking & Managed Outreach",
-                desc: "A strong personal brand is not just about posting content. It is also about building the right network. We help connections connected through outreach guidance. This improves:",
+                desc: "A strong personal brand is not just about posting content. It is also about building the right network. We help professionals strategically connect with recruiters, hiring managers, industry professionals, and decision-makers through structured networking and outreach guidance. This improves:",
                 items: [
                   "profile visibility",
                   "recruiter familiarity",
@@ -686,7 +685,7 @@ const PersonalBrandingContentPage = () => {
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6 font-semibold">
               Whether you want stronger recruiter visibility, better professional positioning, or long-term credibility, our personal branding consultant India services help you build it strategically.
             </p>
-            <CTAButton text="Yes, Build My Personal Brand" href="/contact-us" variant="blue" />
+            <CTAButton text="Yes, Build My Professional Brand" href="/contact-us" variant="blue" />
           </div>
         </div>
       </section>
@@ -710,7 +709,7 @@ const PersonalBrandingContentPage = () => {
                 We focus on recruiter credibility, strategic visibility, professional positioning, and career alignment. Our approach combines LinkedIn optimization, content strategy, networking guidance, recruiter-focused positioning, and professional communication to help professionals build personal brands that support real career growth.
               </p>
               <p className="text-sm md:text-base text-slate-800 dark:text-white font-black">
-                Instead of just chasing impressions, we build true recruiter credibility.
+                Not just impressions.
               </p>
               <div className="pt-2">
                 <CTAButton text="Improve My Recruiter Credibility" href="/contact-us" variant="blue" />

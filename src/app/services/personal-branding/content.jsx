@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  Check,
   CheckCircle2,
   Brain,
   FileCheck2,
@@ -19,10 +20,8 @@ import {
   ShieldCheck,
   Star,
   Quote,
-  ArrowLeftRight,
   FileText,
   Users,
-  Activity,
   Rocket
 } from "lucide-react";
 import {
@@ -32,29 +31,52 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const CTAButton = ({ text, href = "/contact-us" }) => (
-  <Button
-    size="lg"
-    className="group rounded-full px-8 py-6 text-base font-bold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 border-0 cursor-pointer active:scale-95 bg-[#3f3fe2] hover:bg-[#3232c7] text-white shadow-[#3f3fe2]/20"
-    asChild
-  >
-    <Link href={href}>
-      <span className="flex items-center gap-2">
-        {text}
-        <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
-      </span>
-    </Link>
-  </Button>
-);
+const CTAButton = ({
+  text,
+  href = "/contact-us",
+  primary = true,
+  variant = "blue",
+}) => {
+  const getVariantStyles = () => {
+    if (!primary) {
+      return "bg-white hover:bg-slate-50 text-[#3f3fe2] shadow-slate-200/50 border border-slate-200";
+    }
+    switch (variant) {
+      case "purple":
+        return "bg-[#7c3aed] hover:bg-[#6d28d9] text-white shadow-[#7c3aed]/20";
+      case "green":
+        return "bg-[#047857] hover:bg-[#065f46] text-white shadow-[#047857]/20";
+      case "blue":
+      default:
+        return "bg-[#3f3fe2] hover:bg-[#3232c7] text-white shadow-[#3f3fe2]/20";
+    }
+  };
+
+  return (
+    <Button
+      size="lg"
+      className={`group rounded-full px-7 py-5 text-sm sm:text-base font-bold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 border-0 cursor-pointer active:scale-95 ${getVariantStyles()}`}
+      style={{ cursor: "pointer" }}
+      asChild
+    >
+      <Link href={href} style={{ cursor: "pointer" }}>
+        <span className="flex items-center gap-2">
+          {text}
+          <ArrowRight className="w-4.5 h-4.5 group-hover:translate-x-1 transition-transform" />
+        </span>
+      </Link>
+    </Button>
+  );
+};
 
 const PersonalBrandingContentPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden relative font-sans">
       
       {/* 1. HERO SECTION (Light Theme) */}
-      <section className="relative pt-10 pb-20 md:pb-24 lg:pb-32 bg-white dark:bg-background">
+      <section className="relative pt-20 pb-20 md:pb-24 lg:pb-32 bg-white dark:bg-background">
         {/* Soft Background gradient */}
-        <div className="absolute top-0 inset-x-0 h-[450px] w-full bg-gradient-to-b from-[#f8f9ff]/50 via-[#fcfcff]/20 to-transparent dark:from-primary/5 -z-10" />
+        <div className="absolute top-0 inset-x-0 h-[450px] w-full bg-gradient-to-b from-[#f8f9ff]/60 via-[#fcfcff]/30 to-transparent dark:from-primary/5 -z-10" />
 
         {/* Decorative background bottom-left dot matrix */}
         <div className="absolute bottom-10 left-10 grid grid-cols-6 gap-2.5 opacity-20 pointer-events-none hidden md:grid">
@@ -69,12 +91,15 @@ const PersonalBrandingContentPage = () => {
               
               {/* Left Content Column */}
               <div className="lg:col-span-7 space-y-6">
-                <h1 className="text-3xl md:text-5xl lg:text-[44px] font-black leading-[1.2] tracking-[-0.03em] text-[#0f172a] dark:text-white">
+                <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+                  Personal Branding Services
+                </span>
+                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-[1.1] tracking-[-0.03em] text-[#0f172a] dark:text-white">
                   Strong LinkedIn personal branding can increase <span className="text-[#3f3fe2]">interview opportunities by up to 71%</span>
                 </h1>
 
                 <div className="text-sm md:text-base lg:text-lg text-slate-500 dark:text-slate-400 leading-relaxed max-w-xl font-medium space-y-4">
-                  <p className="text-slate-700 dark:text-slate-300">
+                  <p className="text-slate-700 dark:text-slate-300 font-semibold">
                     That’s because recruiters today are no longer evaluating candidates only through resumes.
                   </p>
                   <p>
@@ -86,7 +111,7 @@ const PersonalBrandingContentPage = () => {
                 </div>
 
                 <div className="pt-2">
-                  <CTAButton text="Build My Personal Brand" />
+                  <CTAButton text="Build My Personal Brand" href="/contact-us" variant="blue" />
                 </div>
               </div>
 
@@ -95,7 +120,7 @@ const PersonalBrandingContentPage = () => {
                 <div className="absolute -right-20 top-1/2 -translate-y-1/2 w-[480px] h-[480px] bg-[#f0f2ff] dark:bg-[#1e1b4b]/15 rounded-[120px_200px_150px_220px] blur-[60px] pointer-events-none -z-10" />
                 
                 {/* Mockup Container */}
-                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] p-6 shadow-[0_25px_60px_rgba(0,0,0,0.06),0_10px_25px_rgba(0,0,0,0.03)] relative z-10 w-full max-w-[420px]">
+                <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] p-6 shadow-[0_25px_60px_rgba(0,0,0,0.06),0_10px_25px_rgba(0,0,0,0.03)] relative z-10 w-full max-w-[420px] hover:shadow-[0_30px_70px_rgba(0,0,0,0.08)] transition-all duration-500">
                   
                   {/* Top Bar */}
                   <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/60 pb-4 mb-4">
@@ -107,7 +132,7 @@ const PersonalBrandingContentPage = () => {
                     <div className="flex items-center gap-1 opacity-25">
                       <div className="grid grid-cols-6 gap-1">
                         {[...Array(12)].map((_, i) => (
-                          <span key={i} className="w-1 h-1 bg-slate-400 dark:bg-slate-500 rounded-full" />
+                          <span key={i} className="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full" />
                         ))}
                       </div>
                     </div>
@@ -148,7 +173,7 @@ const PersonalBrandingContentPage = () => {
                       
                       <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-1 rounded-lg flex items-center justify-between shadow-sm text-[7px] font-black text-[#3f3fe2] uppercase tracking-wider">
                         <span>Profile Credible</span>
-                        <CheckCircle2 className="w-2.5 h-2.5 text-green-500" />
+                        <Check className="w-2.5 h-2.5 text-green-500 stroke-[3.5]" />
                       </div>
                     </div>
 
@@ -156,7 +181,7 @@ const PersonalBrandingContentPage = () => {
                       <div className="bg-[#fafaff] dark:bg-slate-950/40 border border-slate-50 dark:border-slate-900 p-3 rounded-xl flex flex-col gap-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.01)] hover:border-[#3f3fe2]/10 transition-all">
                         <div className="flex items-center gap-2 text-[10px] font-black text-slate-800 dark:text-slate-200">
                           <div className="w-5 h-5 rounded-full bg-violet-100 dark:bg-violet-950/40 flex items-center justify-center text-violet-600">
-                            <Award className="w-3 h-3" />
+                            <Award className="w-3.5 h-3.5" />
                           </div>
                           <span>Profile Credibility</span>
                         </div>
@@ -191,6 +216,7 @@ const PersonalBrandingContentPage = () => {
                     </div>
                   </div>
 
+                  {/* Wave Visualizer at Bottom */}
                   <div className="bg-[#fcfcff] dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-3 mt-5 flex items-center justify-between gap-3 shadow-inner">
                     <div className="w-9 h-9 rounded-full bg-[#3f3fe2] text-white flex items-center justify-center shrink-0 shadow-md">
                       <Rocket className="w-4 h-4" />
@@ -217,39 +243,42 @@ const PersonalBrandingContentPage = () => {
 
           </div>
         </div>
-      </section>      {/* 2. SO, WHAT EXACTLY IS PERSONAL BRANDING? (Light Theme) */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-950/40 relative border-t border-slate-100 dark:border-slate-800">
+      </section>
+
+      {/* 2. SO, WHAT EXACTLY IS PERSONAL BRANDING? (Light Theme) */}
+      <section className="py-24 bg-slate-50/50 dark:bg-slate-950/20 relative border-t border-b border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
             {/* Left Column content */}
-            <div className="lg:col-span-7 space-y-6">
-              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+                Definition
+              </span>
+              <h2 className="text-2xl md:text-3xl lg:text-[40px] font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                 So, What Exactly is Personal Branding?
               </h2>
 
-              <p className="text-sm md:text-base lg:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+              <p className="text-sm sm:text-base text-slate-655 dark:text-slate-350 leading-relaxed font-medium">
                 Personal branding is the process of strategically building your professional identity online so recruiters and hiring managers clearly understand:
               </p>
 
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-                <p className="text-[#3f3fe2] text-xs uppercase font-extrabold tracking-wider mb-4">
+                <p className="text-[#3f3fe2] dark:text-indigo-400 text-xs uppercase font-extrabold tracking-wider mb-4">
                   Recruiters and hiring managers clearly understand:
                 </p>
-                <ul className="grid sm:grid-cols-2 gap-3">
+                <ul className="grid sm:grid-cols-2 gap-3 pl-0.5">
                   {[
                     "what you do",
                     "what expertise you bring",
                     "what problems you solve",
                     "what makes you professionally credible"
                   ].map((item, idx) => (
-                    <li key={idx} className="flex items-center gap-2.5">
-                      <div className="w-4.5 h-4.5 rounded-full bg-indigo-50 dark:bg-slate-900 flex items-center justify-center shrink-0">
-                        <CheckCircle2 className="w-3 h-3 text-[#3f3fe2]" />
+                    <li key={idx} className="flex items-center gap-2.5 text-xs md:text-sm font-bold text-slate-700 dark:text-slate-305">
+                      <div className="w-4.5 h-4.5 rounded-full bg-indigo-50 dark:bg-slate-950 flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-[#3f3fe2] stroke-[3]" />
                       </div>
-                      <span className="text-slate-600 dark:text-slate-300 text-xs md:text-sm font-bold capitalize">
-                        {item}
-                      </span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -259,13 +288,13 @@ const PersonalBrandingContentPage = () => {
                 <p>
                   Today, recruiters often evaluate professionals long before interviews happen. They review LinkedIn profiles, observe professional activity, assess communication style, and look for signals that indicate expertise, confidence, and professional maturity.
                 </p>
-                <p className="text-slate-800 dark:text-white font-bold">
+                <p className="text-slate-850 dark:text-white font-bold bg-[#3f3fe2]/5 border border-[#3f3fe2]/10 rounded-xl px-4 py-3 text-sm">
                   Which means your online presence has now become part of your professional positioning. And professionals who build visibility strategically often create stronger career opportunities.
                 </p>
               </div>
 
               <div className="pt-2">
-                <CTAButton text="Help Me Build My Professional Presence" />
+                <CTAButton text="Help Me Build My Professional Presence" href="/contact-us" variant="blue" />
               </div>
             </div>
 
@@ -273,78 +302,85 @@ const PersonalBrandingContentPage = () => {
             <div className="lg:col-span-5 flex justify-center lg:justify-end relative">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
               
-              <div className="relative w-full aspect-[4/3] max-w-[320px] md:max-w-[380px] hover:scale-105 transition-transform duration-500">
+              <motion.div
+                whileHover={{ scale: 1.02, y: -3 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="relative w-full aspect-[4/3] max-w-[320px] md:max-w-[380px] drop-shadow-[0_15px_30px_rgba(0,0,0,0.02)]"
+              >
                 <Image
                   src="/illustrations/personal_site.svg"
                   alt="Personal Branding"
                   fill
                   className="object-contain relative z-10"
                 />
-              </div>
+              </motion.div>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* 3. MOST PROFESSIONALS STAY INVISIBLE (Light Theme) */}
-      <section className="py-24 bg-white dark:bg-background border-t border-slate-100 dark:border-slate-800">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
+      {/* 3. MINDSET SHIFT SECTION (Dark Theme) */}
+      <section className="relative w-full bg-slate-900 text-gray-100 py-16 md:py-24 overflow-hidden selection:bg-indigo-500/30">
+        <div className="container mx-auto px-6 max-w-7xl relative z-10">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-8">
             {/* Left Content Column */}
-            <div className="lg:col-span-7 space-y-6">
-              <h2 className="text-2xl md:text-3xl font-extrabold leading-tight tracking-tight text-slate-900 dark:text-white">
-                Most Professionals Stay Invisible Despite Having Strong Experience
+            <div className="w-full lg:w-[50%] flex flex-col items-center lg:items-start text-center lg:text-left z-20 space-y-6">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-tight">
+                Most Professionals Stay Invisible
+                <br />
+                Despite Having Strong Experience
+                <br />
+                <span className="bg-gradient-to-r from-violet-400 via-indigo-400 to-[#3f3fe2] bg-clip-text text-transparent">
+                  Recruiters cannot value what they cannot see.
+                </span>
               </h2>
 
-              <div className="space-y-4 text-xs md:text-sm lg:text-base text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
-                <p>
-                  Many professionals spend years building experience but very little time building visibility. They focus on projects, targets, deadlines, and company growth while completely neglecting how they are positioned professionally in the market. And that becomes a serious problem during hiring cycles.
-                </p>
-                <p className="font-extrabold text-[#3f3fe2]">
-                  Because recruiters cannot value expertise they cannot clearly see.
-                </p>
+              <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+                Many professionals spend years building experience but very little time building visibility. They focus on projects, targets, deadlines, and company growth while completely neglecting how they are positioned professionally in the market. And that becomes a serious problem during hiring cycles. Because recruiters cannot value expertise they cannot clearly see.
+              </p>
 
-                <div className="bg-rose-50/50 dark:bg-rose-950/10 border border-rose-100 dark:border-rose-900/20 rounded-2xl p-5 shadow-inner">
-                  <p className="font-bold text-rose-700 dark:text-rose-400 text-xs uppercase tracking-wider mb-2">
-                    Why they struggle:
-                  </p>
-                  <p>
-                    Most professionals struggle with inconsistent LinkedIn activity, unclear positioning, weak professional messaging, and low recruiter visibility. Meanwhile, professionals who communicate their expertise more clearly often stand out faster, even when experience levels are similar.
-                  </p>
-                </div>
-
-                <p className="border-l-4 border-[#3f3fe2] bg-[#f0f2ff] dark:bg-slate-900 rounded-r-xl p-4 text-slate-800 dark:text-slate-200 font-bold">
-                  That is the real power of personal branding. It helps recruiters remember you before opportunities even open up.
+              <div className="bg-slate-950/65 border border-slate-800 rounded-2xl p-5 text-left w-full shadow-sm">
+                <p className="text-slate-350 text-xs leading-relaxed font-semibold">
+                  Most professionals struggle with inconsistent LinkedIn activity, unclear positioning, weak professional messaging, and low recruiter visibility. Meanwhile, professionals who communicate their expertise more clearly often stand out faster, even when experience levels are similar.
                 </p>
+              </div>
+
+              <div className="bg-[#3f3fe2]/10 border border-[#3f3fe2]/20 rounded-xl p-4 text-slate-200 font-bold text-xs text-left w-full">
+                That is the real power of personal branding. It helps recruiters remember you before opportunities even open up.
+              </div>
+
+              {/* Call to Actions */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 pt-2 w-full sm:w-auto self-start">
+                <CTAButton text="Increase My Professional Visibility" href="/contact-us" variant="blue" />
               </div>
             </div>
 
             {/* Right Column Graphic */}
-            <div className="lg:col-span-5 flex justify-center lg:justify-end">
-              <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[28px] p-6 shadow-sm w-full max-w-[380px]">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-3">
+            <div className="w-full lg:w-[42%] z-10 flex justify-center">
+              <div className="w-full max-w-[400px] bg-slate-950/40 border border-white/5 rounded-[28px] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.3)] backdrop-blur-xl relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-tr from-violet-500 to-indigo-500 rounded-[28px] opacity-10 blur-xl group-hover:opacity-15 transition-opacity" />
+                <div className="space-y-4 relative z-10">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
                     <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">Recruiter Discovery Loop</span>
                     <span className="flex h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
                   </div>
 
-                  <div className="space-y-3 text-xs">
-                    <div className="bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
+                  <div className="space-y-3.5 text-xs">
+                    <div className="bg-slate-900/60 border border-white/5 rounded-xl p-3.5 shadow-sm flex items-center justify-between">
                       <div>
-                        <p className="font-bold text-slate-800 dark:text-slate-100 text-xs">Unbranded Profile</p>
+                        <p className="font-bold text-white text-xs">Unbranded Profile</p>
                         <p className="text-[9px] text-slate-400 mt-0.5">Generic headline • Basic</p>
                       </div>
-                      <span className="text-[8px] font-bold px-2 py-0.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 rounded">Low Discovery</span>
+                      <span className="text-[8px] font-bold px-2 py-0.5 bg-amber-900/20 text-amber-400 border border-amber-500/10 rounded">Low Discovery</span>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl p-3 shadow-sm flex items-center justify-between">
+                    <div className="bg-slate-900/90 border border-green-500/20 rounded-xl p-3.5 shadow-sm flex items-center justify-between">
                       <div>
-                        <p className="font-bold text-slate-800 dark:text-slate-100 text-xs">Branded Profile</p>
+                        <p className="font-bold text-slate-100 text-xs">Branded Profile</p>
                         <p className="text-[9px] text-slate-400 mt-0.5">Expert updates • Visible</p>
                       </div>
-                      <span className="text-[8px] font-bold px-2 py-0.5 bg-green-100/50 dark:bg-green-950/20 text-green-600 rounded">71% Increase</span>
+                      <span className="text-[8px] font-bold px-2 py-0.5 bg-green-950/40 text-green-400 border border-green-500/10 rounded">71% Increase</span>
                     </div>
                   </div>
                 </div>
@@ -352,29 +388,27 @@ const PersonalBrandingContentPage = () => {
             </div>
 
           </div>
-
-          <div className="mt-12 flex justify-center">
-            <CTAButton text="Increase My Professional Visibility" />
-          </div>
         </div>
       </section>
 
-      {/* 4. LINKEDIN IS NO LONGER JUST A NETWORKING PLATFORM (Light Theme) */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-950/40 relative border-t border-slate-100 dark:border-slate-800">
+      {/* 4. PLATFORM VALUE SECTION (Light Theme) */}
+      <section className="py-24 bg-white dark:bg-background border-b border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-sm relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-3xl -z-10" />
-
-            <h2 className="text-2xl md:text-3xl font-extrabold mb-6 text-center tracking-tight text-slate-900 dark:text-white">
-              LinkedIn Is No Longer Just a Networking Platform
-            </h2>
-
-            <p className="text-sm md:text-base lg:text-lg text-slate-500 dark:text-slate-400 leading-relaxed mb-8 text-center max-w-3xl mx-auto font-semibold">
-              LinkedIn has become one of the biggest professional discovery platforms for recruiters and hiring managers. Recruiters actively use LinkedIn to:
-            </p>
+          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[32px] p-6 md:p-8 shadow-sm">
+            <div className="text-center mb-10">
+              <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+                Platform Dynamics
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-4">
+                LinkedIn Is No Longer Just a Networking Platform
+              </h2>
+              <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-2 font-semibold max-w-2xl mx-auto">
+                LinkedIn has become one of the biggest professional discovery platforms for recruiters and hiring managers. Recruiters actively use LinkedIn to:
+              </p>
+            </div>
 
             <div className="grid md:grid-cols-2 gap-6 items-stretch mb-8">
-              <div className="bg-[#fafaff] dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-center">
+              <div className="flex flex-col justify-center bg-white dark:bg-slate-950 border border-slate-150 dark:border-slate-850 rounded-2xl p-5 md:p-6 shadow-sm">
                 <ul className="space-y-3">
                   {[
                     "search candidates",
@@ -383,68 +417,71 @@ const PersonalBrandingContentPage = () => {
                     "understand expertise",
                     "evaluate professional credibility"
                   ].map((item, idx) => (
-                    <li key={idx} className="flex gap-3 items-center text-xs font-bold text-slate-600 dark:text-slate-300">
+                    <li key={idx} className="flex gap-2.5 items-center text-xs font-bold text-slate-700 dark:text-slate-300">
                       <CheckCircle2 className="w-4 h-4 text-[#3f3fe2] shrink-0" />
-                      <span className="capitalize">{item}</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="bg-[#fafaff] dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-center text-xs font-semibold text-slate-500 dark:text-slate-400 leading-relaxed">
+              <div className="flex flex-col justify-center bg-white dark:bg-slate-950 border border-slate-150 dark:border-slate-850 rounded-2xl p-5 md:p-6 shadow-sm text-xs font-semibold text-slate-550 dark:text-slate-400 leading-relaxed">
                 <p className="mb-4">
                   Your profile, content, activity, engagement, and network all influence recruiter perception.
                 </p>
-                <p className="text-slate-800 dark:text-white font-extrabold">
+                <p className="text-slate-850 dark:text-white font-extrabold bg-[#3f3fe2]/5 border border-[#3f3fe2]/10 rounded-xl px-4 py-3">
                   That is why personal branding for job seekers matters more than ever in today’s hiring market.
                 </p>
               </div>
             </div>
 
             <div className="flex justify-center">
-              <CTAButton text="Make My LinkedIn Profile Stand Out" />
+              <CTAButton text="Make My LinkedIn Profile Stand Out" href="/contact-us" variant="blue" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. PERSONAL BRANDING IS NOT ABOUT BECOMING AN INFLUENCER (Light Theme) */}
-      <section className="py-24 bg-white dark:bg-background border-t border-slate-100 dark:border-slate-800">
+      {/* 5. MYTH BUSTER SECTION (Light Theme) */}
+      <section className="py-24 bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-sm text-left">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 md:p-12 shadow-sm text-left">
             <h2 className="text-2xl md:text-3xl font-extrabold mb-6 tracking-tight text-slate-900 dark:text-white text-center">
               Personal Branding Is Not About Becoming an Influencer
             </h2>
 
-            <p className="text-sm md:text-base lg:text-lg text-slate-600 dark:text-slate-400 leading-relaxed mb-6 font-semibold">
+            <p className="text-sm md:text-base lg:text-lg text-slate-655 dark:text-slate-350 leading-relaxed mb-8 font-medium">
               Most professionals avoid LinkedIn because they believe personal branding means posting motivational content, chasing likes, or becoming a social media influencer. That is not what professional personal branding is about.
             </p>
 
-            <div className="grid md:grid-cols-2 gap-6 items-stretch mb-6">
-              <div className="bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
+            <div className="grid md:grid-cols-2 gap-6 items-stretch mb-8">
+              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-150 dark:border-slate-850 p-5 rounded-2xl shadow-inner flex flex-col justify-center">
+                <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
                   Real personal branding is about building credibility, positioning expertise, improving visibility, and communicating professional maturity consistently over time.
                 </p>
               </div>
-              <div className="bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
+              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-150 dark:border-slate-850 p-5 rounded-2xl shadow-inner flex flex-col justify-center">
+                <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
                   At MyCareerSarthi, we help professionals build LinkedIn presences that feel strategic, authentic, recruiter-credible, and professionally aligned without sounding overly promotional.
                 </p>
               </div>
             </div>
 
             <div className="flex justify-center pt-4">
-              <CTAButton text="Build My Personal Brand" />
+              <CTAButton text="Build My Personal Brand" href="/contact-us" variant="blue" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. BUILD YOUR BRAND IN 4 STRUCTURED STEPS (DARK THEMED - PROCESS HIGHLIGHT EXCEPTION) */}
-      <section className="py-24 bg-[#070714] text-white relative">
+      {/* 6. PROCESS STEPS SECTION (Dark Theme) */}
+      <section className="py-24 bg-[#070714] text-white relative border-b border-white/5">
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
+            <span className="inline-flex items-center justify-center text-[10px] font-bold text-indigo-400 uppercase tracking-wider bg-indigo-500/10 px-3.5 py-1 rounded-full border border-indigo-500/20 shadow-sm">
+              Process Roadmap
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white mt-4">
               Build Your Personal Brand in 4 Structured Steps
             </h2>
           </div>
@@ -481,7 +518,7 @@ const PersonalBrandingContentPage = () => {
               {
                 num: "03",
                 title: "3. Networking & Managed Outreach",
-                desc: "A strong personal brand is not just about posting content. It is also about building the right network. We help connections connected through outreach guidance. This improves:",
+                desc: "A strong personal brand is not just about posting content. It is also about building the right network. We help professionals strategically connect with recruiters, hiring managers, industry professionals, and decision-makers through structured networking and outreach guidance. This improves:",
                 items: [
                   "profile visibility",
                   "recruiter familiarity",
@@ -519,13 +556,13 @@ const PersonalBrandingContentPage = () => {
                   </div>
 
                   <h3 className="text-base font-extrabold text-white mb-2 leading-snug">{step.title}</h3>
-                  <p className="text-xs text-slate-400 leading-relaxed font-semibold mb-4">{step.desc}</p>
+                  <p className="text-xs text-slate-450 leading-relaxed font-semibold mb-4">{step.desc}</p>
                   
                   {step.items.length > 0 && (
                     <ul className="space-y-1.5 mb-2">
                       {step.items.map((item, i) => (
-                        <li key={i} className="flex gap-2 items-start text-[11px] text-slate-300 leading-tight">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-indigo-400 shrink-0 mt-0.5" />
+                        <li key={i} className="flex gap-2 items-start text-[10px] text-slate-350 leading-tight">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-indigo-500 shrink-0 mt-0.5" />
                           <span>{item}</span>
                         </li>
                       ))}
@@ -539,13 +576,13 @@ const PersonalBrandingContentPage = () => {
           </div>
 
           <div className="flex justify-center mt-12">
-            <CTAButton text="Build My Personal Brand Strategically" />
+            <CTAButton text="Build My Personal Brand Strategically" href="/contact-us" variant="purple" />
           </div>
         </div>
       </section>
 
-      {/* 7. WHY PERSONAL BRANDING MATTERS MORE THAN EVER (DARK THEMED - HIGHLIGHT EXCEPTION) */}
-      <section className="py-24 bg-[#070714] text-white relative border-t border-white/5">
+      {/* 7. WHY PERSONAL BRANDING MATTERS SECTION (Dark Theme) */}
+      <section className="py-24 bg-[#070714] text-white relative border-b border-white/5">
         <div className="container mx-auto px-4 max-w-4xl relative z-10">
           <div className="bg-slate-900/50 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/5 text-center space-y-6">
             <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight">
@@ -559,23 +596,26 @@ const PersonalBrandingContentPage = () => {
                 Recruiters often form first impressions through LinkedIn long before interviews happen. Which means professionals who consistently build visibility and credibility often create stronger professional opportunities over time.
               </p>
               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 shadow-inner max-w-lg mx-auto">
-                <p className="text-[#3f3fe2] dark:text-indigo-400 font-extrabold text-sm leading-relaxed">
+                <p className="text-indigo-400 font-extrabold text-sm leading-relaxed">
                   That is why personal branding for job seekers has become an important part of modern career growth.
                 </p>
               </div>
             </div>
             <div className="flex justify-center pt-4">
-              <CTAButton text="Strengthen My Professional Positioning" />
+              <CTAButton text="Strengthen My Professional Positioning" href="/contact-us" variant="blue" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 8. WONDERING IF PERSONAL BRANDING RIGHT FOR YOU? (Light Theme) */}
+      {/* 8. WONDERING IF RIGHT FOR YOU SECTION (Light Theme) */}
       <section className="py-24 bg-white dark:bg-background border-t border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white text-center">
+            <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+              Target Audience
+            </span>
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-2">
               Wondering If Personal Branding Services Are Right for You?
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -613,7 +653,7 @@ const PersonalBrandingContentPage = () => {
                 title: "Consultants & Independent Professionals",
                 desc: "Building trust, authority, and a credible professional presence within their industry.",
                 icon: Target,
-                color: "text-indigo-600 bg-indigo-50 dark:bg-indigo-950/20"
+                color: "text-indigo-650 bg-indigo-50 dark:bg-indigo-950/20"
               },
               {
                 title: "Preparing for Leadership Roles",
@@ -630,7 +670,7 @@ const PersonalBrandingContentPage = () => {
                   <item.icon className="w-5 h-5" />
                 </div>
                 <div className="space-y-1">
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                  <h4 className="text-sm font-bold text-slate-900 dark:text-white leading-tight">
                     {item.title}
                   </h4>
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-semibold">
@@ -645,33 +685,34 @@ const PersonalBrandingContentPage = () => {
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6 font-semibold">
               Whether you want stronger recruiter visibility, better professional positioning, or long-term credibility, our personal branding consultant India services help you build it strategically.
             </p>
-            <CTAButton text="Yes, Build My Professional Brand" />
+            <CTAButton text="Yes, Build My Professional Brand" href="/contact-us" variant="blue" />
           </div>
         </div>
       </section>
 
-      {/* 9. WHY CHOOSE MYCAREERSARTHI? (Light Theme, Slate Background) */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-950/40 relative border-t border-slate-100 dark:border-slate-800">
-        <div className="container mx-auto px-4 max-w-7xl relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 pointer-events-none" />
-          
-          <div className="grid lg:grid-cols-12 gap-12 items-center relative z-10">
+      {/* 9. WHY CHOOSE MYCAREERSARTHI? (Light Theme) */}
+      <section className="py-24 bg-slate-50/50 dark:bg-slate-950/20 relative border-t border-b border-slate-100 dark:border-slate-800">
+        <div className="container mx-auto px-4 max-w-7xl relative z-10">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
             {/* Left Column */}
-            <div className="lg:col-span-7 space-y-6">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+                Why Choose Us
+              </span>
+              <h2 className="text-2xl md:text-3xl lg:text-[40px] font-black text-slate-900 dark:text-white tracking-tight leading-tight">
                 Why Choose MyCareerSarthi?
               </h2>
-              <p className="text-xs uppercase font-extrabold tracking-widest text-[#3f3fe2]">
+              <p className="text-xs uppercase font-extrabold tracking-widest text-[#3f3fe2] dark:text-indigo-400">
                 Most personal branding services focus on vanity metrics, influencer-style content, and random posting strategies.
               </p>
-              <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-semibold">
+              <p className="text-sm md:text-base text-slate-655 dark:text-slate-300 leading-relaxed font-semibold">
                 We focus on recruiter credibility, strategic visibility, professional positioning, and career alignment. Our approach combines LinkedIn optimization, content strategy, networking guidance, recruiter-focused positioning, and professional communication to help professionals build personal brands that support real career growth.
               </p>
-              <p className="text-sm md:text-base text-slate-700 dark:text-slate-200 font-bold">
+              <p className="text-sm md:text-base text-slate-800 dark:text-white font-black">
                 Not just impressions.
               </p>
               <div className="pt-2">
-                <CTAButton text="Improve My Recruiter Credibility" />
+                <CTAButton text="Improve My Recruiter Credibility" href="/contact-us" variant="blue" />
               </div>
             </div>
 
@@ -679,24 +720,31 @@ const PersonalBrandingContentPage = () => {
             <div className="lg:col-span-5 flex justify-center lg:justify-end relative">
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
 
-              <div className="relative w-full aspect-[4/3] max-w-[300px] md:max-w-[360px] hover:scale-105 transition-transform duration-500">
+              <motion.div 
+                whileHover={{ scale: 1.02, y: -3 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="relative w-full aspect-[4/3] max-w-[300px] md:max-w-[360px] drop-shadow-[0_15px_30px_rgba(0,0,0,0.02)]"
+              >
                 <Image
                   src="/illustrations/destination.svg"
                   alt="Why Choose Us"
                   fill
                   className="object-contain relative z-10"
                 />
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
       </section>
 
       {/* 10. TESTIMONIALS (Light Theme) */}
-      <section className="py-24 bg-white dark:bg-background border-t border-slate-100 dark:border-slate-800">
+      <section className="py-24 bg-white dark:bg-background relative">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white">
+            <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+              Testimonials
+            </span>
+            <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white mt-4">
               Real Stories from Professionals Like You
             </h2>
           </div>
@@ -716,7 +764,7 @@ const PersonalBrandingContentPage = () => {
               {
                 quote: "“I finally understood how to position myself professionally without sounding promotional.”",
                 author: "Product Management Candidate",
-                tagColor: "text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-900/10"
+                tagColor: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/10"
               }
             ].map((t, idx) => (
               <div
@@ -729,7 +777,7 @@ const PersonalBrandingContentPage = () => {
                       <Star key={i} className="w-4 h-4 fill-amber-500 text-amber-500" />
                     ))}
                   </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 italic leading-relaxed font-medium">
+                  <p className="text-sm text-slate-605 dark:text-slate-300 italic leading-relaxed font-semibold font-medium">
                     {t.quote}
                   </p>
                 </div>
@@ -743,16 +791,19 @@ const PersonalBrandingContentPage = () => {
           </div>
 
           <div className="flex justify-center">
-            <CTAButton text="Build My Personal Brand" />
+            <CTAButton text="Build My Personal Brand" href="/contact-us" variant="blue" />
           </div>
         </div>
       </section>
 
-      {/* 11. FAQs (Light Theme, Slate Background) */}
+      {/* 11. FAQs (Light Theme) */}
       <section className="py-24 bg-slate-50 dark:bg-slate-950/40 relative border-t border-slate-100 dark:border-slate-800">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="text-center mb-16">
-            <h2 className="text-2xl md:text-3xl font-black mb-4 tracking-tight text-slate-900 dark:text-white text-center">
+            <span className="inline-flex items-center justify-center text-[10px] font-bold text-[#3f3fe2] uppercase tracking-wider bg-[#3f3fe2]/8 px-3.5 py-1 rounded-full border border-[#3f3fe2]/15 shadow-sm">
+              FAQ
+            </span>
+            <h2 className="text-2xl md:text-3xl font-black mb-4 tracking-tight text-slate-900 dark:text-white text-center mt-4">
               Frequently Asked Questions
             </h2>
           </div>
@@ -800,6 +851,33 @@ const PersonalBrandingContentPage = () => {
                 </AccordionItem>
               ))}
             </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* 12. FINAL CTA SECTION (Dark Theme) */}
+      <section className="py-24 md:py-32 lg:py-36 bg-[#070714]/95 backdrop-blur-md border-t border-white/5 text-white relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none -z-10" />
+
+        <div className="container mx-auto px-4 max-w-7xl relative z-10 text-center space-y-8">
+          <div className="space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl lg:text-[48px] font-black text-white tracking-tight leading-[1.1]">
+              Your Personal Brand Shouldn't Be Left to Chance
+            </h2>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-200 leading-relaxed font-bold">
+              Build your presence. Attract recruiters. Build credibility.
+            </p>
+            <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl mx-auto text-center font-medium">
+              With our professional personal branding service, you'll establish an authentic and visible online identity that stands out in the job market.
+            </p>
+          </div>
+
+          <div className="flex justify-center pt-2">
+            <CTAButton
+              text="Build My Personal Brand"
+              href="/contact-us"
+              variant="blue"
+            />
           </div>
         </div>
       </section>

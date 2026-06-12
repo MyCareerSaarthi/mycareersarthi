@@ -127,10 +127,12 @@ const ComparisonReportPage = () => {
         // Case 3: Load by ID
         if (id) {
           try {
-            const token = await getToken();
-            const response = await api.get(`/api/comparison/${id}`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
+            const token = await getToken().catch(() => null);
+            const headers = {};
+            if (token) {
+              headers.Authorization = `Bearer ${token}`;
+            }
+            const response = await api.get(`/api/comparison/${id}`, { headers });
 
             if (response.data?.overall_alignment_score !== undefined) {
               setComparisonData(response.data);
@@ -180,7 +182,11 @@ const ComparisonReportPage = () => {
 
     try {
       setIsGeneratingPdf(true);
-      const token = await getToken();
+      const token = await getToken().catch(() => null);
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
 
       const baseUrl =
         process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -189,7 +195,7 @@ const ComparisonReportPage = () => {
         `${baseUrl}/api/comparison/generate-pdf/${id}`,
         {
           method: "GET",
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          headers,
         }
       );
 

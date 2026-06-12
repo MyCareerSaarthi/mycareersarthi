@@ -273,8 +273,8 @@ const ReportsPage = () => {
                   <TrendingUp className="h-4 w-4 text-green-600" />
                   <span className="text-sm text-gray-600">
                     Avg Score:{" "}
-                    {statistics.average_score
-                      ? statistics.average_score.toFixed(1)
+                    {statistics.average_score !== undefined && statistics.average_score !== null && !isNaN(Number(statistics.average_score))
+                      ? Number(statistics.average_score).toFixed(1)
                       : "0.0"}
                   </span>
                 </div>

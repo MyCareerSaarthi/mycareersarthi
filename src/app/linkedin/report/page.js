@@ -100,12 +100,12 @@ const LinkedinReport = () => {
   const getLinkedinReport = async () => {
     try {
       setLoading(true);
-      const token = await getToken();
-      const response = await api.get(`/api/linkedin/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const token = await getToken().catch(() => null);
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      const response = await api.get(`/api/linkedin/${id}`, { headers });
       setLinkedinReport(response.data);
     } catch (error) {
       console.error("Error fetching LinkedIn report:", error);
@@ -126,7 +126,11 @@ const LinkedinReport = () => {
 
     try {
       setIsGeneratingPdf(true);
-      const token = await getToken();
+      const token = await getToken().catch(() => null);
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
 
       // Fetch PDF as blob (API now streams the PDF directly)
       const response = await fetch(
@@ -135,9 +139,7 @@ const LinkedinReport = () => {
         }/api/linkedin/generate-pdf/${id}`,
         {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
         },
       );
 

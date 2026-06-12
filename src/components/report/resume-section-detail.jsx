@@ -24,6 +24,10 @@ const ResumeSectionDetail = ({ data, sectionName, title, subtitle }) => {
 
   if (!sectionData) return <div>No {title || sectionName} data available</div>;
 
+  const sectionScore = sectionData.score !== undefined && sectionData.score !== null && !isNaN(Number(sectionData.score))
+    ? Number(sectionData.score)
+    : 0;
+
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8 flex items-center justify-between">
@@ -39,7 +43,7 @@ const ResumeSectionDetail = ({ data, sectionName, title, subtitle }) => {
           <div className="relative flex items-center justify-center">
             <div className="text-4xl md:text-6xl font-bold tracking-wider">
               <span className="bg-gradient-to-r from-primary to-accent-foreground bg-clip-text text-transparent">
-                {sectionData.score.toFixed(1)}
+                {sectionScore.toFixed(1)}
               </span>
               <span className="text-lg md:text-2xl text-muted-foreground align-top">
                 /10

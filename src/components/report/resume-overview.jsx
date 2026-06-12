@@ -8,7 +8,12 @@ const ResumeOverview = ({ data, onNavigate }) => {
     return <div className="text-center py-8">No data available</div>;
   }
 
-  const { overall_score, overall_summary, section_scores, role_name, role_id } =
+  const rawOverallScore = data.overall_score;
+  const overall_score = rawOverallScore !== undefined && rawOverallScore !== null && !isNaN(Number(rawOverallScore))
+    ? Number(rawOverallScore)
+    : 0;
+
+  const { overall_summary, section_scores, role_name, role_id } =
     data;
 
   // Determine color based on score - improved for light mode
@@ -175,53 +180,58 @@ const ResumeOverview = ({ data, onNavigate }) => {
 
       {/* Section Scores Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-        {orderedSections?.map((section, index) => (
-          <Card
-            key={index}
-            className={`border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-1 ${
-              onNavigate ? "hover:border-primary/30" : ""
-            }`}
-            onClick={() =>
-              onNavigate && onNavigate(getSectionTabId(section.name))
-            }
-          >
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center justify-between text-sm md:text-base">
-                <span className="capitalize">{section.name}</span>
-                <span
-                  className={`text-lg font-bold ${getSectionCardColor(
-                    section.score,
-                  )}`}
-                >
-                  {section.score}/10
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <p className="text-xs text-muted-foreground line-clamp-2">
-                {section.summary}
-              </p>
-              {onNavigate && (
-                <div className="mt-2 flex items-center text-xs text-primary/70 hover:text-primary transition-colors">
-                  <span>Click to view details</span>
-                  <svg
-                    className="w-3 h-3 ml-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+        {orderedSections?.map((section, index) => {
+          const sectionScore = section.score !== undefined && section.score !== null && !isNaN(Number(section.score))
+            ? Number(section.score)
+            : 0;
+          return (
+            <Card
+              key={index}
+              className={`border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:-translate-y-1 ${
+                onNavigate ? "hover:border-primary/30" : ""
+              }`}
+              onClick={() =>
+                onNavigate && onNavigate(getSectionTabId(section.name))
+              }
+            >
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center justify-between text-sm md:text-base">
+                  <span className="capitalize">{section.name}</span>
+                  <span
+                    className={`text-lg font-bold ${getSectionCardColor(
+                      sectionScore,
+                    )}`}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+                    {sectionScore}/10
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-xs text-muted-foreground line-clamp-2">
+                  {section.summary}
+                </p>
+                {onNavigate && (
+                  <div className="mt-2 flex items-center text-xs text-primary/70 hover:text-primary transition-colors">
+                    <span>Click to view details</span>
+                    <svg
+                      className="w-3 h-3 ml-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Summary Section */}

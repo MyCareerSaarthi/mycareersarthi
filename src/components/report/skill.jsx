@@ -30,6 +30,10 @@ const Skill = ({ data }) => {
   const skills = data.profile?.skills || [];
   const hasProfile = !!data.profile;
 
+  const skillScore = skillData.score !== undefined && skillData.score !== null && !isNaN(Number(skillData.score))
+    ? Number(skillData.score)
+    : 0;
+
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="mb-6 md:mb-8 flex items-center justify-between">
@@ -45,7 +49,7 @@ const Skill = ({ data }) => {
           <div className="relative flex items-center justify-center">
             <div className="text-4xl md:text-6xl font-bold tracking-wider">
               <span className="bg-gradient-to-r from-primary to-accent-foreground bg-clip-text text-transparent">
-                {skillData.score.toFixed(1)}
+                {skillScore.toFixed(1)}
               </span>
               <span className="text-lg md:text-2xl text-muted-foreground align-top">
                 /10

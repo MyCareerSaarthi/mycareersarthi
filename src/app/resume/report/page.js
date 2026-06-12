@@ -92,12 +92,12 @@ const ResumeReport = () => {
   const getResumeReport = async () => {
     try {
       setLoading(true);
-      const token = await getToken();
-      const response = await api.get(`/api/resume/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const token = await getToken().catch(() => null);
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      const response = await api.get(`/api/resume/${id}`, { headers });
       setResumeReport(response.data);
     } catch (error) {
       console.error("Error fetching resume report:", error);
@@ -118,7 +118,11 @@ const ResumeReport = () => {
 
     try {
       setIsGeneratingPdf(true);
-      const token = await getToken();
+      const token = await getToken().catch(() => null);
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
 
       // Fetch PDF as blob (API now streams the PDF directly)
       const response = await fetch(
@@ -127,9 +131,7 @@ const ResumeReport = () => {
         }/api/resume/generate-pdf/${id}`,
         {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
         },
       );
 

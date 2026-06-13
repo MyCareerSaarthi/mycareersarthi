@@ -28,7 +28,6 @@ import {
   AlertCircle,
   RefreshCw,
   Crown,
-  HelpCircle,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -233,33 +232,60 @@ function ErrorFallback({ message, onRetry }) {
 }
 
 // ─── Collapsible Feature List Component ─────────────────────────────
-function CollapsibleFeatureList({ features, limit = 5 }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+function CollapsibleFeatureList({ features, limit = 5, isExpanded, setIsExpanded }) {
+  const [localExpanded, setLocalExpanded] = useState(false);
+  const activeExpanded = isExpanded !== undefined ? isExpanded : localExpanded;
+  const activeSetExpanded = setIsExpanded !== undefined ? setIsExpanded : setLocalExpanded;
 
   if (!features || features.length === 0) return null;
 
-  const displayed = isExpanded ? features : features.slice(0, limit);
+  const baseFeatures = features.slice(0, limit);
+  const extraFeatures = features.slice(limit);
   const hasMore = features.length > limit;
   const remainingCount = features.length - limit;
 
   return (
     <div className="pt-4 flex-1 flex flex-col justify-between">
-      <ul className="space-y-3.5">
-        {displayed.map((feature, i) => (
-          <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed">
-            <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-            <span>{feature}</span>
-            {i < 2 && !isExpanded && <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/35 shrink-0 mt-0.5 ml-auto cursor-help" />}
-          </li>
-        ))}
-      </ul>
+      <div>
+        <ul className="space-y-3.5">
+          {baseFeatures.map((feature, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed">
+              <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+
+        {hasMore && (
+          <AnimatePresence initial={false}>
+            {activeExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <ul className="space-y-3.5 pt-3.5">
+                  {extraFeatures.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed">
+                      <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
+      </div>
 
       {hasMore && (
         <button
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={() => activeSetExpanded(!activeExpanded)}
           className="text-[11px] font-bold text-primary hover:text-primary/80 transition-colors mt-4 flex items-center gap-1 cursor-pointer w-fit"
         >
-          {isExpanded ? (
+          {activeExpanded ? (
             <>
               Show less <ChevronDown className="w-3.5 h-3.5 rotate-180 shrink-0" />
             </>
@@ -341,6 +367,12 @@ const Pricing = () => {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedServiceType, setSelectedServiceType] = useState(null);
   const [activeCategory, setActiveCategory] = useState("profile-optimization");
+
+  const [isAiProfileExpanded, setIsAiProfileExpanded] = useState(false);
+  const [isExpertProfileExpanded, setIsExpertProfileExpanded] = useState(false);
+  const [isCareerExpanded, setIsCareerExpanded] = useState(false);
+  const [isAiInterviewExpanded, setIsAiInterviewExpanded] = useState(false);
+  const [isExpertInterviewExpanded, setIsExpertInterviewExpanded] = useState(false);
 
   // Dynamically resolve categories to prevent index shifting bugs when categories are hidden
   const profileCategory = careerCategories.find(c => c.id === "profile-optimization");
@@ -530,7 +562,7 @@ const Pricing = () => {
                   ) : errorAiTools ? (
                     <ErrorFallback message={errorAiTools} onRetry={fetchAiToolPlans} />
                   ) : (
-                    <div className="grid gap-8 md:grid-cols-3 items-stretch max-w-5xl mx-auto">
+                    <div className="grid gap-8 md:grid-cols-3 items-stretch max-w-5xl mx-auto py-6">
                       {aiToolPlans.map((plan) => {
                         const meta = aiToolMeta[plan.serviceType] || {
                           isPopular: false,
@@ -541,7 +573,7 @@ const Pricing = () => {
                         return (
                           <div
                             key={plan.id}
-                            className={`relative p-8 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col h-full overflow-hidden border ${
+                            className={`relative p-8 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col border ${
                               meta.isPopular
                                 ? "bg-card text-card-foreground border-2 border-primary shadow-xl md:scale-105 z-10 dark:bg-[#1a1a1a]"
                                 : "bg-card text-card-foreground border-border/60 hover:border-foreground/30 dark:bg-[#121212] dark:border-zinc-800/80"
@@ -589,7 +621,11 @@ const Pricing = () => {
                             </Link>
 
                             <div className="border-t border-border/30 my-2 dark:border-zinc-800/60" />
-                            <CollapsibleFeatureList features={plan.features} />
+                            <CollapsibleFeatureList
+                              features={plan.features}
+                              isExpanded={isAiProfileExpanded}
+                              setIsExpanded={setIsAiProfileExpanded}
+                            />
                           </div>
                         );
                       })}
@@ -611,11 +647,11 @@ const Pricing = () => {
                     </p>
                   </div>
 
-                  <div className="grid gap-8 md:grid-cols-3 items-stretch max-w-5xl mx-auto">
+                  <div className="grid gap-8 md:grid-cols-3 items-stretch max-w-5xl mx-auto py-6">
                     {profileCategory?.services?.map((service, idx) => (
                       <div
                         key={service.name}
-                        className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col h-full dark:bg-[#121212] dark:border-zinc-800/80"
+                        className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col dark:bg-[#121212] dark:border-zinc-800/80"
                       >
                         <div className="mb-4">
                           <h4 className="text-base md:text-lg font-bold text-foreground">
@@ -642,7 +678,11 @@ const Pricing = () => {
                         </Button>
 
                         <div className="border-t border-border/30 my-2 dark:border-zinc-800/60" />
-                        <CollapsibleFeatureList features={service.details} />
+                        <CollapsibleFeatureList
+                          features={service.details}
+                          isExpanded={isExpertProfileExpanded}
+                          setIsExpanded={setIsExpertProfileExpanded}
+                        />
                       </div>
                     ))}
                   </div>
@@ -798,11 +838,11 @@ const Pricing = () => {
                   </p>
                 </div>
 
-                <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto items-stretch">
+                <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto items-stretch py-6">
                   {careerCategory?.services?.map((service) => (
                     <div
                       key={service.name}
-                      className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col h-full dark:bg-[#121212] dark:border-zinc-800/80"
+                      className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col dark:bg-[#121212] dark:border-zinc-800/80"
                     >
                       <div className="mb-4">
                         <h4 className="text-base md:text-lg font-bold text-foreground">
@@ -829,7 +869,11 @@ const Pricing = () => {
                       </Button>
 
                       <div className="border-t border-border/30 my-2 dark:border-zinc-800/60" />
-                      <CollapsibleFeatureList features={service.details} />
+                      <CollapsibleFeatureList
+                        features={service.details}
+                        isExpanded={isCareerExpanded}
+                        setIsExpanded={setIsCareerExpanded}
+                      />
                     </div>
                   ))}
                 </div>
@@ -919,13 +963,13 @@ const Pricing = () => {
                   ) : errorInterview ? (
                     <ErrorFallback message={errorInterview} onRetry={fetchInterviewPlans} />
                   ) : (
-                    <div className={`grid gap-8 items-stretch max-w-5xl mx-auto ${sortedInterviewPlans.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
+                    <div className={`grid gap-8 items-stretch max-w-5xl mx-auto py-6 ${sortedInterviewPlans.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
                       {sortedInterviewPlans.map((plan) => {
                         const isPopular = plan.slug === popularInterviewSlug;
                         return (
                           <div
                             key={plan.slug}
-                            className={`relative p-8 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col h-full overflow-hidden border ${
+                            className={`relative p-8 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col border ${
                               isPopular
                                 ? "bg-card text-card-foreground border-2 border-primary shadow-xl md:scale-105 z-10 dark:bg-[#1a1a1a]"
                                 : "bg-card text-card-foreground border-border/60 hover:border-foreground/30 dark:bg-[#121212] dark:border-zinc-800/80"
@@ -993,7 +1037,11 @@ const Pricing = () => {
                             </div>
 
                             <div className="border-t border-border/30 my-2 dark:border-zinc-800/60" />
-                            <CollapsibleFeatureList features={plan.features} />
+                            <CollapsibleFeatureList
+                              features={plan.features}
+                              isExpanded={isAiInterviewExpanded}
+                              setIsExpanded={setIsAiInterviewExpanded}
+                            />
                           </div>
                         );
                       })}
@@ -1023,11 +1071,11 @@ const Pricing = () => {
                     </p>
                   </div>
 
-                  <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto items-stretch">
+                  <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto items-stretch py-6">
                     {interviewCategory?.services?.map((service) => (
                       <div
                         key={service.name}
-                        className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col h-full dark:bg-[#121212] dark:border-zinc-800/80"
+                        className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col dark:bg-[#121212] dark:border-zinc-800/80"
                       >
                         <div className="mb-4">
                           <h4 className="text-base md:text-lg font-bold text-foreground mb-2">
@@ -1064,7 +1112,11 @@ const Pricing = () => {
                         </Button>
 
                         <div className="border-t border-border/30 my-2 dark:border-zinc-800/60" />
-                        <CollapsibleFeatureList features={service.details} />
+                        <CollapsibleFeatureList
+                          features={service.details}
+                          isExpanded={isExpertInterviewExpanded}
+                          setIsExpanded={setIsExpertInterviewExpanded}
+                        />
                       </div>
                     ))}
                   </div>

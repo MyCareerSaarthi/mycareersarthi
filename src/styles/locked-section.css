@@ -1,54 +1,85 @@
 /* Locked section styles */
 .locked-content {
   position: relative;
-  filter: blur(4px);
+  filter: blur(8px);
   pointer-events: none;
   user-select: none;
+  transition: filter 0.3s ease;
 }
 
-.locked-section-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.locked-overlay {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.95);
-  z-index: 10;
-  backdrop-filter: blur(8px);
+  padding: 4rem 1.5rem;
+  width: 100%;
+  min-height: 480px;
+  background: transparent;
 }
 
-.locked-section-overlay-content {
-  text-align: center;
+.locked-overlay-content {
   padding: 2rem;
-  max-width: 500px;
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.4s ease-out forwards;
 }
 
-.locked-section-overlay h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #1f2937;
+.lock-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 auto 1.5rem auto;
+  background: var(--accent);
+  color: var(--primary);
+  border-radius: 50%;
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
-.locked-section-overlay p {
-  color: #6b7280;
-  margin-bottom: 1.5rem;
-}
-
-.locked-section-overlay button {
-  background: linear-gradient(to right, #3b82f6, #8b5cf6);
-  color: white;
-  padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.locked-section-overlay button:hover {
+.locked-overlay-content:hover .lock-icon-container {
   transform: scale(1.05);
+}
+
+.lock-icon-container::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 1.5px dashed var(--primary);
+  border-radius: 50%;
+  opacity: 0.25;
+  animation: spin-slow 24s linear infinite;
+}
+
+.lock-icon {
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+}
+
+.locked-overlay h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+  letter-spacing: -0.025em;
+}
+
+.locked-overlay p {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 1.75rem;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -15,6 +15,9 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/components/api/api";
 import { useAuth } from "@clerk/nextjs";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { Lock } from "lucide-react";
+import LockedSectionOverlay from "@/components/locked-section-overlay";
+import FloatingUnlockTab from "@/components/floating-unlock-tab";
 
 const LinkedinReport = () => {
   const [activeTab, setActiveTab] = useState("overview");
@@ -25,6 +28,14 @@ const LinkedinReport = () => {
   const [loading, setLoading] = useState(true);
   const { getToken } = useAuth();
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+  const isPaid = linkedinReport?.is_paid || false;
+  const freeTabIds = ["overview", "profile-info", "headline", "about"];
+  const isTabLocked = (tabId) => !isPaid && !freeTabIds.includes(tabId);
+
+  const handleUnlockSuccess = () => {
+    getLinkedinReport();
+  };
 
   // Check if device is mobile
   useEffect(() => {
@@ -235,20 +246,28 @@ const LinkedinReport = () => {
           <div className="p-4">
             <nav>
               <ul className="space-y-1">
-                {tabs.map((tab) => (
-                  <li key={tab.id}>
-                    <button
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        activeTab === tab.id
-                          ? "bg-primary text-primary-foreground shadow-sm hover:shadow-md"
-                          : "text-foreground hover:bg-accent/50 hover:border-primary/30 border border-transparent"
-                      }`}
-                    >
-                      <span className="capitalize">{tab.label}</span>
-                    </button>
-                  </li>
-                ))}
+                {tabs.map((tab) => {
+                  const locked = isTabLocked(tab.id);
+                  return (
+                    <li key={tab.id}>
+                      <button
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between ${
+                          activeTab === tab.id
+                            ? "bg-primary text-primary-foreground shadow-sm hover:shadow-md"
+                            : locked
+                            ? "text-muted-foreground/50 opacity-60 hover:bg-accent/30 hover:text-muted-foreground/80 border border-transparent"
+                            : "text-foreground hover:bg-accent/50 hover:border-primary/30 border border-transparent"
+                        }`}
+                      >
+                        <span className="capitalize">{tab.label}</span>
+                        {locked && (
+                          <Lock className="w-3.5 h-3.5 text-muted-foreground/60 ml-2" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </nav>
           </div>
@@ -257,9 +276,7 @@ const LinkedinReport = () => {
 
       {/* Mobile menu button */}
       {isMobile && (
-        // Removed motion.button wrapper
         <button
-          // Removed motion props
           onClick={() =>
             document.getElementById("mobile-sidebar").classList.toggle("hidden")
           }
@@ -320,25 +337,33 @@ const LinkedinReport = () => {
               </div>
               <nav>
                 <ul className="space-y-1">
-                  {tabs.map((tab) => (
-                    <li key={tab.id}>
-                      <button
-                        onClick={() => {
-                          setActiveTab(tab.id);
-                          document
-                            .getElementById("mobile-sidebar")
-                            .classList.toggle("hidden");
-                        }}
-                        className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                          activeTab === tab.id
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-foreground hover:bg-accent"
-                        }`}
-                      >
-                        <span className="capitalize">{tab.label}</span>
-                      </button>
-                    </li>
-                  ))}
+                  {tabs.map((tab) => {
+                    const locked = isTabLocked(tab.id);
+                    return (
+                      <li key={tab.id}>
+                        <button
+                          onClick={() => {
+                            setActiveTab(tab.id);
+                            document
+                              .getElementById("mobile-sidebar")
+                              .classList.toggle("hidden");
+                          }}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-between ${
+                            activeTab === tab.id
+                              ? "bg-primary text-primary-foreground shadow-sm"
+                              : locked
+                              ? "text-muted-foreground/50 opacity-60 hover:bg-accent/30 hover:text-muted-foreground/80"
+                              : "text-foreground hover:bg-accent"
+                          }`}
+                        >
+                          <span className="capitalize">{tab.label}</span>
+                          {locked && (
+                            <Lock className="w-3.5 h-3.5 text-muted-foreground/60 ml-2" />
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               </nav>
             </div>
@@ -362,13 +387,24 @@ const LinkedinReport = () => {
                 </LoadingButton>
               </div>
 
-              {tabs.find((tab) => tab.id === activeTab)?.component}
+              {isTabLocked(activeTab) ? (
+                <LockedSectionOverlay
+                  reportId={id}
+                  onUpgrade={handleUnlockSuccess}
+                />
+              ) : (
+                tabs.find((tab) => tab.id === activeTab)?.component
+              )}
             </div>
           </div>
         </div>
       </div>
 
-
+      <FloatingUnlockTab
+        reportId={id}
+        isPaid={isPaid}
+        onUnlockSuccess={handleUnlockSuccess}
+      />
     </div>
   );
 };

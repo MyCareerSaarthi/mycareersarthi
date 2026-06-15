@@ -38,7 +38,6 @@ const optimizationServices = [
   { href: "/services/resume-optimization", label: "Resume Optimization", icon: FileTextIcon },
   { href: "/services/personal-branding", label: "Personal Branding", icon: User },
   { href: "/services/career-assessment", label: "Career Assessment & Roadmap", icon: Compass },
-  { href: "/services/job-search", label: "Job Search Services", icon: Search },
   { href: "/services/interview-preparation", label: "Interview Preparation", icon: MessageSquare },
   { href: "/services/alignment", label: "LinkedIn vs Resume Alignment", icon: ArrowLeftRight },
 ];

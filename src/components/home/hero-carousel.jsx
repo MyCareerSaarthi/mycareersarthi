@@ -203,94 +203,6 @@ const InterviewPreparationSlide = () => {
   );
 };
 
-const JobSearchSlide = () => {
-  return (
-    <div className={slideShellClass}>
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-10 right-10 w-56 h-56 bg-linear-to-br from-yellow-400/50 to-red-400/50 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 left-10 w-44 h-44 bg-linear-to-br from-amber-400/40 to-orange-300/40 rounded-full blur-3xl"></div>
-        <svg
-          className="absolute top-1/3 left-1/4 w-24 h-24 opacity-30"
-          viewBox="0 0 100 100"
-        >
-          <path
-            d="M20 50 L50 20 L80 50 L50 80 Z"
-            className="stroke-orange-500"
-            strokeWidth="2"
-            fill="none"
-          />
-          <path
-            d="M30 50 L50 30 L70 50 L50 70 Z"
-            className="stroke-amber-500"
-            strokeWidth="1.5"
-            fill="none"
-          />
-        </svg>
-        <div className="absolute bottom-1/4 right-1/3 grid grid-cols-3 gap-2 opacity-40">
-          <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-        </div>
-      </div>
-
-      {/* Left Content Section */}
-      <div className="flex flex-col justify-center space-y-4 sm:space-y-5 md:space-y-6 order-2 lg:order-1 relative z-10">
-        <h2 className={headingClass}>
-          Job Search Strategy Designed To 10X Your Interview Calls
-        </h2>
-
-        <ul className="space-y-3 sm:space-y-4">
-          <li className="flex items-start gap-2 sm:gap-3">
-            <CheckIcon />
-            <span className={listItemClass}>
-              Build a focused job search strategy that helps you get interview
-              calls for your target roles and companies
-            </span>
-          </li>
-          <li className="flex items-start gap-2 sm:gap-3">
-            <CheckIcon />
-            <span className={listItemClass}>
-              Learn how to build a strong network that helps you get interview
-              calls
-            </span>
-          </li>
-          <li className="flex items-start gap-2 sm:gap-3">
-            <CheckIcon />
-            <span className={listItemClass}>
-              Reduce application fatigue by aligning your job search with how
-              hiring actually works today in India.
-            </span>
-          </li>
-        </ul>
-
-        <Link href="/services/job-search" className="pt-1 sm:pt-2">
-          <button
-            className={`${buttonBaseClass} bg-white text-orange-600 hover:bg-orange-50`}
-          >
-            Prepare the right way
-          </button>
-        </Link>
-      </div>
-
-      {/* Right Image Section */}
-      <div className="flex items-center justify-center order-1 lg:order-2 relative z-10">
-        <div className="relative w-full max-w-full">
-          <video
-            src="https://res.cloudinary.com/rohanphulkar/video/upload/v1770353729/job-search_wfidzc.mp4"
-            poster="https://res.cloudinary.com/rohanphulkar/video/upload/so_0/v1770353729/job-search_wfidzc.jpg"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className="w-full h-auto object-cover pointer-events-none rounded"
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const AIProfileScorerSlide = () => {
   return (
@@ -427,10 +339,6 @@ const HeroCarousel = () => {
     {
       component: <InterviewPreparationSlide />,
       bg: "bg-linear-to-br from-orange-400 to-orange-400 dark:from-orange-600 dark:to-orange-700",
-    },
-    {
-      component: <JobSearchSlide />,
-      bg: "bg-linear-to-br from-rose-400 to-rose-400 dark:from-rose-600 dark:to-rose-700",
     },
   ];
 

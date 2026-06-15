@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import Content from "./content";
 import { JsonLd } from "@/components/seo/json-ld";
 
@@ -45,6 +46,7 @@ const breadcrumbSchema = {
 };
 
 export default function Page() {
+  notFound();
   return (
     <>
       <JsonLd data={breadcrumbSchema} />

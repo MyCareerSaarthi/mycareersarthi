@@ -53,14 +53,7 @@ const services = [
     color: "text-emerald-500",
     bgColor: "bg-emerald-50 dark:bg-emerald-950/20",
   },
-  {
-    icon: Search,
-    title: "Job Search Services",
-    description: "Targeted job search assistance",
-    href: "/services/job-search",
-    color: "text-cyan-500",
-    bgColor: "bg-cyan-50 dark:bg-cyan-950/20",
-  },
+
   {
     icon: MessageSquare,
     title: "Interview Preparation",
@@ -139,7 +132,12 @@ ServiceItem.displayName = "ServiceItem";
 export const ServicesMenuItem = () => {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="bg-transparent hover:bg-primary/10 data-[state=open]:bg-primary/10">
+      <NavigationMenuTrigger
+        className="bg-transparent hover:bg-primary/10 data-[state=open]:bg-primary/10"
+        onPointerMove={(e) => e.preventDefault()}
+        onPointerLeave={(e) => e.preventDefault()}
+        onPointerEnter={(e) => e.preventDefault()}
+      >
         Services
       </NavigationMenuTrigger>
       <NavigationMenuContent>

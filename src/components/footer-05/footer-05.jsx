@@ -18,7 +18,7 @@ const footerLinks = [
   },
   {
     title: "Pricing",
-    href: "#",
+    href: "/pricing",
   },
   {
     title: "Careers",

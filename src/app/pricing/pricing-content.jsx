@@ -50,7 +50,8 @@ const careerCategories = [
       {
         name: "LinkedIn Profile Re-Design & Optimization",
         price: 6000,
-        description: "Transform your LinkedIn profile into a recruiter magnet with keyword optimization.",
+        description:
+          "Transform your LinkedIn profile into a recruiter magnet with keyword optimization.",
         details: [
           "Current Profile Analysis along with Report",
           "Profile Optimization with a Target Score > 7+",
@@ -61,7 +62,8 @@ const careerCategories = [
       {
         name: "Resume Redesign & Enrichment",
         price: 4000,
-        description: "A professional, industry-standard resume designed to pass ATS filters effortlessly.",
+        description:
+          "A professional, industry-standard resume designed to pass ATS filters effortlessly.",
         details: [
           "Current Resume Analysis along with Report",
           "Resume Re-design & Optimization with a Target Score > 7+",
@@ -72,7 +74,8 @@ const careerCategories = [
       {
         name: "LinkedIn & Resume Profile Alignment",
         price: 2000,
-        description: "Align your professional branding across platforms to build recruiter trust.",
+        description:
+          "Align your professional branding across platforms to build recruiter trust.",
         details: [
           "Current Alignment Score with Gaps",
           "Closure of All gaps & Revised alignment Score > 7+",
@@ -115,7 +118,8 @@ const careerCategories = [
       {
         name: "Career Assessment & Career Roadmap",
         price: 6000,
-        description: "Uncover your true career fit and path forward with diagnostics and mappings.",
+        description:
+          "Uncover your true career fit and path forward with diagnostics and mappings.",
         details: [
           "Discovery Session - Current Profile & Career Journey & Aspirations",
           "Written Test",
@@ -127,7 +131,8 @@ const careerCategories = [
       {
         name: "Job Search Strategy & System Implementation",
         price: 7500,
-        description: "Deploy automated inbound setup and targeted outbound outreach frameworks.",
+        description:
+          "Deploy automated inbound setup and targeted outbound outreach frameworks.",
         details: [
           "Strategies for InBound Job Search Session",
           "Strategies for OutBound Job Search",
@@ -152,7 +157,8 @@ const careerCategories = [
         price: 3000,
         bundlePrice: 2499,
         isPromo: true,
-        description: "Live interactive mock rounds with seasoned corporate recruiters.",
+        description:
+          "Live interactive mock rounds with seasoned corporate recruiters.",
         details: [
           "Mock Interview Round 1 to assess current level",
           "Mock Interview Report along with Gaps & Suggestions",
@@ -164,7 +170,8 @@ const careerCategories = [
         price: 17000,
         priceBreakdown:
           "₹2,500 assessment + ₹12,000 training + ₹2,500 reassessment",
-        description: "A personalized preparation program to help you craft compelling, authentic, and high-impact answers over 5–6 guided sessions.",
+        description:
+          "A personalized preparation program to help you craft compelling, authentic, and high-impact answers over 5–6 guided sessions.",
         details: [
           "5–6 Guided 1-on-1 Sessions to build your playbook",
           "Polished answers for: Tell Me About Yourself & Career Journey",
@@ -176,6 +183,13 @@ const careerCategories = [
         ],
       },
     ],
+  },
+  {
+    id: "bundled-services",
+    name: "Bundled Services",
+    description:
+      "Get complete, high-value packages designed to accelerate your career transition.",
+    icon: Package,
   },
 ];
 
@@ -197,7 +211,10 @@ function SectionSkeleton() {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="p-8 bg-card text-card-foreground border border-border/40 animate-pulse rounded-3xl">
+        <div
+          key={i}
+          className="p-8 bg-card text-card-foreground border border-border/40 animate-pulse rounded-3xl"
+        >
           <div className="h-4 bg-muted rounded w-1/4 mb-4" />
           <div className="h-8 bg-muted rounded w-1/2 mb-2" />
           <div className="h-3 bg-muted rounded w-3/4 mb-6" />
@@ -221,9 +238,16 @@ function ErrorFallback({ message, onRetry }) {
       <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center mb-3">
         <AlertCircle className="w-6 h-6 text-destructive" />
       </div>
-      <h4 className="text-base font-semibold mb-1">Could not fetch pricing options</h4>
+      <h4 className="text-base font-semibold mb-1">
+        Could not fetch pricing options
+      </h4>
       <p className="text-xs text-muted-foreground mb-4 max-w-sm">{message}</p>
-      <Button variant="outline" size="sm" onClick={onRetry} className="rounded-full">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onRetry}
+        className="rounded-full"
+      >
         <RefreshCw className="w-3.5 h-3.5 mr-2" />
         Try Again
       </Button>
@@ -232,10 +256,16 @@ function ErrorFallback({ message, onRetry }) {
 }
 
 // ─── Collapsible Feature List Component ─────────────────────────────
-function CollapsibleFeatureList({ features, limit = 5, isExpanded, setIsExpanded }) {
+function CollapsibleFeatureList({
+  features,
+  limit = 5,
+  isExpanded,
+  setIsExpanded,
+}) {
   const [localExpanded, setLocalExpanded] = useState(false);
   const activeExpanded = isExpanded !== undefined ? isExpanded : localExpanded;
-  const activeSetExpanded = setIsExpanded !== undefined ? setIsExpanded : setLocalExpanded;
+  const activeSetExpanded =
+    setIsExpanded !== undefined ? setIsExpanded : setLocalExpanded;
 
   if (!features || features.length === 0) return null;
 
@@ -249,7 +279,10 @@ function CollapsibleFeatureList({ features, limit = 5, isExpanded, setIsExpanded
       <div>
         <ul className="space-y-3.5">
           {baseFeatures.map((feature, i) => (
-            <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed">
+            <li
+              key={i}
+              className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed"
+            >
               <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
               <span>{feature}</span>
             </li>
@@ -268,7 +301,10 @@ function CollapsibleFeatureList({ features, limit = 5, isExpanded, setIsExpanded
               >
                 <ul className="space-y-3.5 pt-3.5">
                   {extraFeatures.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed">
+                    <li
+                      key={i}
+                      className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed"
+                    >
                       <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
                       <span>{feature}</span>
                     </li>
@@ -287,11 +323,13 @@ function CollapsibleFeatureList({ features, limit = 5, isExpanded, setIsExpanded
         >
           {activeExpanded ? (
             <>
-              Show less <ChevronDown className="w-3.5 h-3.5 rotate-180 shrink-0" />
+              Show less{" "}
+              <ChevronDown className="w-3.5 h-3.5 rotate-180 shrink-0" />
             </>
           ) : (
             <>
-              + {remainingCount} more features <ChevronDown className="w-3.5 h-3.5 shrink-0" />
+              + {remainingCount} more features{" "}
+              <ChevronDown className="w-3.5 h-3.5 shrink-0" />
             </>
           )}
         </button>
@@ -368,17 +406,63 @@ const Pricing = () => {
   const [selectedServiceType, setSelectedServiceType] = useState(null);
   const [activeCategory, setActiveCategory] = useState("profile-optimization");
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const checkUrlParams = () => {
+        // 1. Check hash fragment (e.g. #interview-services)
+        const hash = window.location.hash.replace("#", "");
+        if (hash && careerCategories.some((c) => c.id === hash)) {
+          setActiveCategory(hash);
+          return;
+        }
+
+        // 2. Check query params (e.g. ?service=interview-services)
+        const params = new URLSearchParams(window.location.search);
+        const serviceParam = params.get("service") || params.get("category");
+        if (
+          serviceParam &&
+          careerCategories.some((c) => c.id === serviceParam)
+        ) {
+          setActiveCategory(serviceParam);
+        }
+      };
+
+      // Check on mount
+      checkUrlParams();
+
+      // Listen for subsequent hash changes
+      window.addEventListener("hashchange", checkUrlParams);
+      return () => window.removeEventListener("hashchange", checkUrlParams);
+    }
+  }, []);
+
+  const handleCategoryChange = (categoryId) => {
+    setActiveCategory(categoryId);
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `#${categoryId}`);
+    }
+  };
+
   const [isAiProfileExpanded, setIsAiProfileExpanded] = useState(false);
   const [isExpertProfileExpanded, setIsExpertProfileExpanded] = useState(false);
   const [isCareerExpanded, setIsCareerExpanded] = useState(false);
   const [isAiInterviewExpanded, setIsAiInterviewExpanded] = useState(false);
-  const [isExpertInterviewExpanded, setIsExpertInterviewExpanded] = useState(false);
+  const [isExpertInterviewExpanded, setIsExpertInterviewExpanded] =
+    useState(false);
 
   // Dynamically resolve categories to prevent index shifting bugs when categories are hidden
-  const profileCategory = careerCategories.find(c => c.id === "profile-optimization");
-  const personalBrandingCategory = careerCategories.find(c => c.id === "personal-branding");
-  const careerCategory = careerCategories.find(c => c.id === "career-services");
-  const interviewCategory = careerCategories.find(c => c.id === "interview-services");
+  const profileCategory = careerCategories.find(
+    (c) => c.id === "profile-optimization",
+  );
+  const personalBrandingCategory = careerCategories.find(
+    (c) => c.id === "personal-branding",
+  );
+  const careerCategory = careerCategories.find(
+    (c) => c.id === "career-services",
+  );
+  const interviewCategory = careerCategories.find(
+    (c) => c.id === "interview-services",
+  );
 
   // Dynamic API states
   const [aiToolPlans, setAiToolPlans] = useState([]);
@@ -414,7 +498,9 @@ const Pricing = () => {
     setLoadingInterview(true);
     setErrorInterview(null);
     try {
-      const res = await fetch(`${INTERVIEW_API_URL}/api/payment/plans?_t=${Date.now()}`);
+      const res = await fetch(
+        `${INTERVIEW_API_URL}/api/payment/plans?_t=${Date.now()}`,
+      );
       if (!res.ok) throw new Error("Could not fetch AI simulator packages.");
       const data = await res.json();
       if (data.success && data.data?.plans) {
@@ -482,10 +568,10 @@ const Pricing = () => {
       />
 
       {/* ─── Hero Section ───────────────────────────────────────────── */}
-      <section className="relative pt-16 pb-8 overflow-hidden">
+      <section className="relative pt-16 pb-3 overflow-hidden">
         {/* Soft atmospheric gradient background matching the branding */}
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background pointer-events-none" />
-        
+
         <div className="relative container mx-auto px-4 max-w-6xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -495,16 +581,14 @@ const Pricing = () => {
             <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">
               Simple, Transparent Pricing
             </h1>
-           
           </motion.div>
-
 
           {/* ─── 4-Tab Category Navigation ──────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="flex flex-wrap justify-center gap-3 mb-8 w-full max-w-5xl mx-auto"
+            className="flex flex-wrap justify-center gap-3 mb-2 w-full max-w-5xl mx-auto"
           >
             {careerCategories.map((category) => {
               const IconComponent = category.icon;
@@ -512,7 +596,7 @@ const Pricing = () => {
               return (
                 <button
                   key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
+                  onClick={() => handleCategoryChange(category.id)}
                   className={`flex items-center gap-2 px-5 py-3 rounded-full text-xs md:text-sm font-semibold transition-all duration-300 cursor-pointer shadow-sm ${
                     isActive
                       ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 border border-primary"
@@ -532,7 +616,6 @@ const Pricing = () => {
       <section className="relative py-4 pb-16">
         <div className="container mx-auto px-4 max-w-6xl">
           <AnimatePresence mode="wait">
-            
             {/* ═══ TAB 1: Profile Optimization & Re-Design ═══ */}
             {activeCategory === "profile-optimization" && (
               <motion.div
@@ -545,22 +628,13 @@ const Pricing = () => {
               >
                 {/* 1.1 AI-Powered Self Checkout Grid */}
                 <div className="space-y-8">
-                  <div className="text-center max-w-xl mx-auto mb-4">
-                    <Badge variant="secondary" className="bg-indigo-500/10 text-indigo-600 border-indigo-500/20 text-[10px] uppercase font-bold tracking-wider mb-2">
-                      Self-Checkout & Instant
-                    </Badge>
-                    <h3 className="text-xl md:text-2xl font-black">
-                      AI-Powered Instant Profile Scoring
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      Obtain precise scoring dashboards and ATS compatibility analysis instantly.
-                    </p>
-                  </div>
-
                   {loadingAiTools ? (
                     <SectionSkeleton />
                   ) : errorAiTools ? (
-                    <ErrorFallback message={errorAiTools} onRetry={fetchAiToolPlans} />
+                    <ErrorFallback
+                      message={errorAiTools}
+                      onRetry={fetchAiToolPlans}
+                    />
                   ) : (
                     <div className="grid gap-8 md:grid-cols-3 items-stretch max-w-5xl mx-auto py-6">
                       {aiToolPlans.map((plan) => {
@@ -569,7 +643,7 @@ const Pricing = () => {
                           link: "/",
                           badgeText: null,
                         };
-                        
+
                         return (
                           <div
                             key={plan.id}
@@ -587,7 +661,7 @@ const Pricing = () => {
                                 </Badge>
                               </div>
                             )}
-                            
+
                             <div className="mb-4">
                               <h4 className="text-base md:text-lg font-bold text-foreground">
                                 {plan.name}
@@ -604,10 +678,14 @@ const Pricing = () => {
                             </div>
 
                             <p className="text-xs text-muted-foreground/80 leading-relaxed mb-6 min-h-[40px]">
-                              {plan.description || "Get deep insights and keyword gaps immediately."}
+                              {plan.description ||
+                                "Get deep insights and keyword gaps immediately."}
                             </p>
 
-                            <Link href={meta.link} className="block w-full mb-6">
+                            <Link
+                              href={meta.link}
+                              className="block w-full mb-6"
+                            >
                               <Button
                                 className={`w-full rounded-full font-bold text-xs py-5 px-6 flex items-center justify-center gap-1.5 transition-all duration-200 border shadow-sm ${
                                   meta.isPopular
@@ -636,14 +714,18 @@ const Pricing = () => {
                 {/* 1.2 Expert-Led Services Grid */}
                 <div className="space-y-8 pt-4">
                   <div className="text-center max-w-xl mx-auto">
-                    <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[10px] uppercase font-bold tracking-wider mb-2">
+                    <Badge
+                      variant="secondary"
+                      className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[10px] uppercase font-bold tracking-wider mb-2"
+                    >
                       1-on-1 Dedicated Support
                     </Badge>
                     <h3 className="text-xl md:text-2xl font-black">
                       Expert-Led Re-Design & Mentoring
                     </h3>
                     <p className="text-xs text-muted-foreground">
-                      Direct individual strategy consultations and professional redesign alignments.
+                      Direct individual strategy consultations and professional
+                      redesign alignments.
                     </p>
                   </div>
 
@@ -686,135 +768,98 @@ const Pricing = () => {
                       </div>
                     ))}
                   </div>
-
-                  {/* 1.3 Complete Profile Bundle Deal */}
-                  <div className="max-w-4xl mx-auto">
-                    <Card className="relative p-8 bg-card text-card-foreground border-2 border-primary shadow-2xl rounded-3xl flex flex-col md:flex-row gap-8 items-center overflow-hidden dark:bg-[#1a1a1a]">
-                      <div className="absolute top-4 right-4">
-                        <Badge className="bg-primary text-primary-foreground border-0 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider">
-                          BEST VALUE COMBO
-                        </Badge>
-                      </div>
-
-                      <div className="flex-1 space-y-4">
-                        <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
-                          Save ₹{formatPrice(calculateSavings(profileCategory))}
-                        </Badge>
-                        <h4 className="text-xl font-black text-foreground">
-                          {profileCategory?.bundleName}
-                        </h4>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          Get a complete professional overhaul. Includes customized LinkedIn optimization, dynamic resume redesign, and comprehensive scoring alignment to ensure recruiter consistency.
-                        </p>
-                        
-                        <div className="border-t border-border/30 my-2 pt-4 dark:border-zinc-800/60" />
-                        
-                        <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                          <li className="flex items-center gap-2 text-xs text-muted-foreground/90">
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                            <span>LinkedIn Redesign</span>
-                          </li>
-                          <li className="flex items-center gap-2 text-xs text-muted-foreground/90">
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                            <span>Resume Redesign</span>
-                          </li>
-                          <li className="flex items-center gap-2 text-xs text-muted-foreground/90">
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                            <span>Branding Alignment</span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="shrink-0 flex flex-col items-center md:items-end justify-center gap-4 bg-muted/30 p-6 rounded-2xl min-w-[240px] text-center md:text-right dark:bg-[#121212]/50">
-                        <div>
-                          <div className="text-xs text-muted-foreground line-through mb-1">
-                            ₹{formatPrice(6000 + 4000 + 2000)}
-                          </div>
-                          <span className="text-4xl font-black block text-foreground">
-                            ₹{formatPrice(profileCategory?.bundlePrice)}
-                          </span>
-                        </div>
-                        <Button
-                          onClick={() => handleBookingClick(profileCategory?.bundleName)}
-                          className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
-                        >
-                          Book Complete Bundle
-                          <ArrowUpRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </div>
-                    </Card>
-                  </div>
                 </div>
               </motion.div>
             )}
 
             {/* ═══ TAB 2: Personal Branding Services ═══ */}
-            {activeCategory === "personal-branding" && personalBrandingCategory && (
-              <motion.div
-                key="personal-brand"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="max-w-3xl mx-auto space-y-8"
-              >
-                <div className="text-center">
-                  <Badge variant="secondary" className="bg-violet-500/10 text-violet-600 border-violet-500/20 text-[10px] uppercase font-bold tracking-wider mb-2">
-                    Ongoing Engagement
-                  </Badge>
-                  <h3 className="text-xl md:text-2xl font-black">
-                    Personal Branding Solutions
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Take command of your online voice. Establish authority and organic visibility on LinkedIn.
-                  </p>
-                </div>
-
-                <Card className="relative p-8 bg-card text-card-foreground border-2 border-primary shadow-2xl rounded-3xl flex flex-col md:flex-row gap-8 items-center overflow-hidden dark:bg-[#1a1a1a]">
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-bold">
-                      RETAINER PACKAGE
-                    </Badge>
-                  </div>
-
-                  <div className="flex-1 space-y-4">
-                    <h4 className="text-lg md:text-xl font-bold">
-                      {personalBrandingCategory.services[0].name}
-                    </h4>
-                    <p className="text-xs text-muted-foreground">
-                      Deploy content blueprints, custom article publications, engagement cycles, and organic network expansion keys directly.
-                    </p>
-                    
-                    <div className="border-t border-border/30 my-2 pt-4 dark:border-zinc-800/60" />
-                    
-                    <ul className="space-y-3 pt-2">
-                      {personalBrandingCategory.services[0].details.map((detail, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed">
-                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
-                          <span>{detail}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="shrink-0 flex flex-col items-center md:items-end justify-center gap-4 bg-muted/30 p-6 rounded-2xl min-w-[240px] text-center md:text-right dark:bg-[#121212]/50">
-                    <div>
-                      <div className="text-xs text-muted-foreground mb-1">Monthly retainer</div>
-                      <span className="text-4xl font-black block text-foreground">
-                        ₹{formatPrice(personalBrandingCategory.services[0].price)}
-                      </span>
-                    </div>
-                    <Button
-                      onClick={() => handleBookingClick(personalBrandingCategory.services[0].name)}
-                      className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
+            {activeCategory === "personal-branding" &&
+              personalBrandingCategory && (
+                <motion.div
+                  key="personal-brand"
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="max-w-3xl mx-auto space-y-8"
+                >
+                  <div className="text-center">
+                    <Badge
+                      variant="secondary"
+                      className="bg-violet-500/10 text-violet-600 border-violet-500/20 text-[10px] uppercase font-bold tracking-wider mb-2"
                     >
-                      Book Free Consultation
-                      <ArrowUpRight className="w-4 h-4 ml-2" />
-                    </Button>
+                      Ongoing Engagement
+                    </Badge>
+                    <h3 className="text-xl md:text-2xl font-black">
+                      Personal Branding Solutions
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      Take command of your online voice. Establish authority and
+                      organic visibility on LinkedIn.
+                    </p>
                   </div>
-                </Card>
-              </motion.div>
-            )}
+
+                  <Card className="relative p-8 bg-card text-card-foreground border-2 border-primary shadow-2xl rounded-3xl flex flex-col md:flex-row gap-8 items-center overflow-hidden dark:bg-[#1a1a1a]">
+                    <div className="absolute top-4 right-4">
+                      <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-bold">
+                        RETAINER PACKAGE
+                      </Badge>
+                    </div>
+
+                    <div className="flex-1 space-y-4">
+                      <h4 className="text-lg md:text-xl font-bold">
+                        {personalBrandingCategory.services[0].name}
+                      </h4>
+                      <p className="text-xs text-muted-foreground">
+                        Deploy content blueprints, custom article publications,
+                        engagement cycles, and organic network expansion keys
+                        directly.
+                      </p>
+
+                      <div className="border-t border-border/30 my-2 pt-4 dark:border-zinc-800/60" />
+
+                      <ul className="space-y-3 pt-2">
+                        {personalBrandingCategory.services[0].details.map(
+                          (detail, i) => (
+                            <li
+                              key={i}
+                              className="flex items-start gap-2.5 text-xs text-muted-foreground/95 leading-relaxed"
+                            >
+                              <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />
+                              <span>{detail}</span>
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    </div>
+
+                    <div className="shrink-0 flex flex-col items-center md:items-end justify-center gap-4 bg-muted/30 p-6 rounded-2xl min-w-[240px] text-center md:text-right dark:bg-[#121212]/50">
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1">
+                          Monthly retainer
+                        </div>
+                        <span className="text-4xl font-black block text-foreground">
+                          ₹
+                          {formatPrice(
+                            personalBrandingCategory.services[0].price,
+                          )}
+                        </span>
+                      </div>
+                      <Button
+                        onClick={() =>
+                          handleBookingClick(
+                            personalBrandingCategory.services[0].name,
+                          )
+                        }
+                        className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
+                      >
+                        Book Free Consultation
+                        <ArrowUpRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </div>
+                  </Card>
+                </motion.div>
+              )}
 
             {/* ═══ TAB 3: Career Services ═══ */}
             {activeCategory === "career-services" && (
@@ -826,18 +871,6 @@ const Pricing = () => {
                 transition={{ duration: 0.3 }}
                 className="space-y-16"
               >
-                <div className="text-center max-w-xl mx-auto">
-                  <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] uppercase font-bold tracking-wider mb-2">
-                    Systems Mapping
-                  </Badge>
-                  <h3 className="text-xl md:text-2xl font-black">
-                    1-on-1 Career Clarity & Job Search Systems
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Map your path forward, understand industry fits, and launch systemic inbound/outbound strategies.
-                  </p>
-                </div>
-
                 <div className="grid gap-8 md:grid-cols-2 max-w-4xl mx-auto items-stretch py-6">
                   {careerCategory?.services?.map((service) => (
                     <div
@@ -877,60 +910,6 @@ const Pricing = () => {
                     </div>
                   ))}
                 </div>
-
-                {/* Bundle Box */}
-                <div className="max-w-4xl mx-auto">
-                  <Card className="relative p-8 bg-card text-card-foreground border-2 border-primary shadow-2xl rounded-3xl flex flex-col md:flex-row gap-8 items-center overflow-hidden dark:bg-[#1a1a1a]">
-                    <div className="absolute top-4 right-4">
-                      <Badge className="bg-primary text-primary-foreground border-0 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider">
-                        BEST VALUE BUNDLE
-                      </Badge>
-                    </div>
-
-                    <div className="flex-1 space-y-4">
-                      <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
-                        Save ₹{formatPrice(calculateSavings(careerCategory))}
-                      </Badge>
-                      <h4 className="text-xl font-black text-foreground">
-                        {careerCategory?.bundleName}
-                      </h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
-                        Combines initial roadmap coaching, diagnostic career assessments, comprehensive training on inbound recruiter magnets, and active outbound deployment.
-                      </p>
-                      
-                      <div className="border-t border-border/30 my-2 pt-4 dark:border-zinc-800/60" />
-                      
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <li className="flex items-center gap-2 text-xs text-muted-foreground/90">
-                          <CheckCircle2 className="w-4 h-4 text-green-500" />
-                          <span>Roadmap & Assessment</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-xs text-muted-foreground/90">
-                          <CheckCircle2 className="w-4 h-4 text-green-500" />
-                          <span>Job Search Inbound/Outbound</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <div className="shrink-0 flex flex-col items-center md:items-end justify-center gap-4 bg-muted/30 p-6 rounded-2xl min-w-[240px] text-center md:text-right dark:bg-[#121212]/50">
-                      <div>
-                        <div className="text-xs text-muted-foreground line-through mb-1">
-                          ₹{formatPrice(6000 + 7500)}
-                        </div>
-                        <span className="text-4xl font-black block text-foreground">
-                          ₹{formatPrice(careerCategory?.bundlePrice)}
-                        </span>
-                      </div>
-                      <Button
-                        onClick={() => handleBookingClick(careerCategory?.bundleName)}
-                        className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
-                      >
-                        Secure Clarity Bundle
-                        <ArrowUpRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </div>
-                  </Card>
-                </div>
               </motion.div>
             )}
 
@@ -946,24 +925,17 @@ const Pricing = () => {
               >
                 {/* 4.1 AI-Powered Mock Practice Grid */}
                 <div className="space-y-8">
-                  <div className="text-center max-w-xl mx-auto">
-                    <Badge variant="secondary" className="bg-rose-500/10 text-rose-600 border-rose-500/20 text-[10px] uppercase font-bold tracking-wider mb-2">
-                      Automated Simulator
-                    </Badge>
-                    <h3 className="text-xl md:text-2xl font-black">
-                      AI-Powered Interview Simulator
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      Simulate full role-specific mock interviews and custom question practices with smart scoring.
-                    </p>
-                  </div>
-
                   {loadingInterview ? (
                     <SectionSkeleton />
                   ) : errorInterview ? (
-                    <ErrorFallback message={errorInterview} onRetry={fetchInterviewPlans} />
+                    <ErrorFallback
+                      message={errorInterview}
+                      onRetry={fetchInterviewPlans}
+                    />
                   ) : (
-                    <div className={`grid gap-8 items-stretch max-w-5xl mx-auto py-6 ${sortedInterviewPlans.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"}`}>
+                    <div
+                      className={`grid gap-8 items-stretch max-w-5xl mx-auto py-6 ${sortedInterviewPlans.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"}`}
+                    >
                       {sortedInterviewPlans.map((plan) => {
                         const isPopular = plan.slug === popularInterviewSlug;
                         return (
@@ -991,11 +963,17 @@ const Pricing = () => {
 
                             <div className="mb-4 flex items-baseline gap-1">
                               {plan.isFree ? (
-                                <span className="text-4xl md:text-5xl font-black text-emerald-500">Free</span>
+                                <span className="text-4xl md:text-5xl font-black text-emerald-500">
+                                  Free
+                                </span>
                               ) : (
                                 <>
-                                  <span className="text-4xl md:text-5xl font-black text-foreground">₹{formatPrice(plan.price)}</span>
-                                  <span className="text-[11px] font-semibold text-muted-foreground">/ pack</span>
+                                  <span className="text-4xl md:text-5xl font-black text-foreground">
+                                    ₹{formatPrice(plan.price)}
+                                  </span>
+                                  <span className="text-[11px] font-semibold text-muted-foreground">
+                                    / pack
+                                  </span>
                                 </>
                               )}
                             </div>
@@ -1004,7 +982,10 @@ const Pricing = () => {
                               {plan.description}
                             </p>
 
-                            <Link href="/interview-preparation" className="block w-full mb-6">
+                            <Link
+                              href="/interview-preparation"
+                              className="block w-full mb-6"
+                            >
                               <Button
                                 className={`w-full rounded-full font-bold text-xs py-5 px-6 flex items-center justify-center gap-1.5 transition-all duration-200 border shadow-sm ${
                                   isPopular
@@ -1052,7 +1033,14 @@ const Pricing = () => {
                   <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 flex gap-3 items-start max-w-4xl mx-auto">
                     <Brain className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      <strong className="text-foreground">🤖 Intelligent AI feedback:</strong> Our simulation engine allows you to upload custom job descriptions, uses synthesized voice asking precise situational questions, processes spoken audio transcripts, and scores you instant feedback alongside sample model answers.
+                      <strong className="text-foreground">
+                        🤖 Intelligent AI feedback:
+                      </strong>{" "}
+                      Our simulation engine allows you to upload custom job
+                      descriptions, uses synthesized voice asking precise
+                      situational questions, processes spoken audio transcripts,
+                      and scores you instant feedback alongside sample model
+                      answers.
                     </p>
                   </div>
                 </div>
@@ -1060,14 +1048,18 @@ const Pricing = () => {
                 {/* 4.2 Expert-Led Services Grid */}
                 <div className="space-y-8 pt-4">
                   <div className="text-center max-w-xl mx-auto">
-                    <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px] uppercase font-bold tracking-wider mb-2">
+                    <Badge
+                      variant="secondary"
+                      className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px] uppercase font-bold tracking-wider mb-2"
+                    >
                       Live Coaching Rounds
                     </Badge>
                     <h3 className="text-xl md:text-2xl font-black">
                       Expert-Led Interview Coaching & Live Mock Rounds
                     </h3>
                     <p className="text-xs text-muted-foreground">
-                      Live mock interview sessions with executive recruiters, combined with response framing.
+                      Live mock interview sessions with executive recruiters,
+                      combined with response framing.
                     </p>
                   </div>
 
@@ -1082,7 +1074,10 @@ const Pricing = () => {
                             {service.name}
                           </h4>
                           {service.isPromo && (
-                            <Badge variant="secondary" className="bg-green-500/10 text-green-600 border-green-500/20 text-[9px] uppercase tracking-wider font-bold">
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-500/10 text-green-600 border-green-500/20 text-[9px] uppercase tracking-wider font-bold"
+                            >
                               Promo Pricing Active
                             </Badge>
                           )}
@@ -1120,137 +1115,216 @@ const Pricing = () => {
                       </div>
                     ))}
                   </div>
-
-                  {/* Combo Card */}
-                  <div className="max-w-4xl mx-auto">
-                    <Card className="relative p-8 bg-card text-card-foreground border-2 border-primary shadow-2xl rounded-3xl flex flex-col md:flex-row gap-8 items-center overflow-hidden dark:bg-[#1a1a1a]">
-                      <div className="absolute top-4 right-4">
-                        <Badge className="bg-primary text-primary-foreground border-0 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider">
-                          BEST VALUE BUNDLE
-                        </Badge>
-                      </div>
-
-                      <div className="flex-1 space-y-4">
-                        <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
-                          Save ₹{formatPrice(calculateSavings(interviewCategory))}
-                        </Badge>
-                        <h4 className="text-xl font-black text-foreground">
-                          {interviewCategory?.bundleName}
-                        </h4>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          Offers full coverage: initial diagnostic mock rounds, specialized interview structural question training (4 dedicated coaching hours), and post-training feedback mock sessions.
-                        </p>
-                        
-                        <div className="border-t border-border/30 my-2 pt-4 dark:border-zinc-800/60" />
-                        
-                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          <li className="flex items-center gap-2 text-xs text-muted-foreground/90">
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                            <span>Mock Assessment Round 1 & 2</span>
-                          </li>
-                          <li className="flex items-center gap-2 text-xs text-muted-foreground/90">
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                            <span>Q&A Response Framing (4 Sessions)</span>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div className="shrink-0 flex flex-col items-center md:items-end justify-center gap-4 bg-muted/30 p-6 rounded-2xl min-w-[240px] text-center md:text-right dark:bg-[#121212]/50">
-                        <div>
-                          <div className="text-xs text-muted-foreground line-through mb-1">
-                            ₹{formatPrice(3000 + 17000)}
-                          </div>
-                          <span className="text-4xl font-black block text-foreground">
-                            ₹{formatPrice(interviewCategory?.bundlePrice)}
-                          </span>
-                        </div>
-                        <Button
-                          onClick={() => handleBookingClick(interviewCategory?.bundleName)}
-                          className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
-                        >
-                          Book Mastery Bundle
-                          <ArrowUpRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </div>
-                    </Card>
-                  </div>
                 </div>
               </motion.div>
             )}
 
-          </AnimatePresence>
-        </div>
-      </section>
+            {/* ═══ TAB 5: Bundled Services ═══ */}
+            {activeCategory === "bundled-services" && (
+              <motion.div
+                key="bundled-svcs"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-8"
+              >
+                <div className="grid gap-8 md:grid-cols-3 items-stretch max-w-5xl mx-auto py-6">
+                  {/* Complete Profile Bundle */}
+                  <div className="relative p-8 bg-card text-card-foreground border-2 border-primary shadow-xl rounded-3xl flex flex-col justify-between dark:bg-[#1a1a1a]">
+                    <div className="absolute top-4 right-4">
+                      <Badge className="bg-primary text-primary-foreground border-0 rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider">
+                        Best Value
+                      </Badge>
+                    </div>
 
-      {/* ─── Why Choose Section ────────────────────────────────────── */}
-      <section className="relative py-16 bg-muted/20 border-t border-b border-border/40 dark:bg-[#121212]/30 dark:border-zinc-800/60">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-[11px] mb-4">
-              Our Methodology
-            </Badge>
-            <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-3">
-              Built-in AI + Expert Mentorship = Placement Success
-            </h2>
-            <p className="text-xs md:text-sm text-muted-foreground">
-              We leverage advanced machine-learning metrics to provide automated checkpoints while ensuring real humans supervise and accelerate your strategic growth.
-            </p>
-          </div>
+                    <div>
+                      <div className="mb-4">
+                        <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
+                          Save ₹{formatPrice(6000 + 4000 + 2000 - 8999)}
+                        </Badge>
+                        <h4 className="text-base md:text-lg font-bold text-foreground mt-2">
+                          {profileCategory?.bundleName ||
+                            "Complete Profile Bundle"}
+                        </h4>
+                      </div>
 
-          <div className="grid gap-8 md:grid-cols-3">
-            {[
-              {
-                title: "Deep-Learning Algorithms",
-                description:
-                  "Proprietary AI parses your resume and online scores against actual corporate applicant tracking system guidelines, locating hidden gaps immediately.",
-                icon: Sparkles,
-              },
-              {
-                title: "Elite Career Coaches",
-                description:
-                  "Our network of expert industry coaches brings direct hiring experience from world-class organizations, providing accountability and networking tips.",
-                icon: Users,
-              },
-              {
-                title: "Measurable Results Dashboard",
-                description:
-                  "Keep real tabs on your growth. Track target scorecard progress, view improvement curves, and obtain standardized benchmarks at every phase.",
-                icon: TrendingUp,
-              },
-            ].map((item, idx) => (
-              <Card key={idx} className="p-6 bg-card text-card-foreground border border-border/50 rounded-2xl dark:bg-[#121212] dark:border-zinc-800/80">
-                <div className="flex flex-col gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/25 shrink-0">
-                    <item.icon className="w-5 h-5 text-primary" />
+                      <div className="mb-4">
+                        <div className="text-xs text-muted-foreground line-through mb-1">
+                          ₹{formatPrice(6000 + 4000 + 2000)}
+                        </div>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-black text-foreground">
+                            ₹{formatPrice(profileCategory?.bundlePrice || 8999)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground/80 leading-relaxed mb-6">
+                        Get a complete professional overhaul. Includes
+                        customized LinkedIn optimization, dynamic resume
+                        redesign, and comprehensive scoring alignment to ensure
+                        recruiter consistency.
+                      </p>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className="border-t border-border/30 pt-4 dark:border-zinc-800/60" />
+                      <ul className="space-y-3">
+                        <li className="flex items-center gap-2.5 text-xs text-muted-foreground/95">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          <span>LinkedIn Profile Re-Design & Optimization</span>
+                        </li>
+                        <li className="flex items-center gap-2.5 text-xs text-muted-foreground/95">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          <span>Resume Redesign & Enrichment</span>
+                        </li>
+                        <li className="flex items-center gap-2.5 text-xs text-muted-foreground/95">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          <span>LinkedIn & Resume Alignment</span>
+                        </li>
+                      </ul>
+
+                      <Button
+                        onClick={() =>
+                          handleBookingClick(
+                            profileCategory?.bundleName ||
+                              "Complete Profile Bundle",
+                          )
+                        }
+                        className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
+                      >
+                        Book Complete Bundle
+                        <ArrowUpRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm md:text-base font-bold mb-1.5">{item.title}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
+
+                  {/* Career Clarity Bundle */}
+                  <div className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col justify-between dark:bg-[#121212] dark:border-zinc-800/80">
+                    <div>
+                      <div className="mb-4">
+                        <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
+                          Save ₹{formatPrice(6000 + 7500 - 9999)}
+                        </Badge>
+                        <h4 className="text-base md:text-lg font-bold text-foreground mt-2">
+                          {careerCategory?.bundleName ||
+                            "Career Clarity Bundle"}
+                        </h4>
+                      </div>
+
+                      <div className="mb-4">
+                        <div className="text-xs text-muted-foreground line-through mb-1">
+                          ₹{formatPrice(6000 + 7500)}
+                        </div>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-black text-foreground">
+                            ₹{formatPrice(careerCategory?.bundlePrice || 9999)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground/80 leading-relaxed mb-6">
+                        Combines initial roadmap coaching, diagnostic career
+                        assessments, comprehensive training on inbound recruiter
+                        magnets, and active outbound deployment.
+                      </p>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className="border-t border-border/30 pt-4 dark:border-zinc-800/60" />
+                      <ul className="space-y-3">
+                        <li className="flex items-center gap-2.5 text-xs text-muted-foreground/95">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          <span>Career Assessment & Roadmap</span>
+                        </li>
+                        <li className="flex items-center gap-2.5 text-xs text-muted-foreground/95">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          <span>Job Search Inbound/Outbound</span>
+                        </li>
+                      </ul>
+
+                      <Button
+                        onClick={() =>
+                          handleBookingClick(
+                            careerCategory?.bundleName ||
+                              "Career Clarity Bundle",
+                          )
+                        }
+                        className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
+                      >
+                        Secure Clarity Bundle
+                        <ArrowUpRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Interview Mastery Bundle */}
+                  <div className="relative p-8 bg-card text-card-foreground border border-border/60 hover:border-foreground/30 transition-all duration-300 hover:shadow-2xl rounded-3xl flex flex-col justify-between dark:bg-[#121212] dark:border-zinc-800/80">
+                    <div>
+                      <div className="mb-4">
+                        <Badge className="bg-green-500/15 text-green-600 border-green-500/25 text-[10px] font-bold">
+                          Save ₹{formatPrice(3000 + 17000 - 11999)}
+                        </Badge>
+                        <h4 className="text-base md:text-lg font-bold text-foreground mt-2">
+                          {interviewCategory?.bundleName ||
+                            "Interview Mastery Bundle"}
+                        </h4>
+                      </div>
+
+                      <div className="mb-4">
+                        <div className="text-xs text-muted-foreground line-through mb-1">
+                          ₹{formatPrice(3000 + 17000)}
+                        </div>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-4xl font-black text-foreground">
+                            ₹
+                            {formatPrice(
+                              interviewCategory?.bundlePrice || 11999,
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground/80 leading-relaxed mb-6">
+                        Offers full coverage: initial diagnostic mock rounds,
+                        specialized interview structural question training (4
+                        dedicated coaching hours), and post-training feedback
+                        mock sessions.
+                      </p>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div className="border-t border-border/30 pt-4 dark:border-zinc-800/60" />
+                      <ul className="space-y-3">
+                        <li className="flex items-center gap-2.5 text-xs text-muted-foreground/95">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          <span>Mock Assessment Round 1 & 2</span>
+                        </li>
+                        <li className="flex items-center gap-2.5 text-xs text-muted-foreground/95">
+                          <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
+                          <span>Q&A Response Framing (4 Sessions)</span>
+                        </li>
+                      </ul>
+
+                      <Button
+                        onClick={() =>
+                          handleBookingClick(
+                            interviewCategory?.bundleName ||
+                              "Interview Mastery Bundle",
+                          )
+                        }
+                        className="w-full bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full text-xs py-5 px-6 shadow-sm transition-all dark:bg-white dark:text-black dark:hover:bg-zinc-100"
+                      >
+                        Book Mastery Bundle
+                        <ArrowUpRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── FAQ Accordion Section ──────────────────────────────────── */}
-      <section className="relative py-16">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-2">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Everything you need to know about our dynamic tools, payment flows, and coaching modules.
-            </p>
-          </div>
-
-          <Card className="p-6 md:p-8 bg-card text-card-foreground border border-border/40 rounded-3xl shadow-sm dark:bg-[#121212] dark:border-zinc-800/80">
-            {faqData.map((faq, idx) => (
-              <FaqItem key={idx} question={faq.q} answer={faq.a} />
-            ))}
-          </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
@@ -1260,15 +1334,17 @@ const Pricing = () => {
         <div className="relative container mx-auto px-4 max-w-5xl">
           <Card className="relative p-10 md:p-14 bg-gradient-to-tr from-primary/10 via-card to-background border border-primary/20 shadow-2xl rounded-3xl overflow-hidden text-center dark:bg-[#121212] dark:border-zinc-800/80">
             <div className="absolute -left-16 -bottom-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-            
+
             <div className="relative z-10 space-y-6">
               <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight">
                 Ready to Take the Next Career Step?
               </h2>
               <p className="text-xs md:text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
-                Join hundreds of successful specialists who achieved high-impact career pivots and resume alignment using our built-in tools. Select a program and unlock your access today.
+                Join hundreds of successful specialists who achieved high-impact
+                career pivots and resume alignment using our built-in tools.
+                Select a program and unlock your access today.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
                 <Button
                   onClick={() => handleBookingClick()}

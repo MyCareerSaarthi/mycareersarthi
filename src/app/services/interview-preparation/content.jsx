@@ -36,7 +36,7 @@ import {
 
 const CTAButton = ({
   text,
-  href = "/pricing",
+  href = "/pricing#interview-services",
   primary = true,
   variant = "blue",
 }) => {
@@ -987,7 +987,7 @@ const InterviewPreparationContentPage = () => {
               <div className="pt-3">
                 <CTAButton
                   text="Prepare with an Expert"
-                  href="/pricing"
+                  href="/pricing#interview-services"
                   variant="blue"
                 />
               </div>
@@ -1284,7 +1284,7 @@ const InterviewPreparationContentPage = () => {
           </div>
 
           <div className="mt-12 flex justify-center">
-            <CTAButton text="Yes, Prepare Me for Interviews" href="/pricing" />
+            <CTAButton text="Yes, Prepare Me for Interviews" href="/pricing#interview-services" />
           </div>
         </div>
       </section>
